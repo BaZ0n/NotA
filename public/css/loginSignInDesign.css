@@ -1,0 +1,32 @@
+:root{
+    --bgBlack: #242424;
+    --black: #000000;
+    --primaryColor: #FFD7B1;
+    --gray: #B3B3B3;
+    --placeholder: #555555;
+    --white: white;
+    --btnBg: #A8A8A8;
+}
+
+.backgroundContainer {
+    background-color: var(--bgBlack);
+    min-height: 100vh;
+    border: 2px solid var(--black);
+    font-family: Vollkorn;
+}
+
+.form-control {
+    background-color: var(--bgBlack);
+    border: 1px solid black;
+    border-radius: 20px;
+    color: white;
+}
+
+.form-control::placeholder {
+    color: var(--placeholder);
+}
+
+.form-control:focus {
+    background-color: var(--bgBlack);
+    color: var(--white);
+}

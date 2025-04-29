@@ -1,0 +1,160 @@
+:root{
+    --bgBlack: #242424;
+    --black: #000000;
+    --bgHead: #1E1E1E;
+    --primaryColor: #FFD7B1;
+    --gray: #B3B3B3;
+    --placeholder: #555555;
+    --white: white;
+    --btnBg: #A8A8A8;
+    --sliderBG: #141414;
+}
+
+body {
+    background-color: var(--bgBlack);
+}
+
+.sidebar {
+    width: 10vw; /* Ширина боковой панели */
+    height: 100vh;
+    background-color: var(--sliderBG);
+    position: fixed;
+    left: 0;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px;
+    z-index: 1000;
+}
+
+.main-content {
+    margin-left: 80px; /* Отступ основного контента */
+    width: calc(100% - 80px);
+}
+
+.sidebar-item {
+    margin: 30px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+    text-decoration: none;
+}
+
+.user {
+    margin: 30px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+    text-decoration: none;
+}
+
+.userImg {
+    width: 84px;
+    height: 84px;
+    border: 1px solid var(--primaryColor);
+    border-radius: 50%;
+    object-fit:cover;
+}
+
+.svg path {
+    fill: white;
+}
+
+.svg {
+    width: 32px;
+    height: 32px;
+    margin-bottom: 10px;
+}
+
+.profileLink {
+    margin: 15px 0;
+    border: 2px solid var(--primaryColor);
+    border-radius: 50%;
+    padding: 5px;
+}
+
+.col {
+    margin: 0 10px
+}
+
+.bodyContainer {
+    width: 50%;
+    margin: 15vh auto;
+    align-items: center;
+    color: white;
+    font-family: Vollkorn;
+}
+
+.playlist img {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 15px;
+}
+
+.playlist {
+    width: fit-content;
+    transition: all .2s linear;
+    border: 1px solid var(--bgBlack);
+    border-radius: 10px;
+    text-decoration: none;
+}
+
+.playlist h4 {
+    margin-top: 10px;
+    margin-left: 10px;
+    color: var(--white);
+    width: fit-content;
+}
+
+.playlist h5 {
+    margin-top: 10px;
+    margin-left: 10px;
+    color: var(--gray);
+    width: fit-content;
+}
+
+.playlistLink {
+    text-decoration: none;
+    margin: 0 5px;
+}
+
+.playlistsCollection {
+    overflow-y: hidden;
+    padding: 15px 5px;
+}
+
+.artistsCollection {
+    overflow-y: hidden;
+    padding: 15px 5px;
+}
+
+.artistLink {
+    text-decoration: none;
+    margin: 0 5px;
+}
+
+.artist {
+    width: fit-content;
+    transition: all .2s linear;
+    border: 1px solid var(--bgBlack);
+    border-radius: 10px;
+    text-decoration: none;
+}
+
+.artist img {
+    width: 200px;
+    height: 200px;
+    object-fit: contain;
+    border-radius: 50%;
+}
+
+.artist h4 {
+    margin-top: 10px;
+    margin-left: 10px;
+    color: var(--white);
+}
+

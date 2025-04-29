@@ -1,0 +1,96 @@
+:root{
+    --bgBlack: #242424;
+    --black: #000000;
+    --primaryColor: #FFD7B1;
+    --gray: #B3B3B3;
+    --placeholder: #555555;
+    --white: white;
+    --btnBg: #A8A8A8;
+}
+
+.button-primary {
+    background-color: var(--btnBg);
+    border-radius: 30px;
+    transition: all 0.2s linear;
+    border: 0;
+}
+
+.button-primary:hover {
+    background-color: var(--primaryColor);
+}
+
+.link-primary .text-center{
+    transition: all 0.2s linear;
+}
+
+.link-primary .text-center {
+    color:var(--placeholder);
+}
+
+.link-primary .text-center:hover {
+    color:var(--primaryColor);
+}
+
+.playlist:hover {
+    border: 1px solid var(--primaryColor);
+    border-radius: 20px;
+}
+
+.playlist:hover h4 {
+    color: var(--primaryColor);
+    transition: all .2s linear;
+}
+
+.artist:hover {
+    border: 1px solid var(--primaryColor);
+    border-radius: 20px;
+}
+
+.artist:hover h4 {
+    color: var(--primaryColor);
+}
+
+.sidebar-item:hover path {
+    fill: var(--primaryColor);
+    transition: all .2s linear;
+}
+
+.user:hover .userImg{
+    transition: all .2s linear;
+    box-shadow: 0 0 10px var(--primaryColor);
+}
+
+.user:hover .userName{
+    transition: all .2s linear;
+    color: var(--primaryColor);
+}
+
+.sidebar-item:hover span{
+    color: var(--primaryColor);
+}
+
+.track :hover {
+    color: var(--primaryColor);
+    transition: color .2s linear;
+}
+
+.track:hover {
+    transition: all .2s linear;
+    background-color: var(--placeholder);
+}
+
+.buttonsCont :hover path{
+    transition: all .2s linear;
+    fill: var(--primaryColor);
+}
+
+.playlistCollection:hover img{
+    border-radius: 20px;
+    transition: all .2s linear;
+    box-shadow: 0 0 6px var(--primaryColor);
+}
+
+.playlistCollection:hover h5{
+    transition: all .2s linear;
+    color: var(--primaryColor);
+}
