@@ -4,7 +4,8 @@
     <div class="container d-flex mt-5 mb-2">
         <div class="playlistInfo mx-3"> 
             <img src="{{asset('images/playlistImages/playlistImgTest.png')}}">
-            <h3 class="text-center my-4">Плейлист йоу</h3>
+            <h3 class="text-center my-2">Плейлист йоу</h3>
+            <h4 class="authorName text-center">Автор</h4>
 
             <div class="buttonsCont">
                 <button class="playButton">
@@ -16,34 +17,65 @@
             </div>
         </div>
     
-        <div class="playlistTracks mx-5 my-1 py-5 px-4">
+        <div class="playlistTracks mx-5 py-5 px-5">
             <a href="#" class="trackLink">
                 <div class="track d-flex py-2 px-1" style="align-items: center;">
-                    <h2 style="margin-right: 15px;">1.</h4>
+                    <h4 style="margin-right: 15px;">1.</h4>
                     <div class="trackInfo">
                         <h5 class="trackArtist">Испольнитель</h5>
-                        <h3 class="trackName">Название</h3>
-                        <div class="trackDuration">
-                        </div>
+                        <h4 class="trackName">Название</h3>
                     </div>
+                    <h5 class="trackDuration">0:00</h5>
                 </div>
             </a>
             <a href="#" class="trackLink">
                 <div class="track d-flex py-2 px-1" style="align-items: center;">
-                    <h2 style="margin-right: 15px;">1.</h4>
+                    <h4 style="margin-right: 15px;">1.</h4>
                     <div class="trackInfo">
                         <h5 class="trackArtist">Испольнитель</h5>
-                        <h3 class="trackName">Название</h3>
+                        <h4 class="trackName">Название</h3>
                     </div>
+                    <h5 class="trackDuration">0:00</h5>
                 </div>
             </a>
             <a href="#" class="trackLink">
                 <div class="track d-flex py-2 px-1" style="align-items: center;">
-                    <h2 style="margin-right: 15px;">1.</h4>
+                    <h4 style="margin-right: 15px;">1.</h4>
                     <div class="trackInfo">
                         <h5 class="trackArtist">Испольнитель</h5>
-                        <h3 class="trackName">Название</h3>
+                        <h4 class="trackName">Название</h3>
                     </div>
+                    <h5 class="trackDuration">0:00</h5>
+                </div>
+            </a>
+            <a href="#" class="trackLink">
+                <div class="track d-flex py-2 px-1" style="align-items: center;">
+                    <h4 style="margin-right: 15px;">1.</h4>
+                    <div class="trackInfo">
+                        <h5 class="trackArtist">Испольнитель</h5>
+                        <h4 class="trackName">Название</h3>
+                    </div>
+                    <h5 class="trackDuration">0:00</h5>
+                </div>
+            </a>
+            <a href="#" class="trackLink">
+                <div class="track d-flex py-2 px-1" style="align-items: center;">
+                    <h4 style="margin-right: 15px;">1.</h4>
+                    <div class="trackInfo">
+                        <h5 class="trackArtist">Испольнитель</h5>
+                        <h4 class="trackName">Название</h3>
+                    </div>
+                    <h5 class="trackDuration">0:00</h5>
+                </div>
+            </a>
+            <a href="#" class="trackLink">
+                <div class="track d-flex py-2 px-1" style="align-items: center;">
+                    <h4 style="margin-right: 15px;">1.</h4>
+                    <div class="trackInfo">
+                        <h5 class="trackArtist">Испольнитель</h5>
+                        <h4 class="trackName">Название</h3>
+                    </div>
+                    <h5 class="trackDuration">0:00</h5>
                 </div>
             </a>
         </div>

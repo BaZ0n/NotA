@@ -1,32 +1,20 @@
-:root{
-    --bgBlack: #242424;
-    --black: #000000;
-    --bgHead: #1E1E1E;
-    --primaryColor: #FFD7B1;
-    --gray: #B3B3B3;
-    --placeholder: #555555;
-    --white: white;
-    --btnBg: #A8A8A8;
-}
-
 .playlistInfo img {
-    width: 300px;
-    height: 300px;
+    width: 240px;
+    height: 240px;
     object-fit: cover;
     border-radius: 20px;
 }
 
 .playlistTracks {
-    background-color: var(--bgHead);
+    background-color: var(--bgBlack);
     border-radius: 20px;
-    width: 100%;
-    height: 70vh;
-    overflow-y: auto;
+    border: 2px solid var(--gray);
 }
 
 .track {
     color:white;
     border-radius: 15px;
+    display: flex;
 }
 
 .trackArtist {
@@ -40,6 +28,11 @@
 .trackLink {
     text-decoration: none;
     margin: 5px 0;
+}
+
+.trackDuration {
+    margin-left: 8vw;
+    margin-right: 1vw;
 }
 
 .playButton, .likeButton{

@@ -21,3 +21,5 @@ Route::get("/mainPage", [MainController::class, 'mainPage']);
 Route::get("/playlistPage", [MainController::class, 'playlistPage']);
 
 Route::get("/userPage", [MainController::class,'userPage']);
+
+Route::get("/collectionPage", [MainController::class, 'collectionPage']);

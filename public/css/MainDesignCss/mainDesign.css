@@ -1,21 +1,9 @@
-:root{
-    --bgBlack: #242424;
-    --black: #000000;
-    --bgHead: #1E1E1E;
-    --primaryColor: #FFD7B1;
-    --gray: #B3B3B3;
-    --placeholder: #555555;
-    --white: white;
-    --btnBg: #A8A8A8;
-    --sliderBG: #141414;
-}
-
 body {
     background-color: var(--bgBlack);
 }
 
 .sidebar {
-    width: 10vw; /* Ширина боковой панели */
+    width: 12vw; /* Ширина боковой панели */
     height: 100vh;
     background-color: var(--sliderBG);
     position: fixed;
@@ -26,6 +14,8 @@ body {
     align-items: center;
     padding-top: 20px;
     z-index: 1000;
+    font-family: Volkorn; 
+    font-size: 15pt;
 }
 
 .main-content {
@@ -81,8 +71,8 @@ body {
 }
 
 .bodyContainer {
-    width: 50%;
-    margin: 15vh auto;
+    width: 60%;
+    margin: 15vh 25vw;
     align-items: center;
     color: white;
     font-family: Vollkorn;

@@ -1,0 +1,36 @@
+.showAllPlaylistBTN {
+    background-color: var(--bgBlack);
+    border: 0;
+    color: var(--gray);
+    font-family: Volkorn;
+}
+
+.showAllPlaylistBTN:hover {
+    transition: all 0.2s;
+    color: var(--primaryColor)
+}
+
+.showAllTrackBTN {
+    background-color: var(--bgBlack);
+    border: 0;
+    color: var(--gray);
+    font-family: Volkorn;
+}
+
+.showAllTrackBTN:hover {
+    transition: all 0.2s;
+    color: var(--primaryColor)
+}
+
+.allPlaylistContainer {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    padding-top: 0;
+}
+
+.backBTN {
+    background-color: var(--bgBlack);
+    border: 0;
+    margin-right: 2vw;
+}

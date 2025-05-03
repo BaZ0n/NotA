@@ -18,4 +18,8 @@ class MainController extends Controller
     public function userPage() {
         return view('main/userPage');
     }
+
+    public function collectionPage() {
+        return view("main/collectionPage");
+    }
 }

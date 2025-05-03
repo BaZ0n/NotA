@@ -1,14 +1,3 @@
-:root{
-    --bgBlack: #242424;
-    --black: #000000;
-    --primaryColor: #FFD7B1;
-    --gray: #B3B3B3;
-    --placeholder: #555555;
-    --white: white;
-    --btnBg: #A8A8A8;
-    --bgHead: #1E1E1E;
-}
-
 .pageContainer {
     display: flex;
 }
@@ -28,7 +17,7 @@
 }
 
 .playlistImage{
-    width: 15vw;
+    width: 100%;
     object-fit: cover;
     border-radius: 10%;
 }
@@ -70,8 +59,10 @@
 }
 
 .playlistTracks {
-    max-height: 42vh;
-    overflow: hidden;
+    /* 
+    max-height: 42vh; 
+    overflow-y: none;
+    */
 }
 
 .playlistContainer {

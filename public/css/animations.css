@@ -1,11 +1,20 @@
 :root{
-    --bgBlack: #242424;
+    --bgBlack: #222222;
     --black: #000000;
     --primaryColor: #FFD7B1;
+    --primaryBackground: #4f4032;
     --gray: #B3B3B3;
     --placeholder: #555555;
     --white: white;
     --btnBg: #A8A8A8;
+    --sliderBG: #141414;
+}
+
+.form-group input:focus {
+    transition: all 0.2s linear;
+    box-shadow: 0 0 10px var(--primaryColor);
+    border-color: var(--primaryColor);
+
 }
 
 .button-primary {
@@ -17,6 +26,7 @@
 
 .button-primary:hover {
     background-color: var(--primaryColor);
+    box-shadow: 0 0 5px var(--primaryColor);
 }
 
 .link-primary .text-center{
@@ -93,4 +103,9 @@
 .playlistCollection:hover h5{
     transition: all .2s linear;
     color: var(--primaryColor);
+}
+
+.backBTN:hover path{
+    transition: all .2s;
+    fill: var(--primaryColor);
 }
