@@ -87,6 +87,7 @@
             <div class="imageContainer">
                 <img class="profileImage" src="{{asset('images/icons/profileIcon.svg')}}">
             </div>
+            <a href="/logout"><h4 style="color: white">Выйти из аккаунта</h4></a>
         </div>
     </div>
 @endsection

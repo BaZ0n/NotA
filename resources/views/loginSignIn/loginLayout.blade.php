@@ -21,6 +21,17 @@
         <div class="container-fluid ">
             <div class="row align-items-start" style="justify-content: space-between">
                 <div class="col px-0"> {{-- Бесполезная номер один --}}
+                    <div class="container-fixed" style="position:fixed; top: 15px; left: 15px;">
+                        @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                        @endif
+                    </div>
                     <img src="{{ asset('images/background/backgroundOne.jpg') }}" style="object-fit: cover; width:100%; min-height:100vh" class="welcomePhoto">
                 </div>
 
@@ -30,5 +41,4 @@
             </div>
         </div>
     </body>
-    <script src="{{asset('js/registrationCodeJS.js')}}"></script>
 </html>

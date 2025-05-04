@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class tracksModel extends Model
+class track extends Model
 {
     //
 }

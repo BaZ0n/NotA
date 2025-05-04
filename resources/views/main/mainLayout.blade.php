@@ -17,13 +17,14 @@
         <title>NotA</title>
     </head>
     <body>
-        <div class="sidebar">
-
+        <button class="sidebarBTN" id="sidebarBTN"><img class="svg" src="{{asset('images/icons/sidebar.svg')}}"></button>
+        <div class="sidebar" id="sidebar">
+            
             <a href="/userPage" class="user" style="margin-bottom: 30px;">
                 {{-- <img class="userImg" src="{{ asset('images/icons/profileIcon.svg') }}" alt="Профиль"> --}}
                 <img class="userImg" src="{{ asset('images/userImages/ayanami.jpg') }}" alt="Профиль">
-                <span class="userName">Челикс</span>
-            </a>
+                <span class="userName"></span>
+            </a>    
 
             <div style="flex-grow: 1;"></div>
             
@@ -57,4 +58,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="{{asset('js/imageAnimation.js')}}"></script>
     <script src="{{asset('js/showAll.js')}}"></script>
+    <script src="{{asset("js/sidebarHideShow.js")}}"></script>
+    
 </html>
