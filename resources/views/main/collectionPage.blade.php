@@ -4,52 +4,12 @@
 
     <div class="container" style="padding:0px">
         <div class="container d-flex p-0" id="playlistTrackCont" style="height: 60vh; width: 100%;">
-            <div class="favoriteTracksCont mx-2" style="overflow-y: auto;">
-                <div class="headCont d-flex">
+            <div class="favoriteTracksCont mx-2 my-3 px-1" style="overflow-y: auto;">
+                <div class="headCont">
                     <h3>Треки</h3>  
-                    <button class="showAllTrackBTN mx-2" id="showTracks"><h6>Показать все...<h6></button>
+                    <button class="showAllTrackBTN mx-2" id="showTracks"><h6 class="text">Показать все...<h6></button>
                 </div>
                 
-                <a href="#" class="trackLink">
-                    <div class="track d-flex py-2 px-1" style="align-items: center;">
-                        <h4 style="margin-right: 15px;">1.</h4>
-                        <div class="trackInfo">
-                            <h5 class="trackArtist">Испольнитель</h5>
-                            <h4 class="trackName">Название</h3>
-                        </div>
-                        <h5 class="trackDuration">0:00</h5>
-                    </div>
-                </a>
-                <a href="#" class="trackLink">
-                    <div class="track d-flex py-2 px-1" style="align-items: center;">
-                        <h4 style="margin-right: 15px;">1.</h4>
-                        <div class="trackInfo">
-                            <h5 class="trackArtist">Испольнитель</h5>
-                            <h4 class="trackName">Название</h3>
-                        </div>
-                        <h5 class="trackDuration">0:00</h5>
-                    </div>
-                </a>
-                <a href="#" class="trackLink">
-                    <div class="track d-flex py-2 px-1" style="align-items: center;">
-                        <h4 style="margin-right: 15px;">1.</h4>
-                        <div class="trackInfo">
-                            <h5 class="trackArtist">Испольнитель</h5>
-                            <h4 class="trackName">Название</h3>
-                        </div>
-                        <h5 class="trackDuration">0:00</h5>
-                    </div>
-                </a>
-                <a href="#" class="trackLink">
-                    <div class="track d-flex py-2 px-1" style="align-items: center;">
-                        <h4 style="margin-right: 15px;">1.</h4>
-                        <div class="trackInfo">
-                            <h5 class="trackArtist">Испольнитель</h5>
-                            <h4 class="trackName">Название</h3>
-                        </div>
-                        <h5 class="trackDuration">0:00</h5>
-                    </div>
-                </a>
                 <a href="#" class="trackLink">
                     <div class="track d-flex py-2 px-1" style="align-items: center;">
                         <h4 style="margin-right: 15px;">1.</h4>
@@ -61,67 +21,36 @@
                     </div>
                 </a>
             </div>
-            <div class="playlistContainer mx-2" style="overflow-y: auto; overflow-x: none; width: 20vw;">
+            <div class="playlistContainer mx-2 my-3 px-1" style="overflow-y: auto; overflow-x: none; width: 15vw;">
                 <div class="headCont d-flex">
                     <h3>Плейлисты</h3>
-                    <button class="showAllPlaylistBTN mx-2" id="showPlaylists"><h6>Показать все...<h6></button>
+                    <button class="showAllPlaylistBTN mx-2" id="showPlaylists"><h6>Все...<h6></button>
                 </div>
                 
-                <div class="playlistUser d-flex" style="justify-content: center; flex-direction:column;">
-                    <a href="#" class="playlistLink">
-                        <div class="playlistCollection py-2 px-1">
-                            <img class="playlistImage" src="{{asset('images/playlistImages/playlistImgTest.png')}}">
-                            <h5 class="text-center mt-2">Название</h5>
-                        </div>
-                    </a>
-                    <a href="#" class="playlistLink">
-                        <div class="playlistCollection py-2 px-1">
-                            <img class="playlistImage" src="{{asset('images/playlistImages/playlistImgTest.png')}}">
-                            <h5 class="text-center mt-2">Название</h5>
-                        </div>
-                    </a>
-                    <a href="#" class="playlistLink">
-                        <div class="playlistCollection py-2 px-1">
-                            <img class="playlistImage" src="{{asset('images/playlistImages/playlistImgTest.png')}}">
-                            <h5 class="text-center mt-2">Название</h5>
-                        </div>
-                    </a>
-                    <a href="#" class="playlistLink">
-                        <div class="playlistCollection py-2 px-1">
-                            <img class="playlistImage" src="{{asset('images/playlistImages/playlistImgTest.png')}}">
-                            <h5 class="text-center mt-2">Название</h5>
-                        </div>
-                    </a>
-                    <a href="#" class="playlistLink">
-                        <div class="playlistCollection py-2 px-1">
-                            <img class="playlistImage" src="{{asset('images/playlistImages/playlistImgTest.png')}}">
-                            <h5 class="text-center mt-2">Название</h5>
-                        </div>
-                    </a>
-                </div>
+                <ol class="playlistUser d-flex" style="justify-content: center; flex-direction:column; align-items: center; list-style-type: none; padding:0;">
+                    <li class="playlistCollection py-2 px-1">
+                        <button class="createPlaylistBTN" id="createPlaylistBTN"><h1 style="color: white">+</h1></button>
+                        <h6 class="text-center mt-2">Создать плейлист</h6>
+                    </li>
+                    @foreach ($playlists as $playlist)
+                    @if($loop->iteration > 5)
+                        @break
+                    @endif
+                    <li class="playlist-item">
+                        <a href="/playlistPage/{{$playlist->id}}" class="playlistLink" style="margin:0">
+                            <div class="playlistCollection py-2 px-1">
+                                <img class="playlistImage" src="{{asset('images/playlistImages/playlistImgTest.png')}}">
+                                <h5 class="text-center mt-2">{{$playlist->playlistName}}</h5>
+                            </div>
+                        </a>
+                    </li>
+                    @endforeach
+                </ol>
             </div>
         </div>
         <div class="container mx-0" id="artistContainer">
             <h3>Исполнители</h3>
             <div class="artistsCollection mx-3 d-flex">
-                <a href="#" class="artistLink">
-                    <div class="artist px-2 py-2">
-                        <img src="{{asset('images/artistsImages/4k.jpg')}}">
-                        <h4 class="text-center">4К</h4>
-                    </div>
-                </a>
-                <a href="#" class="artistLink">
-                    <div class="artist px-2 py-2">
-                        <img src="{{asset('images/artistsImages/4k.jpg')}}">
-                        <h4 class="text-center">4К</h4>
-                    </div>
-                </a>
-                <a href="#" class="artistLink">
-                    <div class="artist px-2 py-2">
-                        <img src="{{asset('images/artistsImages/4k.jpg')}}">
-                        <h4 class="text-center">4К</h4>
-                    </div>
-                </a>
                 <a href="#" class="artistLink">
                     <div class="artist px-2 py-2">
                         <img src="{{asset('images/artistsImages/4k.jpg')}}">
@@ -147,51 +76,19 @@
                     </div>
                 </a>
             </div>
-            <div class="allPlaylistContainer d-none">
-                <a href="#" class="playlistLink">
-                    <div class="playlistCollection py-2 px-1">
-                        <img class="playlistImage" src="{{asset('images/playlistImages/playlistImgTest.png')}}">
-                        <h5 class="text-center mt-2">Название</h5>
-                    </div>
-                </a>
-                <a href="#" class="playlistLink">
-                    <div class="playlistCollection py-2 px-1">
-                        <img class="playlistImage" src="{{asset('images/playlistImages/playlistImgTest.png')}}">
-                        <h5 class="text-center mt-2">Название</h5>
-                    </div>
-                </a>
-                <a href="#" class="playlistLink">
-                    <div class="playlistCollection py-2 px-1">
-                        <img class="playlistImage" src="{{asset('images/playlistImages/playlistImgTest.png')}}">
-                        <h5 class="text-center mt-2">Название</h5>
-                    </div>
-                </a>
-                <a href="#" class="playlistLink">
-                    <div class="playlistCollection py-2 px-1">
-                        <img class="playlistImage" src="{{asset('images/playlistImages/playlistImgTest.png')}}">
-                        <h5 class="text-center mt-2">Название</h5>
-                    </div>
-                </a>
-                <a href="#" class="playlistLink">
-                    <div class="playlistCollection py-2 px-1">
-                        <img class="playlistImage" src="{{asset('images/playlistImages/playlistImgTest.png')}}">
-                        <h5 class="text-center mt-2">Название</h5>
-                    </div>
-                </a>
-                <a href="#" class="playlistLink">
-                    <div class="playlistCollection py-2 px-1">
-                        <img class="playlistImage" src="{{asset('images/playlistImages/playlistImgTest.png')}}">
-                        <h5 class="text-center mt-2">Название</h5>
-                    </div>
-                </a>
-                <a href="#" class="playlistLink">
-                    <div class="playlistCollection py-2 px-1">
-                        <img class="playlistImage" src="{{asset('images/playlistImages/playlistImgTest.png')}}">
-                        <h5 class="text-center mt-2">Название</h5>
-                    </div>
-                </a>
-            </div>
-
+            <ul class="allPlaylistContainer d-none" style="list-style-type: none;">
+                @foreach ($playlists as $playlist)
+                    <li class="playlist-item">
+                        <a href="/playlistPage/{{$playlist->id}}" class="playlistLink" style="margin:0">
+                            <div class="playlistCollection py-2 px-1">
+                                <img class="playlistImage" src="{{asset('images/playlistImages/playlistImgTest.png')}}" style="width:150px; height: 150px;">
+                                <h5 class="text-center mt-2">{{$playlist->playlistName}}</h5>
+                            </div>
+                        </a>
+                    </li>
+                @endforeach
+            </ul>
         </div>
     </div>
+    <script src="{{asset("js/playlistCreate.js")}}"></script>
 @endsection

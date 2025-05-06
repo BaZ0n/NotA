@@ -8,12 +8,13 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Vollkorn:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-        <link href="css/MainDesignCss/mainDesign.css" rel="stylesheet">
-        <link href="css/animations.css" rel="stylesheet">
-        <link href="css/MainDesignCss/playlistDesign.css" rel="stylesheet">
-        <link href="css/MainDesignCss/userPageDesign.css" rel="stylesheet">
-        <link href="css/MainDesignCss/adaptive.css" rel="stylesheet">
-        <link href="css/MainDesignCss/collectionDesign.css" rel="stylesheet">
+        <link href="{{ asset('css/MainDesignCss/mainDesign.css') }}" rel="stylesheet">
+        <link href="{{ asset('css/animations.css') }}" rel="stylesheet">
+        <link href="{{ asset('css/MainDesignCss/playlistDesign.css') }}" rel="stylesheet">
+        <link href="{{ asset('css/MainDesignCss/userPageDesign.css')}}" rel="stylesheet">
+        <link href="{{ asset('css/MainDesignCss/adaptive.css')}}" rel="stylesheet">
+        <link href="{{ asset('css/MainDesignCss/collectionDesign.css')}}" rel="stylesheet">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
         <title>NotA</title>
     </head>
     <body>
@@ -23,7 +24,7 @@
             <a href="/userPage" class="user" style="margin-bottom: 30px;">
                 {{-- <img class="userImg" src="{{ asset('images/icons/profileIcon.svg') }}" alt="Профиль"> --}}
                 <img class="userImg" src="{{ asset('images/userImages/ayanami.jpg') }}" alt="Профиль">
-                <span class="userName"></span>
+                <span class="userName">{{Auth::user()->name}}</span>
             </a>    
 
             <div style="flex-grow: 1;"></div>

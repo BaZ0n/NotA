@@ -11,11 +11,12 @@ class LoginController extends Controller
 {
 
     public function welcome() {
-        return view('loginSignIn/welcome');
-    }
-
-    public function registrationCode(){
-        return view('loginSignIn/registrationCode');
+        if (!Auth::check()) {
+            return view('loginSignIn/welcome');
+        }
+        else {
+            return redirect()->action(MainController::class, 'mainPage');
+        }
     }
 
     public function loginCheck(Request $request) {
@@ -34,7 +35,12 @@ class LoginController extends Controller
     }
 
     public function registrationProfile() {
-        return view('loginSignIn/registrationProfile');
+        if (!Auth::check()) {
+            return view('loginSignIn/registrationProfile');
+        }
+        else {
+            return redirect()->action(MainController::class, 'mainPage');
+        }
     }
 
     public function registrationConfirm(Request $request) {
@@ -51,8 +57,10 @@ class LoginController extends Controller
         return redirect()->route('verification.notice');
     }
 
-    public function logout() {
+    public function logout(Request $request) {
         Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
         return redirect()->action([LoginController::class, 'welcome']);
     }
 }

@@ -17,7 +17,8 @@
 }
 
 .playlistImage{
-    width: 100%;
+    width: 128px;
+    height: 128px;
     object-fit: cover;
     border-radius: 10%;
 }
@@ -44,7 +45,7 @@
     background-color: var(--bgHead);
     margin: 0 5%;
     border-radius: 30px;
-    padding: 5% 5%;
+    padding: 0 5%;
     width: 50vw;
 }
 
@@ -59,12 +60,16 @@
 }
 
 .playlistTracks {
-    /* 
-    max-height: 42vh; 
     overflow-y: none;
-    */
+    padding: 2vh 2vw;
 }
 
 .playlistContainer {
     overflow-y: hidden;
+}
+
+.userInfContainer {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
 }

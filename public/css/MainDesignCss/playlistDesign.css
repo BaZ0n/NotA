@@ -35,7 +35,7 @@
     margin-right: 1vw;
 }
 
-.playButton, .likeButton{
+.toolButton {
     background-color:transparent;
     border: 0;
 }
@@ -48,4 +48,10 @@
 .buttonsCont .svg {
     width: 48px;
     height: 48px;
+}
+
+.playlistInfo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }

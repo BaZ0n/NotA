@@ -6,5 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class playlist extends Model
 {
-    //
+    protected $table = 'playlist'; // Явно указываем имя таблицы
+    protected $fillable = ['playlistName', 'userID'];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

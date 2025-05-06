@@ -3,6 +3,12 @@
 @section('main_content')
     <div class="pageContainer">
         <div class="container">
+            <div class="userInfContainer">
+                <div class="imageContainer">
+                    <img class="profileImage" src="{{asset('images/icons/profileIcon.svg')}}">
+                </div>
+                <a href="/logout"><h6 class="text-center" style="color: white">Выйти из аккаунта</h6></a>
+            </div>
             <div class="trackContainer">
                 <h4 class="text-center">Избранные треки</h4>
                 <div class="playlistTracks">
@@ -82,12 +88,7 @@
                 </div>
             </div>
         </div>
-        
-        <div class="userInfContainer">
-            <div class="imageContainer">
-                <img class="profileImage" src="{{asset('images/icons/profileIcon.svg')}}">
-            </div>
-            <a href="/logout"><h4 style="color: white">Выйти из аккаунта</h4></a>
-        </div>
     </div>
 @endsection
+
+{{-- <a href="/logout"><h6 class="text-center" style="color: white">Выйти из аккаунта</h6></a> --}}

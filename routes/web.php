@@ -5,40 +5,54 @@ use App\Http\Controllers\MainController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
-
-
-Route::get('/', [LoginController::class, 'welcome']);
-Route::get('/login', [LoginController::class, 'welcome']);
-
-Route::get('/registrationProfile', [LoginController::class, 'registrationProfile']);
-Route::post('/registrationProfile/confirm', [LoginController::class, 'registrationConfirm']);
-
-Route::post("/login/check", [LoginController::class, 'loginCheck']);
-
-Route::get("/mainPage", [MainController::class, 'mainPage']);
-
-Route::get("/playlistPage", [MainController::class, 'playlistPage']);
-
-Route::get("/userPage", [MainController::class,'userPage']);
-
-Route::get("/collectionPage", [MainController::class, 'collectionPage']);
-
-Route::get('/verify-email', function () {
-    return view('loginSignIn/verify-email');
-})->middleware('auth')->name('verification.notice');
-
-
-Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-    $request->fulfill();
-
-    return redirect('/mainPage');
-})->middleware(['auth', 'signed'])->name('verification.verify');
-
-
-Route::post('/email/verification-notification', function (Request $request) {
-    $request->user()->sendEmailVerificationNotification();
-
-    return back()->with('message', 'Ссылка для подтверждения отправлена!');
-})->middleware(['auth', 'throttle:3,1'])->name('verification.send');
+use Illuminate\Http\Middleware;
 
 Route::get("/logout", [LoginController::class, 'logout']);
+
+Route::middleware('guest')->group(function() {
+    Route::get('/', [LoginController::class, 'welcome']);
+    Route::get('/login', [LoginController::class, 'welcome']);
+
+    Route::get('/registrationProfile', [LoginController::class, 'registrationProfile']);
+    Route::post('/registrationProfile/confirm', [LoginController::class, 'registrationConfirm']);
+
+    Route::post("/login/check", [LoginController::class, 'loginCheck']);
+});
+
+Route::middleware('auth')->group(function() {
+    Route::get('/verify-email', function () {
+        return view('loginSignIn/verify-email');
+    })->middleware('auth')->name('verification.notice');
+
+
+    Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+        $request->fulfill();
+
+        return redirect('/mainPage');
+    })->middleware(['auth', 'signed'])->name('verification.verify');
+
+
+    Route::post('/email/verification-notification', function (Request $request) {
+        $request->user()->sendEmailVerificationNotification();
+
+        return back()->with('message', 'Ссылка для подтверждения отправлена!');
+    })->middleware(['auth', 'throttle:3,1'])->name('verification.send');
+});
+
+Route::middleware(['auth', 'verified'])->group(function() {
+    Route::get("/home", [MainController::class, 'mainPage']);
+
+    Route::get("/mainPage", [MainController::class, 'mainPage']);
+
+    Route::get("/playlistPage", [MainController::class, 'playlistPage']);
+
+    Route::get("/userPage", [MainController::class,'userPage']);
+
+    Route::get("/collectionPage", [MainController::class, 'collectionPage']);
+
+    // Создание плейлиста (AJAX)
+    Route::post('/playlistPage', [MainController::class, 'store'])->name('playlists.store');
+    
+    // Просмотр плейлиста
+    Route::get('/playlistPage/{playlist}', [MainController::class, 'show'])->name('playlist.show');
+});

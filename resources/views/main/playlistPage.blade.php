@@ -4,17 +4,23 @@
     <div class="container d-flex mt-5 mb-2">
         <div class="playlistInfo mx-3"> 
             <img src="{{asset('images/playlistImages/playlistImgTest.png')}}">
-            <h3 class="text-center my-2">Плейлист йоу</h3>
-            <h4 class="authorName text-center">Автор</h4>
+            <h3 class="text-center my-2">{{ $playlist->playlistName}}</h3>
+            <h4 class="authorName text-center mb-3">{{$playlist->userName}}</h4>
 
             <div class="buttonsCont">
-                <button class="playButton">
+                <button class="toolButton" id="playButton">
                     <img class="svg" src="{{ asset('images/icons/playIcon.svg') }}">
                 </button>
-                <button class="likeButton">
+                <button class="toolButton" id="likeButton">
                     <img class="svg" src="{{ asset('images/icons/likeIcon.svg') }}">
                 </button>
+                <button class="toolButton" id="editButton">
+                    <img class="svg" src="{{ asset('images/icons/editIcon.svg') }}">
+                </button>
             </div>
+            <button class="button-primary my-3 px-3 py-3" style="background-color: var(--placeholder)">
+                <h5 class="text my-0" style="color: white">Загрузить трек</h5>
+            </button>
         </div>
     
         <div class="playlistTracks mx-5 py-5 px-5">
