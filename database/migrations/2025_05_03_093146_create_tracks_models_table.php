@@ -11,47 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('artist', function (Blueprint $table) {
-            $table->id();
-            $table->string('artistName');
-            $table->boolean('is_confirmed');
-            $table->string('social_media_links');
-            $table->timestamps();
-        });
-
-        Schema::create('genre', function(Blueprint $table) {
-            $table->id();
-            $table->string('genre');
-            $table->timestamps();
-        });
-
-        Schema::create('album', function (Blueprint $table) {
-            $table->id();
-            $table->string('albumName');
-            $table->date('date_publish');
-            $table->boolean('is_confirmed');
-            // $table->foreignId('genre')->constrained(
-            //     table:'genre',indexName:'id'
-            // );
-            // $table->foreignId('artistID')->constrained(
-            //     table:'artist', indexName:'id'
-            // );
-            $table->unsignedBigInteger('genreID');
-            $table->foreign('genreID')->references('id')->on('genre');
-            $table->unsignedBigInteger('artistID');
-            $table->foreign('artistID')->references('id')->on('artist');
-            $table->timestamps();
-        });
-
         Schema::create('track', function(Blueprint $table) {
             $table-> id();
             $table->string('trackName');
-            $table->integer('duration');
+            $table->float('duration');
             $table->boolean('is_confirmed');
-            $table->string('track_link');
-            $table->foreignId('albumID')->constrained(
-                table:'album', indexName:'id'
-            );
+            $table->string('path');
+            $table->unsignedBigInteger('albumID');
+            $table->foreign('albumID')->references('id')->on('album');
             $table->timestamps();
         });
 
@@ -70,10 +37,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('artist');
-        Schema::dropIfExists('album');
         Schema::dropIfExists('track');
-        Schema::dropIfExists('genre');
-        Schema::dropIfExists('album_authors');
+        Schema::dropIfExists('track_authors');
     }
 };

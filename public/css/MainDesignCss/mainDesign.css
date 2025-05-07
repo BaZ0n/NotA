@@ -109,7 +109,7 @@ body {
     width: fit-content;
 }
 
-.playlist h5 {
+.playlist h6 {
     margin-top: 10px;
     margin-left: 10px;
     color: var(--gray);

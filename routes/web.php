@@ -54,5 +54,9 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::post('/playlistPage', [MainController::class, 'store'])->name('playlists.store');
     
     // Просмотр плейлиста
-    Route::get('/playlistPage/{playlist}', [MainController::class, 'show'])->name('playlist.show');
+    Route::get('/playlistPage/{playlist}', [MainController::class, 'show_playlist'])->name('playlist.show');
+
+    Route::post('/playlist/upload-audio', [MainController::class, 'trackUpload'])->name('playlist.upload-audio');
+
+    Route::put('/playlist/update/{playlist}', [MainController::class, 'playlistNameUpdate']) -> name('playlistName.update');
 });

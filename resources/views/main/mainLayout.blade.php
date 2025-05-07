@@ -22,8 +22,7 @@
         <div class="sidebar" id="sidebar">
             
             <a href="/userPage" class="user" style="margin-bottom: 30px;">
-                {{-- <img class="userImg" src="{{ asset('images/icons/profileIcon.svg') }}" alt="Профиль"> --}}
-                <img class="userImg" src="{{ asset('images/userImages/ayanami.jpg') }}" alt="Профиль">
+                <img class="userImg" src="{{ asset('images/icons/profileIcon.svg') }}" alt="Профиль">
                 <span class="userName">{{Auth::user()->name}}</span>
             </a>    
 
@@ -52,7 +51,16 @@
                 <span>Поиск</span>
             </a>
         </div>
-        <div class="bodyContainer">
+        <div class="bodyContainer">            
+            @if ($errors->any())
+            <div class="alert alert-danger" style="position: fixed; top: 0; right: 0; z-index: 2000;">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif
             @yield('main_content') 
         </div>
     </body>
@@ -60,5 +68,4 @@
     <script src="{{asset('js/imageAnimation.js')}}"></script>
     <script src="{{asset('js/showAll.js')}}"></script>
     <script src="{{asset("js/sidebarHideShow.js")}}"></script>
-    
 </html>
