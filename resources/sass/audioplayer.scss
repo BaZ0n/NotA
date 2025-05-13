@@ -1,0 +1,83 @@
+@use 'colors';
+
+#audio-player-app {
+    position: fixed;
+    bottom: 2vh;
+    left: 2vw;
+    width: 100%;
+
+    #player-container {
+        display: flex;
+        background-color: black;
+        width: 100%;
+        height: 12vh;
+        padding: 0 2%;
+        justify-content: space-between;
+
+        .track-info {
+
+            display: flex;
+            align-items: center;
+
+            img {
+                width: 64px;
+                height: 64px;
+                border-radius: 10px;
+            }
+
+            .track-text-info {
+                color: white;
+                margin: 1vh 1vw;
+            }
+
+        }
+
+        #audioplayer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+        
+        .multBTN {
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+    
+        .icon {
+            width: 48px;
+            height: 48px;
+            fill: white;
+        }
+    
+        .icon:hover {
+          transition: all 0.2s linear;
+          fill: var(--primaryColor);
+        }
+    
+        .multimedia-btn {
+            display: flex;
+            align-items: center;
+        }
+
+        .additionalBtn {
+            display: flex;
+            align-items: center;
+
+            .icons_additional {
+                width: 32px;
+                height: 32px;
+                fill: white;
+            }
+    
+            .icons_additional:hover {
+                transition: all 0.2s linear;
+                fill: var(--primaryColor);
+              }
+
+        }
+        
+
+    }
+}

@@ -8,6 +8,7 @@ use App\Models\track;
 use App\Models\artist;
 use App\Models\album;
 use App\Models\playlist_tracks;
+use App\Models\track_authors;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -15,6 +16,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Carbon;
 
+use function PHPUnit\Framework\isNull;
 
 class MainController extends Controller
 {
@@ -85,27 +87,50 @@ class MainController extends Controller
         ->select('playlist.*', 'users.name as userName')
         ->first();
 
-        $tracks_playlist = DB::table('playlist_tracks')
-        ->where('playlist_tracks.playlistID', '=', $playlist->id)
-        ->join('track', 'playlist_tracks.trackID', '=', 'track.id')
-        ->select('track.*')
-        ->get();
-        return view('main/playlistPage', ['playlist' => $playlist_inf, 'tracks' => $tracks_playlist]);
+        return view('main/playlistPage', ['playlist' => $playlist_inf]);
+
+        // $tracks_playlist = DB::table('playlist_tracks')
+        // ->where('playlist_tracks.playlistID', '=', $playlist->id)
+        // ->join('track', 'playlist_tracks.trackID', '=', 'track.id')
+        // ->select('track.*')
+        // ->get();
+        // return view('main/playlistPage', ['playlist' => $playlist_inf, 'tracks' => $tracks_playlist]);
     }
 
     public function trackUpload(Request $request) {
         $request->validate([
-            'file' => 'required|file|mimes:mp3,wav,aac,ogg|max:10240'
+            'file' => 'required|file|mimes:mp3,wav,aac,ogg|max:20480'
         ]);
 
+        $file = $request->file('file');
+        $file_path = $file->getRealPath();
+
+        $getID3 = new \getID3();
+        $fileInfo = $getID3->analyze($file_path);
+        //dd($fileInfo);
+        if (isNull($request->input('trackArtist'))) {
+            $trackArtist = $fileInfo['tags']['id3v2']['artist'][0] ?? $request->input('trackArtist');
+        }
+        if (isNull($request->input('trackName'))) {
+            $trackName = $fileInfo['tags']['id3v2']['title'][0] ?? $request->input('trackName');
+        }
+        if (isNull($request->input('albumName'))) {
+            $albumName = $fileInfo['tags']['id3v2']['album'][0] ?? $request->input('trackAlbum');
+            if (isNull($albumName)) {
+                // return back()->with('error', 'Введите название альбома');
+                
+                $albumName = $trackName;
+            }
+        }
+        
         $artist = DB::table('artist')
-        ->where(Str::lower('artist.artistName'), '=', Str::lower($request->input('trackArtist')))
+        ->where(Str::lower('artist.artistName'), '=', Str::lower($trackArtist))
         ->select('*')
         ->first();
 
         if (empty($artist)) {
             $new_artist = Artist::create([
-                'artistName' => $request->input('trackArtist'),
+                'artistName' => $trackArtist,
                 'is_confirmed' => false,
                 'music_path' => NULL,
                 'photo_path' => NULL
@@ -115,8 +140,8 @@ class MainController extends Controller
                 ->select('*')
                 ->first();
             $directoryName = Str::random(20) . $artist->id;
-            $path = "public/audio/{$directoryName}";
-            Storage::makeDirectory($path);
+            $path = "audio/{$directoryName}";
+            Storage::disk('public')->makeDirectory($path);
     
             // Обновляем путь в базе
             DB::table('artist')
@@ -126,13 +151,13 @@ class MainController extends Controller
 
 
         $album = DB::table('album')
-        ->where(Str::lower('album.albumName'), '=', Str::lower($request->input('trackAlbum')))
+        ->where(Str::lower('album.albumName'), '=', Str::lower($albumName))
         ->select('*')
         ->first();
 
         if (empty($album)) {
             $new_album = Album::create([
-                'albumName' => $request->input('trackAlbum'),
+                'albumName' => $albumName,
                 'is_confirmed' => false,
                 'date_publish' => Carbon::today()->toDateString(),
                 'photo_path' => null,
@@ -144,12 +169,11 @@ class MainController extends Controller
                 ->first();
         }
 
-        $file = $request->file('file');
         $filename = Str::random(20) . '.' . $file->getClientOriginalExtension();
         $artistPath = $artist->music_path;
-        $track_path = $file->storeAs($artistPath, $filename);
+        $track_path = $file->storeAs($artistPath, $filename, 'public');
         $track = Track::create([
-            'trackName' => $request->input('trackName'),
+            'trackName' => $trackName,
             'duration' => $this->getAudioDuration($file),
             'is_confirmed' => false,
             'path' => $track_path,
@@ -159,6 +183,11 @@ class MainController extends Controller
         $playlist_tracks = Playlist_tracks::create([
             'playlistID' => $request->playlistID,
             'trackID' => $track->id
+        ]);
+
+        $track_authors = track_authors::create([
+            'trackID' => $track->id,
+            'artistID' => $artist->id
         ]);
 
         return back()->with('success', 'Аудио успешно загружено!');

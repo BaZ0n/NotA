@@ -22,19 +22,7 @@
             </button>
         </div>
     
-        <div class="playlistTracks mx-3 py-3 px-3">
-            @foreach ($tracks as $index => $track)
-                <a href="#" class="trackLink">
-                    <div class="track d-flex py-2 px-3" style="align-items: center;">
-                        <h4 class="track-number me-3">{{ $index + 1 }}.</h4>
-                        <div class="trackInfo">
-                            <h5 class="trackArtist">Испольнитель</h5>
-                            <h4 class="trackName">{{$track->trackName}}</h4>
-                        </div>
-                        <h5 class="trackDuration">{{ floor($track->duration / 60) }}:{{ sprintf("%02d", floor($track->duration % 60)) }} </h5>
-                    </div>
-                </a>
-            @endforeach
+        <div class="playlistTracks mx-3 py-3 px-3" id="playlistTracks" data-playlist="{{ $playlist->id }}">
         </div>
     </div>
 

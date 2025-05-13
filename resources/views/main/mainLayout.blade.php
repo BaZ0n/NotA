@@ -17,7 +17,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <title>NotA</title>
     </head>
-    <body>
+    <body style="font-family: Vollkorn">
         <button class="sidebarBTN" id="sidebarBTN"><img class="svg" src="{{asset('images/icons/sidebar.svg')}}"></button>
         <div class="sidebar" id="sidebar">
             
@@ -52,20 +52,23 @@
             </a>
         </div>
         <div class="bodyContainer">            
-            @if ($errors->any())
+            @if ($errors->any() || session('error'))
             <div class="alert alert-danger" style="position: fixed; top: 0; right: 0; z-index: 2000;">
                 <ul>
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach
+                    {{session('error')}}
                 </ul>
             </div>
             @endif
             @yield('main_content') 
-        </div>
+        </div>    
+        <div id="audioplayer"></div>
     </body>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="{{asset('js/imageAnimation.js')}}"></script>
     <script src="{{asset('js/showAll.js')}}"></script>
     <script src="{{asset("js/sidebarHideShow.js")}}"></script>
+    @vite(['resources/js/app.js', 'resources/sass/audioplayer.scss'])
 </html>
