@@ -21,20 +21,20 @@
         <button class="sidebarBTN" id="sidebarBTN"><img class="svg" src="{{asset('images/icons/sidebar.svg')}}"></button>
         <div class="sidebar" id="sidebar">
             
-            <a href="/userPage" class="user" style="margin-bottom: 30px;">
-                <img class="userImg" src="{{ asset('images/icons/profileIcon.svg') }}" alt="Профиль">
+            <a href="/user" class="user" style="margin-bottom: 30px;">
+                <img class="userImg" src="{{ Vite::asset('images/icons/profileIcon.svg') }}" alt="Профиль">
                 <span class="userName">{{Auth::user()->name}}</span>
             </a>    
 
             <div style="flex-grow: 1;"></div>
             
             <!-- Основные иконки -->
-            <a href="/mainPage" class="sidebar-item">
+            <a href="/main" class="sidebar-item">
                 <img class="svg" src="{{ asset('images/icons/mainPageIcon.svg') }}" alt="Главная">
                 <span>Главная</span>
             </a>
             
-            <a href="/collectionPage" class="sidebar-item">
+            <a href="/collection" class="sidebar-item">
                 <img class="svg" src="{{ asset('images/icons/collectionIcon.svg') }}" alt="Коллекция">
                 <span>Коллекция</span>
             </a>
@@ -51,7 +51,7 @@
                 <span>Поиск</span>
             </a>
         </div>
-        <div class="bodyContainer">            
+        <div class="bodyContainer" style="margin-bottom: 15vh;">            
             @if ($errors->any() || session('error'))
             <div class="alert alert-danger" style="position: fixed; top: 0; right: 0; z-index: 2000;">
                 <ul>
@@ -70,5 +70,5 @@
     <script src="{{asset('js/imageAnimation.js')}}"></script>
     <script src="{{asset('js/showAll.js')}}"></script>
     <script src="{{asset("js/sidebarHideShow.js")}}"></script>
-    @vite(['resources/js/app.js', 'resources/sass/audioplayer.scss'])
+    @vite(['resources/js/app.js', 'resources/sass/includeAll.scss'])
 </html>

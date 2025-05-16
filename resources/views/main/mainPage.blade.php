@@ -7,9 +7,9 @@
             @if($loop->iteration > 5)
                 @break
             @endif
-            <a href="/playlistPage/{{$playlist->id}}" class="playlistLink">
+            <a href="/playlist/{{$playlist->id}}" class="playlistLink">
                 <div class="playlist px-2 py-2">
-                    <img src="{{asset('images/playlistImages/playlistImgTest.png')}}"></img>
+                    <img class="playlistImage" src="{{Vite::asset('resources/images/templates/playlistImage.svg')}}">
                     <h4>{{$playlist->playlistName}}</h4>
                     <h6>{{$playlist->userName}}</h6>
                 </div>
@@ -23,9 +23,9 @@
             @if($loop->iteration > 5)
                 @break
             @endif
-            <a href="/playlistPage" class="playlistLink">
+            <a href="/playlist" class="playlistLink">
                 <div class="playlist px-2 py-2">
-                    <img src="{{asset('images/playlistImages/playlistImgTest.png')}}"></img>
+                    <img class="playlistImage" src="{{Vite::asset('resources/images/templates/playlistImage.svg')}}">
                     <h4>{{$playlist->playlistName}}</h4>
                 </div>
             </a>
@@ -40,7 +40,7 @@
             @endif
             <a href="#" class="artistLink">
                 <div class="artist px-2 py-2">
-                    <img src="{{asset('images/artistsImages/4k.jpg')}}">
+                    <img src="{{Vite::asset('resources/images/templates/userImage.svg')}}">
                     <h4 class="text-center">{{$artist->artistName}}</h4>
                 </div>
             </a>

@@ -24,6 +24,7 @@ return new class extends Migration
         });
 
         Schema::create('favorite_album', function(Blueprint $table) {
+            $table->id();
             $table->unsignedBigInteger('userID');
             $table->foreign('userID')->references('id')->on('users');
             $table->unsignedBigInteger('albumID');

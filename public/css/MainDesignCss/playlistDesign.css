@@ -5,39 +5,19 @@
     border-radius: 20px;
 }
 
-.playlistTracks {
-    background-color: var(--bgBlack);
-    border-radius: 20px;
-    border: 2px solid var(--gray);
-}
-
-.track {
-    color:white;
-    border-radius: 15px;
+.playlist_image {
+    background-color: var(--sliderBG);
+    width: 256px;
+    height: 256px;
     display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
 }
 
-.trackArtist {
-    color: var(--gray);
-}
-
-.trackName {
-    color: var(--white)
-}
-
-.trackLink {
-    text-decoration: none;
-    margin: 5px 0;
-}
-
-.trackDuration {
-    margin-left: 8vw;
-    margin-right: 1vw;
-}
-
-.toolButton {
-    background-color:transparent;
-    border: 0;
+.playlist_image .svg {
+    width: 100px;
+    height: 100px;
 }
 
 .buttonsCont {

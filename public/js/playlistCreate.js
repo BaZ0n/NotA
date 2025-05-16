@@ -5,7 +5,7 @@ document.getElementById('createPlaylistBTN').addEventListener('click', async () 
         
         console.log('Sending request with token:', csrfToken);
         
-        const response = await fetch('/playlistPage', {
+        const response = await fetch('/playlist', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -29,7 +29,7 @@ document.getElementById('createPlaylistBTN').addEventListener('click', async () 
         console.log('Response data:', data);
         
         if (data.success) {
-            window.location.href = `/playlistPage/${data.playlistId}`;
+            window.location.href = `/playlist/${data.playlistId}`;
         }
     } catch (error) {
         console.error('Full error:', error);

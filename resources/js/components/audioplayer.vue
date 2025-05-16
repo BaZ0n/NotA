@@ -2,10 +2,10 @@
 <div id="audio-player-app" class="container mt-5">
   <div class="container" id="player-container">
     <div class="track-info">
-        <img src="{{asset('images/playlistImages/playlistImgTest.png')}}">
+        <img class="playlist_image" src="resources/image/templates/playlistImage.svg">  
         <div class="track-text-info">
-            <h5 style="color:var(--placeholder);">Исполнитель</h5>
-            <h4>Название</h4>
+            <h5 style="color:var(--placeholder);">{{artistName}}</h5>
+            <h4>{{trackName}}</h4>
         </div>
     </div>
     <div class="multimedia-btn">
@@ -40,13 +40,13 @@
       <button class="multBTN" @click="dropdown_show">
         <MoreIcon class="icons_additional"></MoreIcon>
       </button>
-      <div class="dropdown-menu" v-if="isOpen">
+      <!-- <div class="dropdown-menu" v-if="isOpen">
         <ul class="menu" id="list">
           <li class="menu-item">
             <a href="#" class="menu-link">Добавить в плейлист</a>
           </li>
         </ul>
-      </div>
+      </div> -->
     </div>
   </div>
 </div>
@@ -54,7 +54,7 @@
 
 <script setup>
   import axios from 'axios'
-  import { ref, onMounted } from 'vue'
+  import { ref, onMounted, onUnmounted } from 'vue'
   import { useAudioPlayerStore } from '@/stores/useAudioPlayerStore'
   import { watch } from 'vue'
 
@@ -69,14 +69,19 @@
 
   // Плейлист
   const tracks = []
-
   const currentIndex = ref(0)
   const isPlaying = ref(false)
+  const audioElement = ref(null)
   const store = useAudioPlayerStore()
   const audioPlayer = ref(null)
   const moreClicked = ref(false)
+  const artistName = "Исполнитель"
+  const trackName = "Трек"
 
   watch(() => store.audioSrc, (newSrc) => {
+    console.log("Победа")
+    artistName = store.artistName
+    trackName = store.trackName
     if (audioPlayer.value) {
       audioPlayer.value.load()
       if (store.isPlaying) {
@@ -91,6 +96,7 @@
       isPlaying.value = true;
     }
   }
+
 
   const pause = () => {
     if (audioPlayer.value) {
@@ -136,22 +142,14 @@
     // Логика для добавления в очередь
   };
 
-  // Загрузка треков при монтировании компонента
-  onMounted(() => {
-    axios.get('/api/tracks')
-      .then(response => {
-        tracks.value = response.data.map(track => ({
-          ...track,
-          trackPath: `/storage/${track.trackPath}`,
-          albumImage: `/storage/${track.albumImage}`
-        }));
-      })
-      .catch(error => {
-        console.error('Ошибка загрузки треков:', error);
-      });
 
-    if (audioPlayer.value) {
-      audioPlayer.value.addEventListener('ended', nextTrack);
-    }
-  });
+  onMounted(() => {
+      if (audioElement.value) {
+        store.initAudio(audioElement.value)
+      }
+  })
+
+  onUnmounted(() => {
+    store.audioElement = null // Очищаем ссылку
+  })
 </script>

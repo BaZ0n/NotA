@@ -10,7 +10,8 @@ export default defineConfig({
                 'resources/sass/colors.scss',
                 'resources/sass/audioplayer.scss', 
                 'resources/js/components/audioplayer.vue',
-                'resources/js/components/tracks.vue'
+                'resources/js/components/tracks.vue',
+                'resources/js/components/artists.vue'
                 ],
             refresh: [
                 'resources/views/**/*.blade.php',

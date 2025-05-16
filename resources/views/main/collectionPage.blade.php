@@ -10,16 +10,7 @@
                     <button class="showAllTrackBTN mx-2" id="showTracks"><h6 class="text">Показать все...<h6></button>
                 </div>
                 
-                <a href="#" class="trackLink">
-                    <div class="track d-flex py-2 px-1" style="align-items: center;">
-                        <h4 style="margin-right: 15px;">1.</h4>
-                        <div class="trackInfo">
-                            <h5 class="trackArtist">Испольнитель</h5>
-                            <h4 class="trackName">Название</h3>
-                        </div>
-                        <h5 class="trackDuration">0:00</h5>
-                    </div>
-                </a>
+                <div class="playlistTracks mx-3 py-3 px-3" id="playlistTracks" style="width:23vw;" data-playlist="{{ 1 }}"></div>
             </div>
             <div class="playlistContainer mx-2 my-3 px-1" style="overflow-y: auto; overflow-x: none; width: 15vw;">
                 <div class="headCont d-flex">
@@ -37,9 +28,9 @@
                         @break
                     @endif
                     <li class="playlist-item">
-                        <a href="/playlistPage/{{$playlist->id}}" class="playlistLink" style="margin:0">
+                        <a href="/playlist/{{$playlist->id}}" class="playlistLink" style="margin:0">
                             <div class="playlistCollection py-2 px-1">
-                                <img class="playlistImage" src="{{asset('images/playlistImages/playlistImgTest.png')}}">
+                                <img class="playlistImage" src="{{Vite::asset('resources/images/templates/playlistImage.svg')}}">
                                 <h5 class="text-center mt-2">{{$playlist->playlistName}}</h5>
                             </div>
                         </a>
@@ -50,14 +41,7 @@
         </div>
         <div class="container mx-0" id="artistContainer">
             <h3>Исполнители</h3>
-            <div class="artistsCollection mx-3 d-flex">
-                <a href="#" class="artistLink">
-                    <div class="artist px-2 py-2">
-                        <img src="{{asset('images/artistsImages/4k.jpg')}}">
-                        <h4 class="text-center">4К</h4>
-                    </div>
-                </a>
-            </div>
+            <div class="artistsCollection mx-3 d-flex" id="artistsCollection" data-user="{{ Auth::user()->id }}"></div>
         </div>
         <div class="container-fluid d-none">
             <div class="headCont d-flex" style="margin-bottom: 5vh">
@@ -79,7 +63,7 @@
             <ul class="allPlaylistContainer d-none" style="list-style-type: none;">
                 @foreach ($playlists as $playlist)
                     <li class="playlist-item">
-                        <a href="/playlistPage/{{$playlist->id}}" class="playlistLink" style="margin:0">
+                        <a href="/playlist/{{$playlist->id}}" class="playlistLink" style="margin:0">
                             <div class="playlistCollection py-2 px-1">
                                 <img class="playlistImage" src="{{asset('images/playlistImages/playlistImgTest.png')}}" style="width:150px; height: 150px;">
                                 <h5 class="text-center mt-2">{{$playlist->playlistName}}</h5>

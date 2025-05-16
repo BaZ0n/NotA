@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class playlist extends Model
 {
     protected $table = 'playlist'; // Явно указываем имя таблицы
-    protected $fillable = ['playlistName', 'userID'];
+    protected $fillable = ['playlistName', 'userID', 'photo_path'];
 
     public function user()
     {

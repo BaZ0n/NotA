@@ -1,0 +1,172 @@
+@use 'colors';
+
+
+.toolButton {
+    background-color:transparent;
+    border: 0;
+}
+
+.lightButtons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.lightButtons :hover path{
+    transition: all .2s linear;
+    fill: var(--primaryColor);
+}
+
+.icon {
+    width: 40px;
+    height: 40px;
+    fill: var(--white);
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown__trigger {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dropdown__menu {
+    position: absolute;
+    right: -25%;
+    top: 125%;
+    background: var(--sliderBG);
+    border: 1px solid var(--gray);
+    border-radius: 6px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    min-width: 200px;
+    z-index: 50;
+    margin-top: 4px;
+}
+
+.dropdown__item {
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: all 0.2s linear;
+}
+
+.dropdown__menu ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.dropdown__menu li {
+    list-style-type: none;
+    margin: 10px 10px;
+    border-bottom: 1px var(--grayBlack) solid;
+}
+
+.dropdown__item:hover {
+    color: var(--primaryColorDark);
+    border-color: var(--gray);
+}
+
+    /* Анимация появления/исчезновения */
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.2s, transform 0.2s;
+    transform-origin: top right;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+    transform: scale(0.95);
+}
+
+.addModerBG {
+    position: absolute;
+    background-color: #0000007c;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 450;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.addModerContainer {
+    background-color: var(--sliderBG);
+    width: 50vw;
+    margin: auto;
+    display: flex;
+    padding: 3vh 8vw;
+    justify-content: center;
+    flex-direction: column;
+    border-radius: 25px;
+}
+
+.searchInput {
+    background-color: var(--sliderBG);
+    border: 0;
+    border-bottom: 1px solid var(--gray);
+    font-size: large;
+    color: var(--white);
+    border-radius: 5px;
+    padding: 5px 10px;
+    transition: all 0.2s linear;
+}
+
+.searchInput::placeholder {
+    font-size: large;
+    color: var(--placeholder);
+}
+
+.searchInput:focus-visible {
+    outline: none;
+}
+
+.user_element {
+    list-style-type: none;
+    margin: 0 10px;
+    border-bottom: 1px var(--grayBlack) solid;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+    transition: all 0.2s linear;
+    cursor: pointer;
+}
+
+.userlist {
+    list-style-type: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.user_element p {
+    margin: 15px;
+}
+
+.user_element:hover {
+    background-color: var(--grayBlack);
+    border-radius: 15px;
+
+}
+
+.addModers {
+    padding: 5px 13px;
+    border: 1px solid var(--sliderBG);
+    border-radius: 50%;
+    transition: all 0.3s linear;
+}
+
+.user_element:hover .addModers {
+    background-color: var(--primaryColorDark);
+}
+

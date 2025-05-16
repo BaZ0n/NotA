@@ -1,0 +1,53 @@
+@use 'colors';
+
+.playlistTracks {
+    background-color: var(--bgBlack);
+    border-radius: 20px;
+    border: 2px solid var(--gray);
+
+    .trackLink {
+        text-decoration: none;
+        margin: 5px 0;
+
+        .track {
+            color:white;
+            border-radius: 15px;
+            display: flex;
+            justify-content: space-between;
+
+            a {
+                text-decoration: none;
+
+                .trackArtist {
+                    color: var(--gray);
+                }
+
+                .trackName {
+                    color: var(--white)
+                }
+            }
+
+            a :hover {
+                color: var(--primaryColor);
+                transition: color .2s linear;
+            }
+            
+            .trackDuration {
+                margin-left: 8vw;
+                margin-right: 1vw;
+            }
+        }
+
+        .track:hover {
+            transition: all .2s linear;
+            background-color: var(--placeholder);
+        }
+
+        .track-number:hover {
+            color: var(--white);
+        }
+
+    }
+
+}
+

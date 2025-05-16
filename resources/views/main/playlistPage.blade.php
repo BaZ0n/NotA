@@ -3,28 +3,16 @@
 @section('main_content')
     <div class="container d-flex mt-5 mb-2">
         <div class="playlistInfo mx-3"> 
-            <img src="{{asset('images/playlistImages/playlistImgTest.png')}}">
+            <img class="playlistImage" src="{{Vite::asset('resources/images/templates/playlistImage.svg')}}">
             <h3 class="text-center my-2 editable" id="playlist_title" data-original="{{ $playlist->playlistName}}" 
                 data-url="{{ route('playlistName.update', $playlist->id )}}">
                 {{$playlist->playlistName}}
             </h3>
             <h4 class="authorName text-center mb-3" style="color: var(--placeholder)">{{$playlist->userName}}</h4>
-            <div class="buttonsCont mt-3">
-                <button class="toolButton" id="playButton">
-                    <img class="svg" src="{{ asset('images/icons/playIcon.svg') }}">
-                </button>
-                <button class="toolButton" id="likeButton">
-                    <img class="svg" src="{{ asset('images/icons/likeIcon.svg') }}">
-                </button>
-            </div>
-            <button class="button-primary my-3 px-3 py-3" style="background-color: var(--placeholder)" id="uploadTrackBTN">
-                <h5 class="text my-0" style="color: white">Загрузить трек</h5>
-            </button>
+            <div class="buttonsCont mt-3" id="playlistButtons" style="flex-direction: column;" data-playlist="{{ $playlist->id }}"></div>
         </div>
     
-        <div class="playlistTracks mx-3 py-3 px-3" id="playlistTracks" data-playlist="{{ $playlist->id }}">
-        </div>
-    </div>
+        <div class="playlistTracks mx-3 py-3 px-3" id="playlistTracks" data-playlist="{{ $playlist->id }}"></div>
 
     <div class="uploadBackground container-fluid d-none" id="uploadCont">
         <div class="uploadTrackContainer">

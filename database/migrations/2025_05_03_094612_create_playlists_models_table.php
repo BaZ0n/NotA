@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('playlist', function (Blueprint $table) {
             $table->id();
             $table->string('playlistName');
-            $table->string('playlistPhoto')->nullable();
+            $table->string('photo_path')->nullable();
             $table->unsignedBigInteger('userID');
             $table->foreign('userID')->references('id')->on('users');
             $table->timestamps();

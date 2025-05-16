@@ -163,7 +163,7 @@ body {
     position: fixed;
     top: 3vh;
     left: 2vw;
-    z-index: 1000;
+    z-index: 550;
     opacity: 1;
 }
 

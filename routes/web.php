@@ -29,7 +29,7 @@ Route::middleware('auth')->group(function() {
     Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
         $request->fulfill();
 
-        return redirect('/mainPage');
+        return redirect('/main');
     })->middleware(['auth', 'signed'])->name('verification.verify');
 
 
@@ -43,21 +43,37 @@ Route::middleware('auth')->group(function() {
 Route::middleware(['auth', 'verified'])->group(function() {
     Route::get("/home", [MainController::class, 'mainPage']);
 
+    Route::get("/main", [MainController::class, 'mainPage']);
+
     Route::get("/mainPage", [MainController::class, 'mainPage']);
 
-    Route::get("/playlistPage", [MainController::class, 'playlistPage']);
+    Route::get("/playlist", [MainController::class, 'playlistPage']);
 
-    Route::get("/userPage", [MainController::class,'userPage']);
+    Route::get("/user", [MainController::class,'userPage']);
 
-    Route::get("/collectionPage", [MainController::class, 'collectionPage']);
+    Route::get("/collection", [MainController::class, 'collectionPage']);
 
     // Создание плейлиста (AJAX)
-    Route::post('/playlistPage', [MainController::class, 'store'])->name('playlists.store');
+    Route::post('/playlist', [MainController::class, 'store'])->name('playlists.store');
     
     // Просмотр плейлиста
-    Route::get('/playlistPage/{playlist}', [MainController::class, 'show_playlist'])->name('playlist.show');
+    Route::get('/playlist/{playlist}', [MainController::class, 'show_playlist'])->name('playlist.show');
 
     Route::post('/playlist/upload-audio', [MainController::class, 'trackUpload'])->name('playlist.upload-audio');
 
     Route::put('/playlist/update/{playlist}', [MainController::class, 'playlistNameUpdate']) -> name('playlistName.update');
+
+    Route::get('/api/collection/{userID}/artists', [MainController::class, 'favoriteArtist']);
+
+    Route::put('/playlist/{playlistID}/favorite', [MainController::class, 'addToFavoritePlaylist']);
+
+    Route::get('/playlist/{playlistID}/isFavoriteAndUserModer', [MainController::class, 'isFavoriteAndUserModer']);
+
+    Route::delete('/playlist/{playlistID}/deleteFavorite', [MainController::class, 'deleteFromFavoritePlaylist']);
+
+    Route::get('/users/get', [MainController::class, 'usersGet']);
+
+    Route::get('users/get/{searchQuery}', [MainController::class, 'getUserWith']);
+
+    Route::put('/playlist/{playlistID}/moders/{userID}', [MainController::class, 'createModer']);
 });
