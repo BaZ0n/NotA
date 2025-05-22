@@ -1,0 +1,44 @@
+.albumList {
+    width: 20vw;
+    border: 1px solid var(--gray);
+    border-radius: 15px;
+
+    .albumsContainer {
+        align-items: center;
+
+        .album-el {
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 15px;
+            cursor: pointer;
+            
+
+            .albumIMG {
+
+                width: 128px;
+                height: 128px;
+                border-radius: 15px;
+                margin: 5px;
+                transition: all 0.2s linear;    
+            }
+
+            .albumName {
+                transition: all 0.4s linear;
+            }
+        }
+
+        .album-el:hover {
+
+            .albumIMG {
+                box-shadow: 0 0 5px var(--primaryColor);
+            }
+
+            .albumName {
+                color: var(--primaryColor);
+            }
+            
+        }
+    }
+}

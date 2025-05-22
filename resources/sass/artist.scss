@@ -1,0 +1,25 @@
+.artistBodyContainer {
+    display: flex;
+    .artistInfoCont {
+        width: fit-content;
+        .artistAvatar {
+            width: 128px;
+            height: 128px;
+            border-radius: 50%;
+            border: 1px solid var(--primaryColor);
+        }
+        .artistName {
+            margin: 20px 0;
+            text-align: center;
+        }
+    }
+
+    .tracksList {
+        margin: 0 20px;
+        border: 1px solid var(--gray);
+        border-radius: 15px;
+        padding: 15px;
+        width: 40vw;
+        align-items: center;
+    }
+}

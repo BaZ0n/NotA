@@ -8,7 +8,7 @@
             <div class="leftContainer" style="display: flex; align-items: center;">
                 <h4 class="track-number me-3">{{ index + 1 }}.</h4>
                 <div class="trackInfo">
-                    <a href="#"><h6 class="trackArtist">{{ track.artistName }}</h6></a>
+                    <a href="#"><h6 class="trackArtist">{{ track.artistName }} {{ track.albumName }}</h6></a>
                     <a href="#"><h5 class="trackName">{{track.trackName}}</h5></a>
                 </div>
             </div>
@@ -26,17 +26,29 @@
     
     const store = useAudioPlayerStore()
     const playlistID = inject('playlistID')
+    const artistID = inject('artistID')
     const tracks = ref([])
     const artists = ref([])
     const test = ref([])
 
     onMounted(async () => {
-        try {
-            const response = await axios.get(`/api/playlistPage/${playlistID}/tracks`)
-            tracks.value = response.data
-        } catch (error) {
-            console.error('Ошибка при загрузке треков плейлиста:', error)
+        if (!isNaN(playlistID)) {
+            try {
+                const response = await axios.get(`/api/playlistPage/${playlistID}/tracks`)
+                tracks.value = response.data
+            } catch (error) {
+                console.error('Ошибка при загрузке треков плейлиста:', error)
+            }
         }
+        else if (!isNaN(artistID)) {
+            try {
+                const response = await axios.get(`/artist/${artistID}/tracks`)
+                tracks.value = response.data
+            } catch (error) {
+                console.error('Ошибка при загрузке треков плейлиста:', error)
+            }
+        }
+        
     })
 
     function formatDuration(seconds) {

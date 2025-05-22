@@ -30,7 +30,7 @@
                     <li class="playlist-item">
                         <a href="/playlist/{{$playlist->id}}" class="playlistLink" style="margin:0">
                             <div class="playlistCollection py-2 px-1">
-                                <img class="playlistImage" src="{{Vite::asset('resources/images/templates/playlistImage.svg')}}">
+                                <img class="playlistImage" src="{{asset('storage/templates/playlistImage.svg')}}">
                                 <h5 class="text-center mt-2">{{$playlist->playlistName}}</h5>
                             </div>
                         </a>
@@ -65,7 +65,7 @@
                     <li class="playlist-item">
                         <a href="/playlist/{{$playlist->id}}" class="playlistLink" style="margin:0">
                             <div class="playlistCollection py-2 px-1">
-                                <img class="playlistImage" src="{{asset('images/playlistImages/playlistImgTest.png')}}" style="width:150px; height: 150px;">
+                                <img class="playlistImage" src="{{asset('storage/templates/playlistImage.svg')}}" style="width:150px; height: 150px;">
                                 <h5 class="text-center mt-2">{{$playlist->playlistName}}</h5>
                             </div>
                         </a>

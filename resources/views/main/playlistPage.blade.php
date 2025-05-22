@@ -3,7 +3,7 @@
 @section('main_content')
     <div class="container d-flex mt-5 mb-2">
         <div class="playlistInfo mx-3"> 
-            <img class="playlistImage" src="{{Vite::asset('resources/images/templates/playlistImage.svg')}}">
+            <img class="playlistImage" src="{{asset('storage/templates/playlistImage.svg')}}">
             <h3 class="text-center my-2 editable" id="playlist_title" data-original="{{ $playlist->playlistName}}" 
                 data-url="{{ route('playlistName.update', $playlist->id )}}">
                 {{$playlist->playlistName}}
@@ -12,7 +12,7 @@
             <div class="buttonsCont mt-3" id="playlistButtons" style="flex-direction: column;" data-playlist="{{ $playlist->id }}"></div>
         </div>
     
-        <div class="playlistTracks mx-3 py-3 px-3" id="playlistTracks" data-playlist="{{ $playlist->id }}"></div>
+        <div class="tracksList mx-3 py-3 px-3" id="playlistTracks" data-playlist="{{ $playlist->id }}"></div>
 
     <div class="uploadBackground container-fluid d-none" id="uploadCont">
         <div class="uploadTrackContainer">

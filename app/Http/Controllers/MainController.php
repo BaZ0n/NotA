@@ -55,6 +55,11 @@ class MainController extends Controller
         return view('main/userPage');
     }
 
+    public function artistPage(Artist $artist) {
+        $artist = DB::table('artist')->find($artist->id);
+        return view("main/artistPage", ['artist'=>$artist]);
+    }
+
     public function collectionPage(Request $request) {
         $playlists = DB::table("playlist")
         ->where("playlist.userID", "=", Auth::id())
@@ -179,7 +184,7 @@ class MainController extends Controller
                 'albumName' => $albumName,
                 'is_confirmed' => false,
                 'date_publish' => Carbon::today()->toDateString(),
-                'photo_path' => null,
+                'photo_path' => 'resources/images/templates/playlistImage.svg',
                 'artistID' => $artist->id
             ]);
             $album = DB::table('album')
@@ -367,6 +372,65 @@ class MainController extends Controller
         else {
             return response()->json([
                 'result' => "Создатель плейлиста не может быть исключён из модераторов."
+            ]);
+        }
+    }
+
+    // public function isFavoriteTrack($trackID) {
+    //     $
+    // }
+
+    public function artistTracks($artistID) {
+        $tracks = DB::table('track_authors')
+        ->where('track_authors.artistID', '=', $artistID)
+        ->join('track', 'track_authors.trackID', '=', 'track.id')
+        ->join('album', 'track.albumID', '=', 'album.id')
+        ->select('track.*', 'album.*')
+        ->get();
+
+        return response()->json($tracks);
+    }
+
+    public function artistAlbums($artistID) {
+        $albums = DB::table('album')
+        ->where('album.artistID', '=', $artistID)
+        ->select('album.*')
+        ->get();
+
+        return response()->json($albums);
+    }
+
+    public function getTracks() {
+        $tracks = DB::table('track')
+        ->join('track_authors', 'track_authors.trackID', '=', 'track.id')
+        ->join('artist', 'artist.id', '=', 'track_authors.artistID')
+        ->select('track.*', 'artist.artistName as artistName')
+        ->get();
+
+        return response()->json( [
+            'tracks' => $tracks  
+        ]);
+    }
+
+    public function addTrackToPlaylist($playlistID, $trackID) {
+        $playlistTrack = DB::table('playlist_tracks')
+        ->where('playlist_tracks.playlistID', '=', $playlistID)
+        ->where('playlist_tracks.trackID', '=', $trackID)
+        ->exists();
+
+        if (!$playlistTrack) {
+            $addTrack = playlist_tracks::create([
+                'playlistID' => $playlistID,
+                'trackID' => $trackID
+            ]);
+
+            return response()->json([
+                "result" => "Успех!"
+            ]);
+        }
+        else {
+            return response()->json([
+                "result" => "Трек уже есть в плейлисте"
             ]);
         }
     }

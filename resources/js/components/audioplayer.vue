@@ -1,56 +1,58 @@
 <template>
 <div id="audio-player-app" class="container mt-5">
   <div class="container" id="player-container">
-    <div class="track-info">
-        <img class="playlist_image" src="resources/image/templates/playlistImage.svg">  
+    <div class="row align-items-center">
+      <div class="col track-info">
+        <img class="playlist_image" :src="'/storage/templates/playlistImage.svg'">  
         <div class="track-text-info">
-            <h5 style="color:var(--placeholder);">{{artistName}}</h5>
-            <h4>{{trackName}}</h4>
+            <h5 style="color:var(--placeholder);"> {{ store?.currentArtistName || 'Исполнитель'}}</h5>
+            <h4>{{store.currentTrackInfo?.trackName || 'Название'}}</h4>
         </div>
-    </div>
-    <div class="multimedia-btn">
-      <audio ref="audioPlayer" :src="store.audioSrc"></audio>
-  
-      <button class="multBTN" @click="prevTrack">
-        <PreviousIcon class="icon"></PreviousIcon>
-      </button>
-  
-      <button class="multBTN" v-if="!isPlaying" @click="play">
-        <PlayIcon class="icon"></PlayIcon>
-      </button>
-  
-      <button class="multBTN" v-else @click="pause">
-        <PauseIcon class="icon"></PauseIcon>
-      </button>
-  
-      <button class="multBTN" @click="nextTrack">
-        <NextIcon class="icon"></NextIcon>
-      </button>
-    </div>
+      </div>
+      <div class="col multimedia-btn">
+        <audio ref="audioPlayer" :src="store.audioSrc"></audio>
+    
+        <button class="multBTN" @click="prevTrack">
+          <PreviousIcon class="icon"></PreviousIcon>
+        </button>
+    
+        <button class="multBTN" v-if="!isPlaying" @click="play">
+          <PlayIcon class="icon"></PlayIcon>
+        </button>
+    
+        <button class="multBTN" v-else @click="pause">
+          <PauseIcon class="icon"></PauseIcon>
+        </button>
+    
+        <button class="multBTN" @click="nextTrack">
+          <NextIcon class="icon"></NextIcon>
+        </button>
+      </div>
 
-    <div class="additionalBtn">
-      <button class="multBTN" @click="likeTrack">
-        <LikeIcon class="icons_additional"></LikeIcon>
-      </button>
-      
-      <button class="multBTN" @click="queue">
-        <QueueIcon class="icons_additional"></QueueIcon>
-      </button>
+      <div class="col additionalBtn">
+        <button class="multBTN" @click="likeTrack">
+          <LikeIcon class="icons_additional"></LikeIcon>
+        </button>
+        
+        <button class="multBTN" @click="queue">
+          <QueueIcon class="icons_additional"></QueueIcon>
+        </button>
 
-      <button class="multBTN" @click="dropdown_show">
-        <MoreIcon class="icons_additional"></MoreIcon>
-      </button>
-      <!-- <div class="dropdown-menu" v-if="isOpen">
-        <ul class="menu" id="list">
-          <li class="menu-item">
-            <a href="#" class="menu-link">Добавить в плейлист</a>
-          </li>
-        </ul>
-      </div> -->
+        <button class="multBTN" @click="dropdown_show">
+          <MoreIcon class="icons_additional"></MoreIcon>
+        </button>
+        <!-- <div class="dropdown-menu" v-if="isOpen">
+          <ul class="menu" id="list">
+            <li class="menu-item">
+              <a href="#" class="menu-link">Добавить в плейлист</a>
+            </li>
+          </ul>
+        </div> -->
+      </div>
     </div>
   </div>
 </div>
-  </template>
+</template>
 
 <script setup>
   import axios from 'axios'
@@ -75,13 +77,11 @@
   const store = useAudioPlayerStore()
   const audioPlayer = ref(null)
   const moreClicked = ref(false)
-  const artistName = "Исполнитель"
-  const trackName = "Трек"
+  const trackID = ref(null)
+  const isFavorite = ref(false)
 
-  watch(() => store.audioSrc, (newSrc) => {
-    console.log("Победа")
-    artistName = store.artistName
-    trackName = store.trackName
+  watch(() => store.audioSrc, async (newSrc) => {
+    trackID = store.trackID
     if (audioPlayer.value) {
       audioPlayer.value.load()
       if (store.isPlaying) {
@@ -152,4 +152,11 @@
   onUnmounted(() => {
     store.audioElement = null // Очищаем ссылку
   })
+
+  // getImageUrl(path) {
+  //   return require(`@/assets/images/${path}`);  // Если в assets
+  //   // Или просто путь, если в public
+  //   return `/storage/${path}`;
+  // }
 </script>
+

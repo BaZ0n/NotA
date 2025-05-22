@@ -87,7 +87,7 @@
     transform: scale(0.95);
 }
 
-.addModerBG {
+.addBG {
     position: absolute;
     background-color: #0000007c;
     top: 0;
@@ -98,9 +98,11 @@
     display: flex;
     align-items: center;
     flex-direction: column;
+    justify-content: center;
 }
 
-.addModerContainer {
+.addContainer {
+    border: 1px solid var(--gray);
     background-color: var(--sliderBG);
     width: 50vw;
     margin: auto;

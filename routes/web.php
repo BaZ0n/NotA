@@ -53,6 +53,8 @@ Route::middleware(['auth', 'verified'])->group(function() {
 
     Route::get("/collection", [MainController::class, 'collectionPage']);
 
+    Route::get("/artist/{artist}", [MainController::class, 'artistPage']);
+
     // Создание плейлиста (AJAX)
     Route::post('/playlist', [MainController::class, 'store'])->name('playlists.store');
     
@@ -63,7 +65,11 @@ Route::middleware(['auth', 'verified'])->group(function() {
 
     Route::put('/playlist/update/{playlist}', [MainController::class, 'playlistNameUpdate']) -> name('playlistName.update');
 
-    Route::get('/api/collection/{userID}/artists', [MainController::class, 'favoriteArtist']);
+    Route::get('/collection/{userID}/artists', [MainController::class, 'favoriteArtist']);
+
+    Route::get('/artist/{artistID}/tracks', [MainController::class, 'artistTracks']);
+
+    Route::get('/artist/{artistID}/albums', [MainController::class, 'artistAlbums']);
 
     Route::put('/playlist/{playlistID}/favorite', [MainController::class, 'addToFavoritePlaylist']);
 
@@ -76,4 +82,10 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::get('users/get/{searchQuery}', [MainController::class, 'getUserWith']);
 
     Route::put('/playlist/{playlistID}/moders/{userID}', [MainController::class, 'createModer']);
+
+    Route::put('/playlist/{playlistID}/addTrack/{trackID}', [MainController::class, 'addTrackToPlaylist']);
+
+    Route::get('tracks/isFavorite/{trackID}', [MainController::class, 'isFavoriteTrack']);
+
+    Route::get('/tracks/get', [MainController::class, 'getTracks']);
 });

@@ -1,11 +1,12 @@
 @use 'colors';
 
-.playlistTracks {
+.tracksList, .tracks_list {
     background-color: var(--bgBlack);
     border-radius: 20px;
     border: 2px solid var(--gray);
+    list-style-type: none;
 
-    .trackLink {
+    .trackLink, .track_element {
         text-decoration: none;
         margin: 5px 0;
 
@@ -14,22 +15,23 @@
             border-radius: 15px;
             display: flex;
             justify-content: space-between;
+            cursor: pointer;
 
             a {
                 text-decoration: none;
-
-                .trackArtist {
-                    color: var(--gray);
-                }
-
-                .trackName {
-                    color: var(--white)
-                }
             }
 
             a :hover {
                 color: var(--primaryColor);
                 transition: color .2s linear;
+            }
+
+            .trackArtist {
+                color: var(--gray);
+            }
+
+            .trackName {
+                color: var(--white)
             }
             
             .trackDuration {

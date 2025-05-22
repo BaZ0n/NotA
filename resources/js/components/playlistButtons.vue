@@ -9,7 +9,7 @@
         <button class="toolButton" id="likeButton" @click="deleteFromFavorite" v-show="isFavorite">
             <FavoriteIcon class="icon"></FavoriteIcon>
         </button>
-        <div class="dropdown" @click.stop="toggleDropdown">
+        <div class="dropdown" @click.stop="toggleDropdown" v-if="isModer">
             <button class="toolButton" id="moreIcon" @click="dropdownMenu">
                 <MoreIcon class="icon"></MoreIcon>
             </button> 
@@ -21,9 +21,9 @@
                     <slot name="content">
                         <!-- Слот для кастомного содержимого -->
                         <ul>
-                            <li class="dropdown__item">Добавить в плейлист</li>
+                            <li class="dropdown__item" @click="addTrack">Добавить в плейлист</li>
                             <li class="dropdown__item" @click="deletePlaylist">Удалить плейлист</li>
-                            <li class="dropdown__item" @click="addModer" v-if="isModer">Добавить модератора</li>
+                            <li class="dropdown__item" @click="addModer">Добавить модератора</li>
                         </ul>
                     </slot>
                 </div>
@@ -35,8 +35,8 @@
         <h5 class="text my-0" style="color: white">Загрузить трек</h5>
     </button>
     
-    <div class="addModerBG" v-show="moddersAdd" @click.self="closeModerModal">
-        <div class="addModerContainer" @click.stop> 
+    <div class="addBG" v-show="moddersAdd" @click.self="closeWindow">
+        <div class="addContainer" @click.stop> 
             <h2>Поиск пользователя</h2>
             <input type="text" class="searchInput" placeholder="Поиск..." v-model="searchQuery">
             <hr>
@@ -49,7 +49,42 @@
         </div>
     </div>
 
+    <div class="addBG" v-show="tracksAdd" @click.self="closeWindow">
+        <div class="addContainer" @click.stop> 
+            <h2>Поиск трека</h2>
+            <input type="text" class="searchInput" placeholder="Поиск..." v-model="searchQuery">
+            <hr>
+            <ul class="tracks_list" style="padding-left: 0; background-color: transparent; border: 0;">
+                <li class="track_element" v-for="(track, index) in tracks" :key="track.id" @click="addTrackToPlaylist(track.id)">
+                    <div class="track d-flex py-2 px-3" style="align-items: center;">
+                        <div class="leftContainer" style="display: flex; align-items: center;">
+                            <h4 class="track-number me-3">{{ index + 1 }}.</h4>
+                            <div class="trackInfo">
+                                <h6 class="trackArtist">{{ track.artistName }} {{ track.albumName }}</h6>
+                                <h5 class="trackName">{{track.trackName}}</h5>
+                            </div>
+                        </div>
+                        <h5 class="trackDuration">{{ formatDuration(track.duration) }}</h5>
+                    </div> 
+                </li>
+            </ul>
+        </div>
+    </div>
+
 </template>
+
+<!-- <div class="track d-flex py-2 px-3" style="align-items: center;">
+            <div class="leftContainer" style="display: flex; align-items: center;">
+                <h4 class="track-number me-3">{{ index + 1 }}.</h4>
+                <div class="trackInfo">
+                    <a href="#"><h6 class="trackArtist">{{ track.artistName }} {{ track.albumName }}</h6></a>
+                    <a href="#"><h5 class="trackName">{{track.trackName}}</h5></a>
+                </div>
+            </div>
+            <h5 class="trackDuration">{{ formatDuration(track.duration) }}</h5>
+        </div> 
+-->
+
 
 <script setup>
 
@@ -70,14 +105,17 @@
     const users = ref([])
     const searchQuery = ref('')
     const isModer = ref(false)
+    const tracksAdd = ref(false)
+    const tracks = ref([])
 
     const toggleDropdown = () => {
         isOpen.value = !isOpen.value;
     }
 
     // Закрытие модального окна
-    const closeModerModal = () => {
+    const closeWindow = () => {
         moddersAdd.value = false;
+        tracksAdd.value = false;
         searchQuery.value = '';
     };
 
@@ -86,8 +124,9 @@
         if (!event.target.closest('.dropdown')) {
             isOpen.value = false
         }
-        if (!event.target.closet('.addModerContainer')) {
+        if (!event.target.closet('.addContainer')) {
             moddersAdd.value = false
+            tracksAdd.value = false
         }
         
     }
@@ -153,11 +192,52 @@
             const response = await axios.get(
                 '/users/get'
             )
+            
             users.value = response.data.users
         }
         else {
+            
             moddersAdd.value = !moddersAdd.value
         }
+    }
+
+    const addTrack = async () => {
+        isOpen.value = !isOpen.value
+        try {
+            if (!tracksAdd.value) {
+                tracksAdd.value = !tracksAdd.value
+                const response = await axios.get(
+                    '/tracks/get'
+                )
+                console.log("Ура")
+                tracks.value = response.data.tracks
+            }
+            else {
+                
+                tracksAdd.value = !tracksAdd.value
+            }
+        } catch (error) {
+            console.log("Лох")
+            console.log(error)
+        }
+        
+    }
+
+    const addTrackToPlaylist = async(trackID) => {
+        try {
+            const response = await axios.put(
+                `/playlist/${playlistID}/addTrack/${trackID}`
+            )
+        }
+        catch(error) {
+            console.log(error)
+        }
+    }
+
+    function formatDuration(seconds) {
+        const mins = Math.floor(seconds / 60)
+        const secs = Math.floor(seconds % 60).toString().padStart(2, '0')
+        return `${mins}:${secs}`
     }
     
 
@@ -175,6 +255,7 @@
         if (e.key === 'Escape') {
             isOpen.value = false;
             moddersAdd.value = false;
+            tracksAdd.value = false;
         }
         });
     })

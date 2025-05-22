@@ -22,7 +22,7 @@
         <div class="sidebar" id="sidebar">
             
             <a href="/user" class="user" style="margin-bottom: 30px;">
-                <img class="userImg" src="{{ Vite::asset('images/icons/profileIcon.svg') }}" alt="Профиль">
+                <img class="userImg" src="{{ Vite::asset('resources/images/templates/userImage.svg') }}" alt="Профиль">
                 <span class="userName">{{Auth::user()->name}}</span>
             </a>    
 

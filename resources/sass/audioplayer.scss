@@ -16,12 +16,15 @@
         height: 12vh;
         padding: 0 2%;
 
-        justify-content: space-between;
+        .row {
+            width: 100%;
+        }
 
         .track-info {
 
             display: flex;
             align-items: center;
+            justify-content: start;
 
             .playlist_image {
                 background-color: var(--grayBlack);
@@ -31,16 +34,13 @@
                 align-items: center;
                 justify-content: center;
                 border-radius: 20px;
-            
-                img {
-                    width: 32px;
-                    height: 32px;
-                }
+                border: 1px solid var(--primaryColor);
             }
 
             .track-text-info {
                 color: white;
                 margin: 1vh 1vw;
+                justify-content: center;
             }
 
         }
@@ -72,11 +72,13 @@
         .multimedia-btn {
             display: flex;
             align-items: center;
+            justify-content: center;
         }
 
         .additionalBtn {
             display: flex;
             align-items: center;
+            justify-content: end;
 
             .icons_additional {
                 width: 32px;

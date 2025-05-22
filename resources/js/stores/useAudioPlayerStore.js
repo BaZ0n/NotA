@@ -11,13 +11,13 @@ export const useAudioPlayerStore = defineStore('audioPlayer', () => {
 
   const setTrack = (track, index) => {
     currentTrackInfo.value = track
-    console.log(currentTrackInfo.value)
+    // console.log(currentTrackInfo.value)
     audioSrc.value = track.audioSrc
-    console.log(track.audioSrc)
+    // console.log(track.audioSrc)
     currentIndex.value = index
-    console.log(currentIndex.value)
+    // console.log(currentIndex.value)
     currentArtistName.value = track.artistName
-    console.log(currentArtistName.value)
+    // console.log(currentArtistName.value)
   }
 
   const play = () => { isPlaying.value = true }
