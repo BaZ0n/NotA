@@ -11,7 +11,8 @@ export default defineConfig({
                 'resources/sass/audioplayer.scss', 
                 'resources/js/components/audioplayer.vue',
                 'resources/js/components/tracks.vue',
-                'resources/js/components/artists.vue'
+                'resources/js/components/artists.vue',
+                'resources/js/components/playlistButtons.vue'
                 ],
             refresh: [
                 'resources/views/**/*.blade.php',

@@ -77,9 +77,13 @@ Route::middleware(['auth', 'verified'])->group(function() {
 
     Route::delete('/playlist/{playlistID}/deleteFavorite', [MainController::class, 'deleteFromFavoritePlaylist']);
 
+    Route::get('/playlist/{playlistID}/tracks', [MainController::class, 'playlistTracks']);
+
     Route::get('/users/get', [MainController::class, 'usersGet']);
 
     Route::get('users/get/{searchQuery}', [MainController::class, 'getUserWith']);
+
+    Route::get('/tracks/get/{searchQueryTrack}', [MainController::class, 'getTrackWith']);
 
     Route::put('/playlist/{playlistID}/moders/{userID}', [MainController::class, 'createModer']);
 
@@ -88,4 +92,5 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::get('tracks/isFavorite/{trackID}', [MainController::class, 'isFavoriteTrack']);
 
     Route::get('/tracks/get', [MainController::class, 'getTracks']);
+
 });

@@ -73,7 +73,62 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-direction: column;
+
+            .multimediaButtonsContainer {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .progress-container {
+                display: flex;
+                align-items: center;
+                width: 100%;
+                gap: 10px;
+                margin-top: 10px;
+            }
+
+            .progress-bar {
+                flex-grow: 1;
+                width: 100%;
+                height: 6px;
+                border-radius: 2px;
+                background: var(--placeholder);
+                outline: none;
+                -webkit-appearance: none;
+                fill: var(--primaryColor);
+            }
+
+            .progress-bar:hover {
+                transition: all 0.1s linear;
+                height: 10px;
+            }
+
+            .progress-bar::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                width: 10px;
+                height: 12px;
+                border-radius: 50%;
+                background: var(--primaryColor);
+                cursor: pointer;
+            }
+
+            .time-current, .time-total {
+                font-size: 12px;
+                color: var(--gray);
+                min-width: 40px;
+                text-align: center;
+            }
+
+            .player-controls {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                width: 100%;
+            }
         }
+
 
         .additionalBtn {
             display: flex;
@@ -95,4 +150,225 @@
         
 
     }
+}
+
+.volume-container {
+  position: relative;
+  display: inline-block;
+
+  .volume-popup {
+        position: absolute;
+        top: -70px;
+        left: 18%;
+        transform: translateY(-50%);
+        background: var(--sliderBG);
+        padding: 15px 10px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        z-index: 100;
+    }
+
+    .volume-slider-vertical {
+        //-webkit-appearance: slider-vertical;
+        writing-mode: vertical-lr; 
+        direction: rtl;
+        width: 8px;
+        height: 100px;
+        padding: 0 5px;
+        background: var(--primaryColor);
+        outline: none;
+        opacity: 0.9;
+        transition: opacity 0.2s;
+    }
+    .volume-slider-vertical:hover {
+        opacity: 1;
+    }
+
+    .volume-slider-vertical::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 14px;
+        height: 14px;
+        background: var(--primaryColor);
+        border-radius: 50%;
+        cursor: pointer;
+    }
+}
+
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.2s;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
+
+
+.queue-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+
+    .queue-container {
+        background-color: var(--sliderBG);
+        border-radius: 10px;
+        width: 50vw;
+        max-height: 70vh;
+        min-height: 50vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        padding: 10px 50px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+
+        .queue-header {
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+
+            .close-queue {
+                background: none;
+                border: none;
+                font-size: 24px;
+                cursor: pointer;
+                color: var(--text-color);
+            }
+        }
+
+        .queue-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px 0;
+
+            .empty-queue {
+                padding: 20px;
+                text-align: center;
+                color: var(--white);
+            }
+
+            .queue-item {
+                padding: 10px 20px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                cursor: pointer;
+                transition: background-color 0.2s;
+                
+
+                .current-track {
+                    background-color: var(--primaryColor);
+                }
+
+                .queue-item-info {
+                    display: flex;
+                    flex-direction: column;
+
+                    .queue-track-name {
+                        font-weight: 500;
+                    }
+
+                    .queue-artist {
+                        font-size: 0.9em;
+                        color: var(--placeholder);
+                    }
+                }
+
+                .remove-from-queue, .add-to-queue {
+                    background: none;
+                    border: none;
+                    font-size: 18px;
+                    cursor: pointer;
+                    color: var(--primaryColor);
+                    width: 24px;
+                    height: 24px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: 50%;
+                }
+
+                .remove-from-queue:hover {
+                    background-color: var(--error-color);
+                    color: white;
+                }
+                .add-to-queue:hover {
+                    background-color: var(--success-color);
+                    color: white;
+                }
+            }
+            .queue-item:hover {
+                background-color: var(--hover-color);
+            }
+
+        }
+
+        .next-up-section {
+            border-top: 1px solid var(--gray);
+            padding: 15px 20px;
+
+            h4 {
+                margin-bottom: 10px;
+                color: var(--placeholder);
+            }
+
+            .next-up {
+                opacity: 0.8;
+                display: flex;
+                justify-content: space-between;
+                margin: 15px;
+                cursor: pointer;
+            }
+
+            .next-up:hover {
+                opacity: 1;
+            }
+
+            .queue-item-info {
+                display: flex;
+                flex-direction: column;
+
+                .queue-track-name {
+                    font-weight: 500;
+                }
+
+                .queue-artist {
+                    font-size: 0.9em;
+                    color: var(--placeholder);
+                }
+            }
+
+            .remove-from-queue, .add-to-queue {
+                background: none;
+                border: none;
+                font-size: 18px;
+                cursor: pointer;
+                color: var(--primaryColor);
+                width: 24px;
+                height: 24px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 50%;
+            }
+
+            .remove-from-queue:hover {
+                background-color: var(--error-color);
+                color: white;
+            }
+            .add-to-queue:hover {
+                background-color: var(--success-color);
+                color: white;
+            }
+        }
+
+    }
+
 }

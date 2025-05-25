@@ -57,28 +57,6 @@
         return `${mins}:${secs}`
     }
 
-    // const playTrack = async (trackID, index) => {
-    //     try {
-    //         const res = await axios.get('/api/play-audio', {
-    //             params: { trackID },
-    //         })
-
-    //         const track = res.data.track
-    //         const author = res.data.author
-    //         const trackData = {
-    //             ...track,
-    //             artistName: author?.artistName,
-    //             audioSrc: `/storage/${track.path.replace('public/audio/', '')}`
-    //         }
-            
-
-    //         store.setTrack(trackData, index)
-    //         store.play()
-    //     } catch (err) {
-    //         console.error('Ошибка при воспроизведении:', err)
-    //     }
-    // }
-
     const playTrack = async (trackID, index) => {
     try {
         const res = await axios.get('/api/play-audio', {
@@ -91,16 +69,19 @@
         const trackData = {
             ...track,
             artistName: author?.artistName,
+            playlistId: playlistID,
             audioSrc: `/storage/${track.path.replace('public/audio/', '')}`
         }
         
         // Загрузка трека в плеер
         const loaded = await store.setTrack(trackData)
-        
+        await store.play()
+
+        // console.log(loaded)
         // Воспроизведение только если загрузка успешна
-        if (loaded) {
-            await store.play()
-        }
+        // if (loaded) {
+        //     await store.play()
+        // }
     } catch (err) {
         console.error('Ошибка при воспроизведении:', err)
         store.error = `Ошибка: ${err.message}`

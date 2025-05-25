@@ -52,7 +52,7 @@
     <div class="addBG" v-show="tracksAdd" @click.self="closeWindow">
         <div class="addContainer" @click.stop> 
             <h2>Поиск трека</h2>
-            <input type="text" class="searchInput" placeholder="Поиск..." v-model="searchQuery">
+            <input type="text" class="searchInput" placeholder="Поиск..." v-model="searchQueryTrack">
             <hr>
             <ul class="tracks_list" style="padding-left: 0; background-color: transparent; border: 0;">
                 <li class="track_element" v-for="(track, index) in tracks" :key="track.id" @click="addTrackToPlaylist(track.id)">
@@ -73,22 +73,11 @@
 
 </template>
 
-<!-- <div class="track d-flex py-2 px-3" style="align-items: center;">
-            <div class="leftContainer" style="display: flex; align-items: center;">
-                <h4 class="track-number me-3">{{ index + 1 }}.</h4>
-                <div class="trackInfo">
-                    <a href="#"><h6 class="trackArtist">{{ track.artistName }} {{ track.albumName }}</h6></a>
-                    <a href="#"><h5 class="trackName">{{track.trackName}}</h5></a>
-                </div>
-            </div>
-            <h5 class="trackDuration">{{ formatDuration(track.duration) }}</h5>
-        </div> 
--->
-
 
 <script setup>
 
     import { ref, onMounted, onUnmounted, watch } from 'vue'
+    import { ZvukAPI } from 'sberzvuk-api';
     import { inject } from 'vue'
     import axios from 'axios'
 
@@ -104,6 +93,7 @@
     const moddersAdd = ref(false)
     const users = ref([])
     const searchQuery = ref('')
+    const searchQueryTrack = ref('')
     const isModer = ref(false)
     const tracksAdd = ref(false)
     const tracks = ref([])
@@ -124,7 +114,7 @@
         if (!event.target.closest('.dropdown')) {
             isOpen.value = false
         }
-        if (!event.target.closet('.addContainer')) {
+        if (!event.target.closest('.addContainer')) {
             moddersAdd.value = false
             tracksAdd.value = false
         }
@@ -143,6 +133,20 @@
             console.log(error)
         }
     })
+
+    watch(searchQueryTrack, async(newSearch) => {
+        console.log(searchQueryTrack.value)
+        try {
+            const response = await axios.get(
+                `/tracks/get/${searchQueryTrack.value}`
+            )
+            tracks.value = response.data.tracks
+            console.log(result)
+        } catch(error) {
+            console.log(error)
+        }
+    })
+
 
     const addToModerPlaylist = async (userID) => {
         try {

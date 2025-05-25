@@ -117,6 +117,27 @@ class MainController extends Controller
         // return view('main/playlistPage', ['playlist' => $playlist_inf, 'tracks' => $tracks_playlist]);
     }
 
+    public function playlistTracks($playlistID) {
+        $playlist_tracks = DB::table('playlist_tracks') // Убедитесь, что имя таблицы правильное (playlist_tracks или playlist_track)
+            ->where('playlist_tracks.playlistID', '=', $playlistID)
+            ->join('track', 'track.id', '=', 'playlist_tracks.trackID') // Исправлено имя таблицы и связь
+            ->join('album', 'album.id', '=', 'track.albumID')
+            ->join('artist', 'artist.id', '=', 'album.artistID')
+            ->select(
+                'track.*', 
+                'album.id as album.albumID', 
+                'album.albumName as albumName',
+                'album.photo_path as albumPhoto',
+                'artist.id as artistID',
+                'artist.artistName as artistName',
+                'artist.photo_path as artistPhoto')
+            ->get();
+
+        return response()->json([
+            'tracks' => $playlist_tracks // Исправлено 'track' на 'tracks' для согласованности
+        ]);
+    }
+
     public function trackUpload(Request $request) {
         $request->validate([
             'file' => 'required|file|mimes:mp3,wav,aac,ogg|max:20480'
@@ -405,6 +426,17 @@ class MainController extends Controller
         ->join('track_authors', 'track_authors.trackID', '=', 'track.id')
         ->join('artist', 'artist.id', '=', 'track_authors.artistID')
         ->select('track.*', 'artist.artistName as artistName')
+        ->get();
+
+        return response()->json( [
+            'tracks' => $tracks  
+        ]);
+    }
+
+    public function getTrackWith($searchQueryTrack) {
+        $tracks = DB::table('track')
+        ->where('track.trackName', 'like', '%'.$searchQueryTrack.'%')
+        ->select('track.*')
         ->get();
 
         return response()->json( [

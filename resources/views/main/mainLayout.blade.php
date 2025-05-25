@@ -51,7 +51,7 @@
                 <span>Поиск</span>
             </a>
         </div>
-        <div class="bodyContainer" style="margin-bottom: 15vh;">            
+        <div class="bodyContainer" style="margin-bottom: 20vh;" id="dynamic-content">            
             @if ($errors->any() || session('error'))
             <div class="alert alert-danger" style="position: fixed; top: 0; right: 0; z-index: 2000;">
                 <ul>
@@ -67,8 +67,8 @@
         <div id="audioplayer"></div>
     </body>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="{{ asset('js/ajaxNavigation.js') }}"></script>
     <script src="{{asset('js/imageAnimation.js')}}"></script>
-    <script src="{{asset('js/showAll.js')}}"></script>
     <script src="{{asset("js/sidebarHideShow.js")}}"></script>
     @vite(['resources/js/app.js', 'resources/sass/includeAll.scss'])
 </html>
