@@ -19,7 +19,11 @@
     import { inject } from 'vue'
     import axios from 'axios'
 
-    const artistID = inject('artistID')
+    const props = defineProps({
+        artistId: Object
+    })
+
+    const artistID = props.artistId
     const albums = ref([])
 
     onMounted(async () => {

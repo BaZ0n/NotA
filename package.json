@@ -19,7 +19,7 @@
         "tailwindcss": "^3.4.13",
         "vite": "^5.0",
         "vite-svg-loader": "^5.1.0",
-        "vue": "^3.5.13",
+        "vue": "^3.5.14",
         "vue-template-compiler": "^2.7.16",
         "webpack": "^5.99.8",
         "webpack-cli": "^6.0.1"
@@ -28,6 +28,8 @@
         "@inertiajs/inertia": "^0.11.1",
         "@inertiajs/inertia-vue3": "^0.6.0",
         "@vitejs/plugin-vue": "^5.2.3",
+        "bootstrap": "^5.3.6",
+        "bootstrap-vue": "^2.23.1",
         "pinia": "^3.0.2",
         "sberzvuk-api": "^2.1.9"
     }

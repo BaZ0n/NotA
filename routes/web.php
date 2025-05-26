@@ -41,29 +41,29 @@ Route::middleware('auth')->group(function() {
 });
 
 Route::middleware(['auth', 'verified'])->group(function() {
+
+    // Маршруты к основной странице
     Route::get("/home", [MainController::class, 'mainPage']);
-
-    Route::get("/main", [MainController::class, 'mainPage']);
-
+    Route::get("/main", [MainController::class, 'mainPage']); 
     Route::get("/mainPage", [MainController::class, 'mainPage']);
 
-    Route::get("/playlist", [MainController::class, 'playlistPage']);
-
-    Route::get("/user", [MainController::class,'userPage']);
-
+    // Маршрут к странице коллекции
     Route::get("/collection", [MainController::class, 'collectionPage']);
+
+    // Маршрут к странице плейлиста
+    Route::post('/playlist', [MainController::class, 'store'])->name('playlists.store'); // Создание плейлиста (AJAX)
+    // Route::get("/playlist", [MainController::class, 'playlistPage']); // Страница пустого плейлиста
+    Route::get('/playlist/{playlistID}', [MainController::class, 'show_playlist'])->name('playlist.show'); // Просмотр плейлиста
+    Route::post('/playlist/{playlistID}/upload-audio', [MainController::class, 'trackUpload'])->name('playlist.upload-audio'); // Загрузка трека в плейлист
+    Route::put('/playlist/update/{playlist}', [MainController::class, 'playlistNameUpdate']) -> name('playlistName.update'); // Новое название плейлиста
+    
+    Route::get("/user", [MainController::class,'userPage']);
 
     Route::get("/artist/{artist}", [MainController::class, 'artistPage']);
 
-    // Создание плейлиста (AJAX)
-    Route::post('/playlist', [MainController::class, 'store'])->name('playlists.store');
     
-    // Просмотр плейлиста
-    Route::get('/playlist/{playlist}', [MainController::class, 'show_playlist'])->name('playlist.show');
 
-    Route::post('/playlist/upload-audio', [MainController::class, 'trackUpload'])->name('playlist.upload-audio');
-
-    Route::put('/playlist/update/{playlist}', [MainController::class, 'playlistNameUpdate']) -> name('playlistName.update');
+    
 
     Route::get('/collection/{userID}/artists', [MainController::class, 'favoriteArtist']);
 

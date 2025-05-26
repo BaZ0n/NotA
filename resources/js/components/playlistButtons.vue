@@ -31,7 +31,7 @@
         </div>
     </div>
     
-    <button class="button-primary my-3 px-3 py-3" style="background-color: var(--placeholder)" id="uploadTrackBTN" v-show="isModer">
+    <button class="button-primary my-3 px-3 py-3" style="background-color: var(--placeholder)" id="uploadTrackBTN" v-show="isModer" @click="trackUploadShow">
         <h5 class="text my-0" style="color: white">Загрузить трек</h5>
     </button>
     
@@ -77,17 +77,20 @@
 <script setup>
 
     import { ref, onMounted, onUnmounted, watch } from 'vue'
-    import { ZvukAPI } from 'sberzvuk-api';
     import { inject } from 'vue'
     import axios from 'axios'
+    import { useAudioPlayerStore } from '@/stores/useAudioPlayerStore'
 
     import PlayIcon from '@/assets/icons/playIcon.svg'
     import LikeIcon from '@/assets/icons/likeIcon.svg'
     import FavoriteIcon from '@/assets/icons/favoriteIcon.svg'
     import MoreIcon from '@/assets/icons/moreIcon.svg'
-    
 
-    const playlistID = inject('playlistID')
+    const props = defineProps({
+        playlistId: Object
+    })
+
+    const playlistID = props.playlistId
     const isFavorite = ref(true)
     const isOpen = ref(false)
     const moddersAdd = ref(false)
@@ -97,6 +100,7 @@
     const isModer = ref(false)
     const tracksAdd = ref(false)
     const tracks = ref([])
+    const store = useAudioPlayerStore()
 
     const toggleDropdown = () => {
         isOpen.value = !isOpen.value;
@@ -122,7 +126,6 @@
     }
 
     watch(searchQuery, async (newSearch) => {
-        console.log(searchQuery.value)
         try {
             const response = await axios.get(
                 `/users/get/${searchQuery.value}`
@@ -135,13 +138,11 @@
     })
 
     watch(searchQueryTrack, async(newSearch) => {
-        console.log(searchQueryTrack.value)
         try {
             const response = await axios.get(
                 `/tracks/get/${searchQueryTrack.value}`
             )
             tracks.value = response.data.tracks
-            console.log(result)
         } catch(error) {
             console.log(error)
         }
@@ -150,7 +151,6 @@
 
     const addToModerPlaylist = async (userID) => {
         try {
-            console.log(userID)
             const response = await axios.put(
                 `/playlist/${playlistID}/moders/${userID}`
             )
@@ -213,7 +213,6 @@
                 const response = await axios.get(
                     '/tracks/get'
                 )
-                console.log("Ура")
                 tracks.value = response.data.tracks
             }
             else {
@@ -221,7 +220,6 @@
                 tracksAdd.value = !tracksAdd.value
             }
         } catch (error) {
-            console.log("Лох")
             console.log(error)
         }
         
@@ -238,11 +236,17 @@
         }
     }
 
+    const trackUploadShow = () => {
+        store.trackUploadShow()
+    }
+
     function formatDuration(seconds) {
         const mins = Math.floor(seconds / 60)
         const secs = Math.floor(seconds % 60).toString().padStart(2, '0')
         return `${mins}:${secs}`
     }
+
+    
     
 
     onMounted(async () => {
@@ -250,7 +254,6 @@
             const response = await axios.get(`/playlist/${playlistID}/isFavoriteAndUserModer`)
             isFavorite.value = response.data.isFavorite
             isModer.value = response.data.isModer
-            console.log(isModer.value)
         } catch (error) {
             console.error('Ошибка при проверке плейлиста:', error)
         }

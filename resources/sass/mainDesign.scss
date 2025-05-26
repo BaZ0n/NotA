@@ -1,0 +1,207 @@
+body {
+    background-color: var(--bgBlack);
+}
+
+.sidebar {
+    display: flex;
+    width: 10vw; /* Ширина боковой панели */
+    height: 95vh;
+    background-color: var(--sliderBG);
+    position: fixed;
+    left: 0.5vw;
+    top: 2vh;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px;
+    z-index: 500;
+    font-family: Volkorn; 
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    opacity: 1;
+    transform: translateX(0);
+    border-radius: 20px;
+
+    .icon {
+        width: 32px;
+        height: 32px;
+        fill: white;
+    }
+
+    .icon:hover {
+        transition: all 0.2s linear;
+        fill: var(--primaryColor);
+    }
+}
+
+.sidebarBTN {
+    .icon {
+        width: 32px;
+        height: 32px;
+        fill: white;
+    }
+
+    .icon:hover {
+        transition: all 0.2s linear;
+        fill: var(--primaryColor);
+    }
+}
+
+.sidebar.hidden {
+    opacity: 0;
+    transform: translateX(-100%);
+    pointer-events: none; /* Чтобы нельзя было кликнуть по скрытому сайдбару */
+}
+
+.main-content {
+    margin-left: 80px; /* Отступ основного контента */
+    width: calc(100% - 80px);
+}
+
+.sidebar-item {
+    margin: 30px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+    text-decoration: none;
+    font-size: 12pt;
+}
+
+.user {
+    margin: 30px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+    text-decoration: none;
+}
+
+.userImg {
+    width: 64px;
+    height: 64px;
+    border: 1px solid var(--primaryColor);
+    border-radius: 50%;
+    object-fit:cover;
+}
+
+.svg path {
+    fill: white;
+}
+
+.svg {
+    width: 32px;
+    height: 32px;
+}
+
+.profileLink {
+    margin: 15px 0;
+    border: 2px solid var(--primaryColor);
+    border-radius: 50%;
+    padding: 5px;
+}
+
+.col {
+    margin: 0 10px
+}
+
+.bodyContainer {
+    width: 70%;
+    margin: 10vh 20vw;
+    align-items: center;
+    color: white;
+    font-family: Vollkorn;
+}
+
+.playlist img {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 15px;
+}
+
+.playlist {
+    width: fit-content;
+    transition: all .2s linear;
+    border: 1px solid var(--bgBlack);
+    border-radius: 10px;
+    text-decoration: none;
+}
+
+.playlist h4 {
+    margin-top: 10px;
+    margin-left: 10px;
+    color: var(--white);
+    width: fit-content;
+}
+
+.playlist h6 {
+    margin-top: 10px;
+    margin-left: 10px;
+    color: var(--gray);
+    width: fit-content;
+}
+
+.playlistLink {
+    text-decoration: none;
+    margin: 0 5px;
+}
+
+.playlistsCollection {
+    overflow-y: hidden;
+    padding: 15px 5px;
+}
+
+.artistsCollection {
+    overflow-y: hidden;
+    padding: 15px 5px;
+}
+
+.artistLink {
+    text-decoration: none;
+    margin: 0 5px;
+}
+
+.artist {
+    width: fit-content;
+    transition: all .2s linear;
+    border: 1px solid var(--bgBlack);
+    border-radius: 10px;
+    text-decoration: none;
+}
+
+.artist img {
+    width: 200px;
+    height: 200px;
+    object-fit: contain;
+    border-radius: 50%;
+}
+
+.artist h4 {
+    margin-top: 10px;
+    margin-left: 10px;
+    color: var(--white);
+}
+
+.sidebarBTN {
+    background-color: transparent;
+    border: 0;
+    position: fixed;
+    top: 3vh;
+    left: 2vw;
+    z-index: 550;
+    opacity: 1;
+}
+
+.sidebarBTN .svg path{
+    fill: white;
+}
+
+.sidebarBTN .svg:hover path {
+    transition: all 0.2s linear;
+    fill: var(--primaryColor);
+}
+
+.sidebarBTN.hidden {
+    opacity: 0;
+    transform: translateX(-100%);
+    pointer-events: none; /* Чтобы нельзя было кликнуть по скрытому сайдбару */
+}

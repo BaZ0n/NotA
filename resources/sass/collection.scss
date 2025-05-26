@@ -1,0 +1,64 @@
+.showAllPlaylistBTN {
+    background-color: var(--bgBlack);
+    border: 0;
+    color: var(--gray);
+    font-family: Volkorn;
+}
+
+.showAllPlaylistBTN:hover {
+    transition: all 0.2s;
+    color: var(--primaryColor)
+}
+
+.showAllTrackBTN {
+    background-color: var(--bgBlack);
+    border: 0;
+    color: var(--gray);
+    font-family: Volkorn;
+}
+
+.showAllTrackBTN:hover {
+    transition: all 0.2s;
+    color: var(--primaryColor)
+}
+
+.allPlaylistContainer {
+    grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    padding-top: 0;
+}
+
+.backBTN {
+    background-color: var(--bgBlack);
+    border: 0;
+    margin-right: 2vw;
+}
+
+.playlistCollection {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+
+.headCont {
+    display: flex;
+    justify-content: space-between;
+}
+
+.createPlaylistBTN {
+    width: 128px;
+    height: 128px;
+    border-radius: 10%;
+    background-color: var(--grayBlack);
+    border-color: var(--grayBlack);
+}
+
+.playlist-item {
+    height: fit-content;
+}
+
+.favoriteTracksCont {
+    width: 40vw;
+}

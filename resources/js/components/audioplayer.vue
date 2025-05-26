@@ -180,6 +180,9 @@
   const queueTracks = ref([])
   const nextUpTracks = ref([])
 
+  // Кнопки управления
+  const isLoop = ref(false)
+
   watch(() => store.audioSrc, async (newSrc) => {
     if (!newSrc || !audioPlayer.value) return;
     playlistID.value = store.currentPlaylistID 
@@ -210,12 +213,16 @@
       }
     };
 
-    try {
-      const response = await axios.get(`/playlist/${playlistID.value}/tracks`)
-      tracks.value = response.data.tracks
-      updateNextUpTracks()
-    } catch (error) {
-      console.error("Ошибка загрузки треков:", error)
+    if (store.justSelected) {
+      try {
+        console.log("Я тут")
+        const response = await axios.get(`/playlist/${playlistID.value}/tracks`)
+        tracks.value = response.data.tracks
+        updateNextUpTracks()
+        store.selectedPlaying()
+      } catch (error) {
+        console.error("Ошибка загрузки треков:", error)
+      }
     }
 
     // Начинаем загрузку
@@ -226,7 +233,7 @@
   const updateNextUpTracks = () => {
     if (!tracks.value || !store.currentTrackInfo) return;
     const currentTrackIndex = tracks.value.findIndex(
-      t => t.id === store.currentTrackInfo.id
+      track => track.id === store.currentTrackInfo.id
     );
     
     if (currentTrackIndex === -1) {
@@ -239,6 +246,7 @@
       currentTrackIndex + 1,
       currentTrackIndex + 6
     );
+    
   };
 
   // Управление очередью
@@ -248,12 +256,12 @@
 
   const addToQueue = (track) => {
     queueTracks.value.push(track);
-    console.log(queueTracks.value)
   };
 
   const removeFromQueue = (index) => {
     queueTracks.value.splice(index, 1);
   };
+
 
   const playFromQueue = (index) => {
     if (index >= queueTracks.value.length) return;
@@ -269,6 +277,7 @@
     play();
   };
 
+  // Добавление трека в очередь
   const playNextUp = (index) => {
     if (index >= nextUpTracks.value.length) return;
     
@@ -301,69 +310,90 @@
 
 
   // Управление воспроизведением
-const play = () => {
-  if (audioPlayer.value) {
-    audioPlayer.value.play();
-    isPlaying.value = true;
-    store.play();
-  }
-};
-
-const pause = () => {
-  if (audioPlayer.value) {
-    audioPlayer.value.pause();
-    isPlaying.value = false;
-    store.pause();
-  }
-};
-
-const nextTrack = () => {
-  if (queueTracks.value.length > 0) {
-    // Берем следующий трек из очереди
-    const nextTrack = queueTracks.value[0];
-    const trackData = {
-      ...nextTrack,
-      audioSrc: `/storage/${nextTrack.path.replace('public/audio/', '')}` 
+  const play = () => {
+    if (audioPlayer.value) {
+      audioPlayer.value.play();
+      isPlaying.value = true;
+      store.play();
     }
-    store.setTrack(trackData);
-    queueTracks.value.shift();
-  } else if (nextUpTracks.value.length > 0) {
-    // Берем следующий трек из плейлиста
-    const nextTrack = nextUpTracks.value[0];
-    const trackData = {
-      ...nextTrack,
-      audioSrc: `/storage/${nextTrack.path.replace('public/audio/', '')}` 
-    }
-    store.setTrack(trackData);
-    updateNextUpTracks();
-  } else if (tracks.value.length) {
-    // Переходим к следующему треку в плейлисте
-    currentIndex.value = (currentIndex.value + 1) % tracks.value.length;
-    const nextTrack = tracks.value[currentIndex.value]
-    const trackData = {
-      ...nextTrack,
-      audioSrc: `/storage/${nextTrack.path.replace('public/audio/', '')}` 
-    }
-    store.setTrack(trackData);
-    updateNextUpTracks();
-  }
-  
-  play();
-};
+  };
 
-const prevTrack = () => {
-  if (audioPlayer.value.currentTime > 3) {
-    // Если трек играет больше 3 секунд, перезапускаем его
-    audioPlayer.value.currentTime = 0;
-  } else if (tracks.value.length) {
-    // Переходим к предыдущему треку
-    currentIndex.value = (currentIndex.value - 1 + tracks.value.length) % tracks.value.length;
-    store.setTrack(tracks.value[currentIndex.value]);
-    updateNextUpTracks();
+  // Пауза
+  const pause = () => {
+    if (audioPlayer.value) {
+      audioPlayer.value.pause();
+      isPlaying.value = false;
+      store.pause();
+    }
+  };
+
+  // Следующий трек
+  const nextTrack = () => {
+    if (queueTracks.value.length > 0) {
+      // Берем следующий трек из очереди
+      const nextTrack = queueTracks.value[0];
+      const trackData = {
+        ...nextTrack,
+        audioSrc: `/storage/${nextTrack.path.replace('public/audio/', '')}` 
+      }
+      store.setTrack(trackData);
+      queueTracks.value.shift();
+    } else if (nextUpTracks.value.length > 0) {
+      // Берем следующий трек из плейлиста
+      const nextTrack = nextUpTracks.value[0];
+      const trackData = {
+        ...nextTrack,
+        audioSrc: `/storage/${nextTrack.path.replace('public/audio/', '')}` 
+      }
+      store.setTrack(trackData);
+      updateNextUpTracks();
+    } else if (nextUpTracks.value.length === 0 && isLoop) {
+      // Больше треков нет
+      isPlaying.value = false;
+      store.pause();
+    } else if (tracks.value.length) {
+      // Переходим к следующему треку в плейлисте
+      currentIndex.value = (currentIndex.value + 1) % tracks.value.length;
+      const nextTrack = tracks.value[currentIndex.value]
+      const trackData = {
+        ...nextTrack,
+        audioSrc: `/storage/${nextTrack.path.replace('public/audio/', '')}` 
+      }
+      store.setTrack(trackData);
+      updateNextUpTracks();
+    }
+    
     play();
-  }
-};
+  };
 
+  // Предыдущий трек
+  const prevTrack = () => {
+    console.log(tracks.value)
+    if (audioPlayer.value.currentTime > 3 || currentIndex.value == 0 && isLoop) {
+      console.log("Слушай заново", currentIndex.value)
+      // Если трек играет больше 3 секунд, перезапускаем его
+      audioPlayer.value.currentTime = 0;
+    } else if (tracks.value.length) {
+      if (!isLoop) {
+        currentIndex.value = (currentIndex.value - 1 + tracks.value.length) % tracks.value.length;
+      }
+      else {
+        currentIndex.value = currentIndex.value - 1
+      }
+      // Переходим к предыдущему треку
+      const prevTrack = tracks.value[currentIndex.value]
+      const trackData = {
+        ...nextTrack,
+        audioSrc: `/storage/${prevTrack.path.replace('public/audio/', '')}` 
+      }
+      store.setTrack(trackData);
+
+      updateNextUpTracks();
+      play();
+    }
+  };
+
+  // Ползунок громкости
   const setVolume = () => {
     if (audioPlayer.value) {
       audioPlayer.value.volume = volumeLevel.value
@@ -374,22 +404,13 @@ const prevTrack = () => {
     }
   }
 
+  // Мут
   const toggleMute = () => {
     if (audioPlayer.value) {
       isMuted.value = !isMuted.value
       audioPlayer.value.muted = isMuted.value
     }
   }
-
-  // const restartPlayback = () => {
-  //   if (audioPlayer.value) {
-  //     audioPlayer.value.pause();
-  //     audioPlayer.value.load();
-  //     if (isPlaying.value) {
-  //       audioPlayer.value.play();
-  //     }
-  //   }
-  // };
 
   // Прогресс бар функции
   const updateProgress = () => {
@@ -401,6 +422,7 @@ const prevTrack = () => {
     }
   };
 
+  // Ползунок
   const seek = (e) => {
     const seekTime = parseFloat(e.target.value);
     if (audioPlayer.value && !isNaN(seekTime)) {
@@ -409,6 +431,7 @@ const prevTrack = () => {
     }
   };
 
+  // Формат длительности
   const formatTime = (time) => {
     if (!time) return '0:00';
     const minutes = Math.floor(time / 60);

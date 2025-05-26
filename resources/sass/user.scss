@@ -1,0 +1,74 @@
+.pageContainer {
+    display: flex;
+}
+
+.imageContainer {
+    border: 2px solid var(--primaryColor);
+    border-radius: 50%;
+    display: inline-block;
+    padding: 3%;
+    width: fit-content;
+    height: fit-content;
+}
+
+.profileImage {
+    height: 64px;
+    width: 64px;
+}
+
+.playlistImage{
+    width: 128px;
+    height: 128px;
+    object-fit: cover;
+    border-radius: 10%;
+}
+
+.playlistCollection {
+    transition: all .2s linear;
+    border: 1px solid var(--bgHead);
+    border-radius: 10px;
+    text-decoration: none;
+    width: fit-content;
+    overflow-y: hidden;
+}
+
+.playlistLink {
+    width: fit-content;
+}
+
+.trackContainer {
+    margin: 2% 5%;
+}
+
+.container {
+    background-color: var(--bgHead);
+    margin: 0 5%;
+    border-radius: 30px;
+    padding: 0 5%;
+    width: 50vw;
+}
+
+.playlistCollection h5 {
+    color: white;
+}
+
+
+.line {
+    border: 1px solid var(--gray);
+    margin: 5% 0;
+}
+
+.playlistTracks {
+    overflow-y: none;
+    padding: 2vh 2vw;
+}
+
+.playlistContainer {
+    overflow-y: hidden;
+}
+
+.userInfContainer {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}

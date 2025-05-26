@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Carbon;
+use Inertia\Inertia;
 
 use function Laravel\Prompts\select;
 use function PHPUnit\Framework\isNull;
@@ -32,41 +33,47 @@ class MainController extends Controller
         return $info['playtime_seconds'] ?? 0;
     }
 
+    // Основная страница
     public function mainPage() {
         $playlists = DB::table('playlist')
-        ->join('users','playlist.userID','=','users.id')
-        ->select('playlist.*', 'users.name as userName')
-        ->get();
-        $user_playlists = DB::table('playlist')
-        ->where('playlist.userID', '=', Auth::user()->id)
-        ->select('playlist.*')
-        ->get();
-        $artists = DB::table('artist')
-        ->select('artist.*')
-        ->get();
-        return view('main/mainPage', ['playlists' => $playlists, 'user_playlists' => $user_playlists, 'artists' => $artists]);
-    }
+            ->join('users','playlist.userID','=','users.id')
+            ->select('playlist.*', 'users.name as userName')
+            ->get();
 
-    public function playlistPage() {
-        return view('main/playlistPage');
+        $user_playlists = DB::table('playlist')
+            ->where('playlist.userID', '=', Auth::user()->id)
+            ->select('playlist.*')
+            ->get();
+
+        $artists = DB::table('artist')
+            ->select('artist.*')
+            ->get();
+
+        return Inertia::render('mainPage', [
+            'playlists' => $playlists,
+            'user_playlists' => $user_playlists,
+            'artists' => $artists,
+            'authUser' => Auth::user()
+        ]);
     }
 
     public function userPage() {
         return view('main/userPage');
     }
 
-    public function artistPage(Artist $artist) {
-        $artist = DB::table('artist')->find($artist->id);
-        return view("main/artistPage", ['artist'=>$artist]);
-    }
-
-    public function collectionPage(Request $request) {
+    // Страница коллекции пользователя
+    public function collectionPage() {
         $playlists = DB::table("playlist")
-        ->where("playlist.userID", "=", Auth::id())
-        ->select('*')
-        ->get();
+            ->where("playlist.userID", "=", Auth::id())
+            ->select('*')
+            ->get();
+
         $tracks = DB::table("track")->select("*")->get();
-        return view("main/collectionPage", ['playlists'=>$playlists, 'tracks'=>$tracks]);
+
+        return Inertia::render('collectionPage', [
+            'playlists' => $playlists,
+            'tracks' => $tracks,
+        ]);
     }
 
     // Создание нового плейлиста
@@ -76,45 +83,45 @@ class MainController extends Controller
             'name' => 'nullable|string|max:255',
         ]);
 
-        $playlist = Playlist::create([
-            'playlistName' => $request->input('name', 'Новый плейлист'),
-            'userID' => Auth::id(),
-            'photo_path' => 'resources/images/templates/playlistImage.svg'
-        ]);
+        $playlistId = DB::transaction(function () use ($request) {
+            $playlist = Playlist::create([
+                'playlistName' => $request->input('name', 'Новый плейлист'),
+                'userID' => Auth::id(),
+                'photo_path' => 'templates/playlistImage.svg', // корректный путь для публичных ресурсов
+            ]);
 
-        $playlist_moders = Playlist_moders::create([
-            'playlistID' => $playlist->id,
-            'userID' => Auth::id()
-        ]);
+            Playlist_moders::create([
+                'playlistID' => $playlist->id,
+                'userID' => Auth::id(),
+            ]);
 
-        $favorite_playlist = Favorite_playlist::create([
-            'userID' => Auth::id(),
-            'playlistID' => $playlist->id
-        ]);
+            Favorite_playlist::create([
+                'userID' => Auth::id(),
+                'playlistID' => $playlist->id,
+            ]);
+
+            return $playlist;
+        });
 
         return response()->json([
             'success' => true,
-            'playlistId' => $playlist->id,
+            'playlistId' => $playlistId,
+            'redirect' => route('playlist.show', $playlistId->id),
         ]);
     }
 
-    // Просмотр плейлиста
-    public function show_playlist(Playlist $playlist)
+    // Функция для открытия страницы плейлиста
+    public function show_playlist($playlistID)
     {
         $playlist_inf = DB::table('playlist')
-        ->where('playlist.id', '=', $playlist->id)
-        ->join('users','playlist.userID','=','users.id')
-        ->select('playlist.*', 'users.name as userName')
-        ->first();
+            ->where('playlist.id', $playlistID)
+            ->join('users', 'playlist.userID', '=', 'users.id')
+            ->select('playlist.*', 'users.name as userName')
+            ->first();
 
-        return view('main/playlistPage', ['playlist' => $playlist_inf]);
-
-        // $tracks_playlist = DB::table('playlist_tracks')
-        // ->where('playlist_tracks.playlistID', '=', $playlist->id)
-        // ->join('track', 'playlist_tracks.trackID', '=', 'track.id')
-        // ->select('track.*')
-        // ->get();
-        // return view('main/playlistPage', ['playlist' => $playlist_inf, 'tracks' => $tracks_playlist]);
+        return Inertia::render('playlistPage', [
+            'playlist' => $playlist_inf,
+        ]);
     }
 
     public function playlistTracks($playlistID) {
@@ -138,7 +145,7 @@ class MainController extends Controller
         ]);
     }
 
-    public function trackUpload(Request $request) {
+    public function trackUpload(Request $request, $playlistID) {
         $request->validate([
             'file' => 'required|file|mimes:mp3,wav,aac,ogg|max:20480'
         ]);
@@ -239,13 +246,13 @@ class MainController extends Controller
         }
         
         $playlist_tracks = DB::table('playlist_tracks')
-        ->where('playlistID', '=', $request->playlistID)
+        ->where('playlistID', '=', $playlistID)
         ->where('trackID', '=', $track->id)
         ->first();
 
         if (empty($playlist_tracks)) {
             $playlist_tracks = Playlist_tracks::create([
-                'playlistID' => $request->playlistID,
+                'playlistID' => $playlistID,
                 'trackID' => $track->id
             ]);
         }
@@ -400,6 +407,15 @@ class MainController extends Controller
     // public function isFavoriteTrack($trackID) {
     //     $
     // }
+
+    // Страница артиста
+    public function artistPage(Artist $artist)
+    {
+        $artist = DB::table('artist')->find($artist->id);
+        return Inertia::render('artistPage', [
+            'artist' => $artist,
+        ]);
+    }
 
     public function artistTracks($artistID) {
         $tracks = DB::table('track_authors')

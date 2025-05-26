@@ -1,0 +1,134 @@
+.playlistInfo img {
+    width: 240px;
+    height: 240px;
+    object-fit: cover;
+    border-radius: 20px;
+}
+
+.playlist_image {
+    background-color: var(--sliderBG);
+    width: 256px;
+    height: 256px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+}
+
+.playlist_image .svg {
+    width: 100px;
+    height: 100px;
+}
+
+.buttonsCont {
+    display: flex;
+    justify-content: center;
+}
+
+.buttonsCont .svg {
+    width: 48px;
+    height: 48px;
+}
+
+.playlistInfo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.uploadBackground {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    z-index: 1000;
+    background-color: #000000b5;
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+}
+
+.uploadTrackContainer {
+    width: 50vw;
+    margin: auto;
+    background-color: var(--bgBlack);
+    padding: 5vh 5vw;
+    border-radius: 15px;
+}
+
+.uploadTrackContainer .form-control {
+    background-color: transparent;
+    border: 0;
+    border-bottom: 1px solid var(--placeholder);
+    color: white;
+    margin: 5% 0;
+}
+
+.uploadTrackContainer .form-control::placeholder {
+    color:var(--white);
+}
+
+.uploadTrackContainer .form-control:focus::placeholder {
+    color: transparent;
+}
+
+.input-file {
+	position: relative;
+	display: inline-block;
+}
+.input-file-btn {
+	position: relative;
+	display: inline-block;
+	cursor: pointer;
+	outline: none;
+	text-decoration: none;
+	font-size: 10pt;
+	vertical-align: middle;
+	color: var(--white);
+	text-align: center;
+	border-radius: 4px;
+	background-color: var(--btnBg);
+	line-height: 22px;
+	height: 40px;
+	box-sizing: border-box;
+	border: none;
+	margin: 0;
+	transition: background-color 0.2s;
+}
+.input-file-text {
+	padding: 0 10px;
+	line-height: 40px;
+	display: inline-block;
+}
+.input-file input[type=file] {
+	position: absolute;
+	z-index: -1;
+	opacity: 0;
+	display: block;
+	width: 0;
+	height: 0;
+}
+
+.input-file:hover {
+    cursor: pointer;
+}
+
+/* Hover/active */
+.input-file:hover .input-file-btn {
+	background-color: var(--primaryColorDark);
+}
+ 
+/* Disabled */
+.input-file input[type=file]:disabled + .input-file-btn {
+	background-color: #eee;
+}
+
+.title-edit-input {
+    outline: none;
+    border: 0;
+    background-color: transparent;
+    color: white;
+    border-bottom: 1px solid var(--gray);
+    border-radius: 5px;
+    width: 240px;
+}

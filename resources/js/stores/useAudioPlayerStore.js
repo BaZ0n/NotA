@@ -9,6 +9,9 @@ export const useAudioPlayerStore = defineStore('audioPlayer', () => {
   const isPlaying = ref(false)
   const currentArtistName = ref(null)
   const currentPlaylistID = ref(0)
+  const justSelected = ref(false)
+  const trackUpload = ref(false)
+  const active_user = ref(null)
 
   const setTrack = (track, index) => {
     currentTrackInfo.value = track
@@ -16,11 +19,18 @@ export const useAudioPlayerStore = defineStore('audioPlayer', () => {
     currentIndex.value = index
     currentArtistName.value = track.artistName
     currentPlaylistID.value = track.playlistId
-    
+  }
+
+  const setUser = (user) => {
+    active_user = user
   }
 
   const play = () => { isPlaying.value = true }
   const pause = () => { isPlaying.value = false }
+  const selectTrack = () => { justSelected.value = true }
+  const selectedPlaying = () => { justSelected.value = false }
+  const trackUploadShow = () => { trackUpload.value = true }
+  const trackUploadHide = () => { trackUpload.value = false }
 
   return {
     currentTrackInfo,
@@ -29,8 +39,14 @@ export const useAudioPlayerStore = defineStore('audioPlayer', () => {
     currentArtistName,
     currentPlaylistID,
     isPlaying,
+    justSelected,
+    trackUpload,
     setTrack,
     play,
-    pause
+    pause,
+    selectTrack,
+    selectedPlaying,
+    trackUploadShow,
+    trackUploadHide
   }
 })

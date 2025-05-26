@@ -1,5 +1,5 @@
 <template>
-    <h2 class="emptyPlaylist" v-if="tracks.length == 0">Упс. Плейлист пока что пустой</h2>
+    <h2 class="emptyPlaylist" v-if="tracks.length == 0">Упс. Тут пока что пустой</h2>
     <div class="trackLink"  
     v-for="(track, index) in tracks"
     :key="track.id"
@@ -24,9 +24,15 @@
     import axios from 'axios'
     import { useAudioPlayerStore } from '@/stores/useAudioPlayerStore'
     
+
+    const props = defineProps({
+        playlistId: Object,
+        artistId: Object
+    })
+
+    const playlistID = props.playlistId
+    const artistID = props.artistId
     const store = useAudioPlayerStore()
-    const playlistID = inject('playlistID')
-    const artistID = inject('artistID')
     const tracks = ref([])
     const artists = ref([])
     const test = ref([])
@@ -73,15 +79,11 @@
             audioSrc: `/storage/${track.path.replace('public/audio/', '')}`
         }
         
+        await store.selectTrack()
+        await store.play()
         // Загрузка трека в плеер
         const loaded = await store.setTrack(trackData)
-        await store.play()
 
-        // console.log(loaded)
-        // Воспроизведение только если загрузка успешна
-        // if (loaded) {
-        //     await store.play()
-        // }
     } catch (err) {
         console.error('Ошибка при воспроизведении:', err)
         store.error = `Ошибка: ${err.message}`
@@ -102,6 +104,7 @@
         align-items: center;
         display: flex;
         text-align: center;
+        justify-content: center;
     }
 
 </style>

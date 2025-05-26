@@ -18,17 +18,13 @@
 
     const userID = inject('userID')
     const artists = ref([])
-    console.log("Привет")
 
     onMounted(async () => {
-        console.log("Начало")
         if (userID == null) {
             try {
-                console.log("Зашёл")
                 const response = await axios.get(`/api/collectionPage/${userID}/artists`)
                 artists.value = response.data 
             } catch(error) {
-                console.log("Бля")
                 console.error('Ошибка при загрузке исполнителей.', error)
             }
         }

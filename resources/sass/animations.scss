@@ -1,0 +1,93 @@
+.form-group input:focus {
+    transition: all 0.2s linear;
+    box-shadow: 0 0 10px var(--primaryColor);
+    border-color: var(--primaryColor);
+
+}
+
+.button-primary {
+    background-color: var(--btnBg);
+    border-radius: 30px;
+    transition: all 0.2s linear;
+    border: 0;
+}
+
+.button-primary:hover {
+    background-color: var(--primaryColor);
+    box-shadow: 0 0 5px var(--primaryColor);
+}
+
+.link-primary .text-center{
+    transition: all 0.2s linear;
+}
+
+.link-primary .text-center {
+    color:var(--placeholder);
+}
+
+.link-primary .text-center:hover {
+    color:var(--primaryColor);
+}
+
+.playlist:hover {
+    border: 1px solid var(--primaryColor);
+    border-radius: 20px;
+}
+
+.playlist:hover h4 {
+    color: var(--primaryColor);
+    transition: all .2s linear;
+}
+
+.artist:hover {
+    border: 1px solid var(--primaryColor);
+    border-radius: 20px;
+}
+
+.artist:hover h4 {
+    color: var(--primaryColor);
+}
+
+.sidebar-item:hover path {
+    fill: var(--primaryColor);
+    transition: all .2s linear;
+}
+
+.user:hover .userImg{
+    transition: all .2s linear;
+    box-shadow: 0 0 10px var(--primaryColor);
+}
+
+.user:hover .userName{
+    transition: all .2s linear;
+    color: var(--primaryColor);
+}
+
+.sidebar-item:hover span{
+    color: var(--primaryColor);
+}
+
+
+.playlistCollection:hover img{
+    border-radius: 20px;
+    transition: all .2s linear;
+    box-shadow: 0 0 6px var(--primaryColor);
+}
+
+.playlistCollection:hover h5{
+    transition: all .2s linear;
+    color: var(--primaryColor);
+}
+
+.backBTN:hover path{
+    transition: all .2s;
+    fill: var(--primaryColor);
+}
+
+.createPlaylistBTN:hover {
+    transition: all 0.2s linear;
+    border-color: var(--primaryColor);
+    box-shadow: 0 0 5px var(--primaryColor);
+}
+
+
