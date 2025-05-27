@@ -2,7 +2,7 @@
   <Link :href="`/artist/${artist.id}`" class="artistLink">
     <div class="artist px-2 py-2">
       <img src="/storage/templates/userImage.svg" />
-      <h4 class="text-center">{{ artist.artistName }}</h4>
+      <h6 class="text-center">{{ artist.artistName }}</h6>
     </div>
   </Link>
 </template>

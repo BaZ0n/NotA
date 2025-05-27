@@ -14,7 +14,7 @@
     </head>
     <body style="overflow-y:hidden; background-image: url({{ asset('images/background/backgroundTwo.jpg') }}); background-size: cover; width:100%; min-height:100vh; height:auto;">
         <div class="container-fluid">
-            <div class="container w-50 px-5 py-3" style="background-color: #1E1E1E; border: 2px solid black; height:100vh; margin: auto;">
+            <div class="container w-50 px-5 py-3" style="background-color: #1E1E1E; border: 2px solid black; height:100vh; margin: auto; display: flex; flex-direction: column;">
                 <h1 class="text-center my-4" style="color:white; font-family: Lora;">NotA</h1>
                 @yield('main_content')
             </div>

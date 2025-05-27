@@ -6,6 +6,8 @@ use Illuminate\Auth\Events\Registered;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Playlist;
+use App\Models\playlist_moders;
 
 class LoginController extends Controller
 {
@@ -15,7 +17,7 @@ class LoginController extends Controller
             return view('loginSignIn/welcome');
         }
         else {
-            return redirect()->action(MainController::class, 'mainPage');
+            return redirect()->action(MainController::class, 'main');
         }
     }
 
@@ -39,7 +41,7 @@ class LoginController extends Controller
             return view('loginSignIn/registrationProfile');
         }
         else {
-            return redirect()->action(MainController::class, 'mainPage');
+            return redirect()->action(MainController::class, 'main');
         }
     }
 

@@ -36,14 +36,34 @@ class MainController extends Controller
     // Основная страница
     public function mainPage() {
         $playlists = DB::table('playlist')
-            ->join('users','playlist.userID','=','users.id')
-            ->select('playlist.*', 'users.name as userName')
-            ->get();
-
+        ->where('playlist.playlistName','!=', "Моё любимое")
+        ->join('users','playlist.userID','=','users.id')
+        ->select('playlist.*', 'users.name as userName')
+        ->get();
+        
         $user_playlists = DB::table('playlist')
             ->where('playlist.userID', '=', Auth::user()->id)
             ->select('playlist.*')
             ->get();
+
+        if ($user_playlists->isEmpty()) {
+            dd($user_playlists->all());
+            $playlist = playlist::create([
+                'playlistName' => "Моё любимое",
+                'userID' => Auth::id(),
+                'photo_path' => 'resources/images/templates/favorite_playlist.svg'
+            ]);
+
+            $playlist_moders = playlist_moders::create([
+                'playlistID' => $playlist->id,
+                'userID' => Auth::id()
+            ]);
+
+            $favorite_playlist = favorite_playlist::create([
+                'playlistID' => $playlist->id,
+                'userID' => Auth::id()
+            ]);
+        }
 
         $artists = DB::table('artist')
             ->select('artist.*')
@@ -63,16 +83,18 @@ class MainController extends Controller
 
     // Страница коллекции пользователя
     public function collectionPage() {
-        $playlists = DB::table("playlist")
-            ->where("playlist.userID", "=", Auth::id())
-            ->select('*')
-            ->get();
+        $favorite_playlists = DB::table("playlist")
+        ->where("playlist.userID", "=", Auth::id())
+        ->select('*')
+        ->get();
 
-        $tracks = DB::table("track")->select("*")->get();
+        $playlist_favoriteTracks = DB::table("playlist")
+        ->where('playlist.userID', '=', Auth::id())
+        ->first();
 
         return Inertia::render('collectionPage', [
-            'playlists' => $playlists,
-            'tracks' => $tracks,
+            'playlistsFavorite' => $favorite_playlists,
+            'playlistFavoriteTracks' => $playlist_favoriteTracks
         ]);
     }
 
@@ -484,3 +506,12 @@ class MainController extends Controller
     }
 
 }
+
+// Запрос на треки: с артистом
+// $favorite_tracks = DB::table('playlist_tracks')
+// ->where('playlist_tracks.playlistID', '=', $playlist_favoriteTracks->id)
+// ->join('track', 'playlist_tracks.trackID', '=', 'track.id')
+// ->join('track_authors', 'playlist_tracks.trackID', '=', 'track_authors.trackID')
+// ->join('artist', 'artist.id', '=', 'track_authors.artistID')
+// ->select('track.*', 'artist.artistName as artistName', 'artist.id as artistID')
+// ->get();

@@ -9,12 +9,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&family=Vollkorn:wght@400;700&display=swap" rel="stylesheet">
-    <link href="{{ asset('css/MainDesignCss/mainDesign.css') }}" rel="stylesheet">
+    <!-- <link href="{{ asset('css/MainDesignCss/mainDesign.css') }}" rel="stylesheet"> -->
     <link href="{{ asset('css/animations.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/MainDesignCss/playlistDesign.css') }}" rel="stylesheet">
+    <!-- <link href="{{ asset('css/MainDesignCss/playlistDesign.css') }}" rel="stylesheet">
     <link href="{{ asset('css/MainDesignCss/userPageDesign.css')}}" rel="stylesheet">
     <link href="{{ asset('css/MainDesignCss/adaptive.css')}}" rel="stylesheet">
-    <link href="{{ asset('css/MainDesignCss/collectionDesign.css')}}" rel="stylesheet">
+    <link href="{{ asset('css/MainDesignCss/collectionDesign.css')}}" rel="stylesheet"> -->
     <!-- Bootstrap и кастомные стили -->
     @vite(['resources/js/app.js', 'resources/sass/includeAll.scss'])
     

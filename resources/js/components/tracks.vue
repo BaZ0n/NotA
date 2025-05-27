@@ -1,5 +1,5 @@
 <template>
-    <h2 class="emptyPlaylist" v-if="tracks.length == 0">Упс. Тут пока что пустой</h2>
+    <h2 class="emptyPlaylist" v-if="tracks.length == 0">Упс. Тут пока что пусто</h2>
     <div class="trackLink"  
     v-for="(track, index) in tracks"
     :key="track.id"
@@ -83,6 +83,8 @@
             audioSrc: `/storage/${track.path.replace('public/audio/', '')}`
         }
         
+        console.log(trackData.audioSrc)
+
         await store.selectTrack()
         await store.play()
         // Загрузка трека в плеер

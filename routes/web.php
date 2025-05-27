@@ -28,7 +28,7 @@ Route::middleware('auth')->group(function() {
 
     Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
         $request->fulfill();
-
+        
         return redirect('/main');
     })->middleware(['auth', 'signed'])->name('verification.verify');
 

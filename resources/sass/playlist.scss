@@ -171,3 +171,71 @@
 .user_element:hover .addModers {
     background-color: var(--primaryColorDark);
 }
+
+.playlistsCollection {
+    overflow-y: hidden;
+    padding: 15px 5px;
+
+    .playlistLink {
+        text-decoration: none;
+        margin: 0 5px;
+    }
+
+    .playlist {
+        width: fit-content;
+        transition: all .2s linear;
+        border: 1px solid var(--bgBlack);
+        border-radius: 10px;
+        text-decoration: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        
+        img {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 15px;
+        }
+
+        h4 {
+            margin: 5px 0;
+            color: var(--white);
+            width: fit-content;
+
+        }
+
+        h6 {
+            margin: 5px 0;
+            color: var(--gray);
+            width: fit-content;
+        }
+    }
+}
+
+.playlistCollection {
+    transition: all .2s linear;
+    border: 1px solid var(--bgHead);
+    border-radius: 10px;
+    text-decoration: none;
+    width: fit-content;
+    overflow-y: hidden;
+}
+
+.playlistLink {
+    width: fit-content;
+    text-decoration: none;
+}
+
+.playlistCollection h5 {
+    color: white;
+}
+
+.playlistTracks {
+    overflow-y: none;
+    padding: 2vh 2vw;
+}
+
+.playlistContainer {
+    overflow-y: hidden;
+}

@@ -12,7 +12,7 @@
         </div>
 
         <div class="playlistTracks mx-3 py-3 px-3">
-          <Tracks :playlistId="1"/>
+          <Tracks :playlistId="playlist_favoriteTracks.id"/>
         </div>
       </div>
 
@@ -36,7 +36,7 @@
           <li v-for="(playlist, index) in playlists.slice(0, 5)" :key="playlist.id" class="playlist-item">
             <Link :href="`/playlist/${playlist.id}`" class="playlistLink" style="margin:0">
               <div class="playlistCollection py-2 px-1">
-                <img class="playlistImage" src="/storage/templates/playlistImage.svg" />
+                <img class="playlistImage" :src="'storage/' + playlist.photo_path" />
                 <h5 class="text-center mt-2">{{ playlist.playlistName }}</h5>
               </div>
             </Link>
@@ -71,14 +71,14 @@ import ArtistsCard from '@/components/artistHCard.vue' // Исполнители
 import { onMounted } from 'vue';
 
 const props = defineProps({
-  playlists: Array,
-  tracks: Array
+  playlistsFavorite: Array,
+  playlistFavoriteTracks: Array
 })
 
 const userStore = useUserStore()
 
-const playlists = props.playlists
-const tracks = props.tracks
+const playlists = props.playlistsFavorite
+const playlist_favoriteTracks = props.playlistFavoriteTracks
 
 const showAllTracks = () => {
   alert('Показать все треки — реализация позже');

@@ -27,3 +27,47 @@
         align-items: center;
     }
 }
+
+.artistsCollection {
+    overflow-y: hidden;
+    padding: 15px 5px;
+
+    .artistLink {
+        text-decoration: none;
+        margin: 0 5px;
+
+        .artist {
+            width: fit-content;
+            transition: all 0.2s linear;
+            border: 1px solid var(--bgBlack);
+            border-radius: 10px;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            img {
+                width: 200px;
+                height: 200px;
+                object-fit: contain;
+                border-radius: 50%;
+            }
+
+            h6 {
+                margin-top: 10px;
+                margin-left: 10px;
+                color: var(--white);
+            }
+        }
+
+        .artist:hover {
+            border: 1px solid var(--primaryColor);
+            border-radius: 20px;
+        }
+
+        .artist:hover h6 {
+            color: var(--primaryColor);
+        }
+    }
+}
+

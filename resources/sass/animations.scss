@@ -39,14 +39,7 @@
     transition: all .2s linear;
 }
 
-.artist:hover {
-    border: 1px solid var(--primaryColor);
-    border-radius: 20px;
-}
 
-.artist:hover h4 {
-    color: var(--primaryColor);
-}
 
 .sidebar-item:hover path {
     fill: var(--primaryColor);
