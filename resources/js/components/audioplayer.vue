@@ -13,7 +13,7 @@
         <audio ref="audioPlayer" 
           :src="store.audioSrc" 
           @timeupdate="updateProgress" 
-          @ended="handleTrackEnd"></audio>
+          @ended="nextTrack"></audio>
     
         <div class="multimediaButtonsContainer">
           <button class="multBTN" @click="prevTrack">
@@ -285,27 +285,6 @@
     // store.setTrack(track);
     updateNextUpTracks();
     play();
-  };
-
-  // Обработка окончания трека
-  const handleTrackEnd = () => {
-    if (queueTracks.value.length > 0) {
-        // Воспроизводим следующий трек из очереди
-        const nextTrack = queueTracks.value[0];
-        store.setTrack(nextTrack);
-        queueTracks.value.shift();
-        play();
-    } else if (nextUpTracks.value.length > 0) {
-        // Воспроизводим следующий трек из плейлиста
-        const nextTrack = nextUpTracks.value[0];
-        store.setTrack(nextTrack);
-        updateNextUpTracks();
-        play();
-    } else {
-        // Больше треков нет
-        isPlaying.value = false;
-        store.pause();
-    }
   };
 
 

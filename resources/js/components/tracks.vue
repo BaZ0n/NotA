@@ -8,12 +8,13 @@
             <div class="leftContainer" style="display: flex; align-items: center;">
                 <h4 class="track-number me-3">{{ index + 1 }}.</h4>
                 <div class="trackInfo">
-                    <a href="#"><h6 class="trackArtist">{{ track.artistName }} {{ track.albumName }}</h6></a>
-                    <a href="#"><h5 class="trackName">{{track.trackName}}</h5></a>
+                    <Link :href="`/artist/${track.artistID}`"><span class="trackArtist">{{ track.artistName }} {{ track.albumName }}</span></Link>
+                    <Link :href="`/album/${track.albumID}`"><span class="trackName">{{track.trackName}}</span></Link>
                 </div>
             </div>
             <h5 class="trackDuration">{{ formatDuration(track.duration) }}</h5>
         </div>
+        <hr>
     </div>
 </template>
 
@@ -23,6 +24,7 @@
     import { inject } from 'vue'
     import axios from 'axios'
     import { useAudioPlayerStore } from '@/stores/useAudioPlayerStore'
+    import { Link } from '@inertiajs/inertia-vue3'
     
 
     const props = defineProps({
@@ -40,8 +42,9 @@
     onMounted(async () => {
         if (!isNaN(playlistID)) {
             try {
-                const response = await axios.get(`/api/playlistPage/${playlistID}/tracks`)
+                const response = await axios.get(`/api/playlist/${playlistID}/tracks`)
                 tracks.value = response.data
+                console.log(tracks)
             } catch (error) {
                 console.error('Ошибка при загрузке треков плейлиста:', error)
             }
@@ -50,6 +53,7 @@
             try {
                 const response = await axios.get(`/artist/${artistID}/tracks`)
                 tracks.value = response.data
+                console.log(tracks)
             } catch (error) {
                 console.error('Ошибка при загрузке треков плейлиста:', error)
             }

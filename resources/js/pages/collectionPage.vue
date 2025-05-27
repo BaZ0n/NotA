@@ -17,7 +17,7 @@
       </div>
 
       <!-- Блок с плейлистами -->
-      <div class="playlistContainer mx-2 my-3 px-1" style="overflow-y: auto; width: 15vw;">
+      <div class="playlistContainer mx-2 my-3 px-1" style="overflow-y: auto;">
         <div class="headCont d-flex">
           <h3>Плейлисты</h3>
           <button class="showAllPlaylistBTN mx-2" @click="showAllPlaylists">
@@ -64,14 +64,18 @@
 <script setup>
 import { Link } from '@inertiajs/inertia-vue3'
 import { Inertia } from '@inertiajs/inertia'
+import { useUserStore } from '@/stores/activeUserStore';
 
 import Tracks from '@/components/tracks.vue'
 import ArtistsCard from '@/components/artistHCard.vue' // Исполнители
+import { onMounted } from 'vue';
 
 const props = defineProps({
   playlists: Array,
   tracks: Array
 })
+
+const userStore = useUserStore()
 
 const playlists = props.playlists
 const tracks = props.tracks
@@ -109,4 +113,9 @@ const createPlaylist = async () => {
     console.log(e.message)
   }
 }
+
+onMounted(() => {
+  userStore.loadFromStorage();
+  console.log(userStore)
+})
 </script>

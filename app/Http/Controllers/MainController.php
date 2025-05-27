@@ -409,9 +409,9 @@ class MainController extends Controller
     // }
 
     // Страница артиста
-    public function artistPage(Artist $artist)
+    public function artist($artistID)
     {
-        $artist = DB::table('artist')->find($artist->id);
+        $artist = DB::table('artist')->find($artistID);
         return Inertia::render('artistPage', [
             'artist' => $artist,
         ]);
@@ -482,4 +482,5 @@ class MainController extends Controller
             ]);
         }
     }
+
 }

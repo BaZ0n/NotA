@@ -60,5 +60,13 @@
 }
 
 .favoriteTracksCont {
-    width: 40vw;
+    width: 80%;
+
+    .playlistTracks {
+        width: 95%;
+    }
+}
+
+.playlistContainer {
+    width: 20%;
 }

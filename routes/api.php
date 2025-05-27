@@ -10,6 +10,6 @@ use Illuminate\Support\Facades\Http;
 // })->middleware('auth:sanctum');
 
 
-Route::get('/playlistPage/{playlistID}/tracks', [AudioController::class, 'getTracks']);
+Route::get('/playlist/{playlistID}/tracks', [AudioController::class, 'getTracks']);
 
 Route::get("/play-audio", [AudioController::class, 'playAudio'])->name('playaudio');

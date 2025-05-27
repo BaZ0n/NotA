@@ -1,7 +1,11 @@
 .artistBodyContainer {
     display: flex;
     .artistInfoCont {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
         width: fit-content;
+
         .artistAvatar {
             width: 128px;
             height: 128px;

@@ -91,3 +91,31 @@
 }
 
 
+html {
+    overflow-x: hidden;
+    overflow-y: scroll;
+
+    /* Define the scrollbar style */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    /* Ползунок */
+    ::-webkit-scrollbar-thumb {
+        background: var(--grayBlack);
+        border-radius: 20px;
+        transition: all 0.2s linear;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        transition: all 0.2s linear;
+        background-color: var(--primaryColor);
+    }
+
+    /* Дорожка */
+    ::-webkit-scrollbar-track {
+        background-color: var(--bgBlack);
+    }
+    
+}

@@ -15,7 +15,7 @@
       <!-- Контент сайдбара -->
       <Link href="/user" class="user" style="margin-bottom: 30px;">
         <img class="userImg" src="/storage/templates/userImage.svg" alt="Профиль" />
-        <!-- <span class="userName">{{ props.authUser.name }}</span> -->
+        <span class="userName">{{ userStore.activeUser?.name }}</span>
       </Link>
 
       <div style="flex-grow: 1;"></div>
@@ -58,57 +58,63 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { usePage, Link } from '@inertiajs/inertia-vue3'
-import AudioPlayer from '@/components/audioplayer.vue'
-import { error } from 'laravel-mix/src/Log'
+  import { ref, computed, onMounted } from 'vue'
+  import { usePage, Link } from '@inertiajs/inertia-vue3'
+  import AudioPlayer from '@/components/audioplayer.vue'
+  import { error } from 'laravel-mix/src/Log'
+  import { useUserStore } from '@/stores/activeUserStore';
 
-import MainPageIcon from '@/assets/icons/mainPageIcon.svg'
-import SearchIcon from '@/assets/icons/searchIcon.svg'
-import SettingsIcon from '@/assets/icons/settingsIcon.svg'
-import CollectionIcon from '@/assets/icons/collectionIcon.svg'
-import SidebarIcon from '@/assets/icons/sidebar.svg'
+  import MainPageIcon from '@/assets/icons/mainPageIcon.svg'
+  import SearchIcon from '@/assets/icons/searchIcon.svg'
+  import SettingsIcon from '@/assets/icons/settingsIcon.svg'
+  import CollectionIcon from '@/assets/icons/collectionIcon.svg'
+  import SidebarIcon from '@/assets/icons/sidebar.svg'
 
-const props = defineProps({
-  playlists: Object,
-  user_playlists: Object,
-  artists: Object,
-  authUser: Object
-})
+  const props = defineProps({
+    playlists: Object,
+    user_playlists: Object,
+    artists: Object,
+    authUser: Object
+  })
 
-const page = usePage()
-const user = computed(() => page.props.authUser ?? null) // Безопасный доступ
-const errors = computed(() => page.props.errors)
-// const flashError = computed(() => page.props.flash.error)
+  const userStore = useUserStore();
+  const page = usePage()
+  const user = computed(() => page.props.authUser ?? null) // Безопасный доступ
+  const errors = computed(() => page.props.errors)
+  // const flashError = computed(() => page.props.flash.error)
 
-// const allErrors = computed(() => {
-//     const result = Object.values(errors.value)
-//     if (flashError.value) result.push(flashError.value)
-//     return result
-// })
+  // const allErrors = computed(() => {
+  //     const result = Object.values(errors.value)
+  //     if (flashError.value) result.push(flashError.value)
+  //     return result
+  // })
 
-// const hasErrors = computed(() => allErrors.value.length > 0)
-const userImage = '/resources/images/templates/userImage.svg'
+  // const hasErrors = computed(() => allErrors.value.length > 0)
+  const userImage = '/resources/images/templates/userImage.svg'
 
-// === Логика отображения сайдбара ===
-const isHidden = ref(false)
-const isHiding = ref(false)
+  // === Логика отображения сайдбара ===
+  const isHidden = ref(false)
+  const isHiding = ref(false)
 
-function toggleSidebar() {
-  if (!isHidden.value) {
-    // Скрыть
-    isHiding.value = true
-    setTimeout(() => {
-      isHidden.value = true
-    }, 10) // подгоняем под CSS-анимацию
-  } else {
-    // Показать
-    isHidden.value = false
-    setTimeout(() => {
-      isHiding.value = false
-    }, 10) // дать Vue прорисовать
+  function toggleSidebar() {
+    if (!isHidden.value) {
+      // Скрыть
+      isHiding.value = true
+      setTimeout(() => {
+        isHidden.value = true
+      }, 10) // подгоняем под CSS-анимацию
+    } else {
+      // Показать
+      isHidden.value = false
+      setTimeout(() => {
+        isHiding.value = false
+      }, 10) // дать Vue прорисовать
+    }
   }
-}
+
+  onMounted(() =>{
+    userStore.setUser(props.authUser)
+  })
 </script>
 
 

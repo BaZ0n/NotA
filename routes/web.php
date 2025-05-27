@@ -59,7 +59,7 @@ Route::middleware(['auth', 'verified'])->group(function() {
     
     Route::get("/user", [MainController::class,'userPage']);
 
-    Route::get("/artist/{artist}", [MainController::class, 'artistPage']);
+    Route::get("/artist/{artistID}", [MainController::class, 'artist']);
 
     
 

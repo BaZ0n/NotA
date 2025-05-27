@@ -3,6 +3,7 @@
     height: 240px;
     object-fit: cover;
     border-radius: 20px;
+    border: 1px solid var(--gray);
 }
 
 .playlist_image {
@@ -131,4 +132,8 @@
     border-bottom: 1px solid var(--gray);
     border-radius: 5px;
     width: 240px;
+}
+
+.tracksList {
+    width: 100%;
 }

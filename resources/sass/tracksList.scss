@@ -1,7 +1,7 @@
 @use 'colors';
 
 .tracksList, .playlistTracks, .tracks_list {
-    background-color: var(--bgBlack);
+    background-color: var(--sliderBG);
     border-radius: 20px;
     border: 2px solid var(--gray);
     list-style-type: none;
@@ -18,6 +18,11 @@
             justify-content: space-between;
             cursor: pointer;
 
+            .trackInfo {
+                display: flex;
+                flex-direction: column;
+            }
+
             a {
                 text-decoration: none;
             }
@@ -28,10 +33,12 @@
             }
 
             .trackArtist {
+                font-size: small;
                 color: var(--gray);
             }
 
             .trackName {
+                font-size: larger;
                 color: var(--white)
             }
             

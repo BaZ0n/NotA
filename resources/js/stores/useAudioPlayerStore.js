@@ -22,7 +22,7 @@ export const useAudioPlayerStore = defineStore('audioPlayer', () => {
   }
 
   const setUser = (user) => {
-    active_user = user
+    active_user.value = user
   }
 
   const play = () => { isPlaying.value = true }
@@ -41,12 +41,14 @@ export const useAudioPlayerStore = defineStore('audioPlayer', () => {
     isPlaying,
     justSelected,
     trackUpload,
+    active_user,
     setTrack,
     play,
     pause,
     selectTrack,
     selectedPlaying,
     trackUploadShow,
-    trackUploadHide
+    trackUploadHide,
+    setUser
   }
 })

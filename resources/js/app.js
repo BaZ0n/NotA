@@ -83,12 +83,14 @@ import { createApp, h } from 'vue'
 import { createInertiaApp } from '@inertiajs/inertia-vue3'
 import { createPinia } from 'pinia'
 import Layout from './layouts/mainLayout.vue'
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
 
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 // Создаем хранилище Pinia
 const pinia = createPinia()
+pinia.use(piniaPluginPersistedstate);
 
 createInertiaApp({
   resolve: name => {
