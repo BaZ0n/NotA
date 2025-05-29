@@ -35,6 +35,8 @@ return new class extends Migration
             $table->foreign('playlistID')->references('id')->on('playlist');
             $table->unsignedBigInteger('trackID');
             $table->foreign('trackID')->references('id')->on('track');
+            $table->unsignedBigInteger('userID');
+            $table->foreign('userID')->references('id')->on('users');
             $table->timestamps();
         });
 

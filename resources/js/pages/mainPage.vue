@@ -1,5 +1,5 @@
 <template>
-    <h2 class="text mt-5 mb-2 mx-4">Может понравится</h2>
+    <h2 class="text mt-5 mb-2 mx-4">Плейлисты пользователей</h2>
     <div class="playlistsCollection mx-3 d-flex">
       <PlaylistCard
         v-for="(playlist, i) in playlists.slice(0, 10)"
@@ -8,7 +8,7 @@
       />
     </div>
 
-    <h2 class="text mt-5 mb-2 mx-4">Последнее из любимого</h2>
+    <h2 class="text mt-5 mb-2 mx-4">Ваши плейлисты</h2>
     <div class="playlistsCollection mx-3 d-flex">
       <PlaylistCard
         v-for="(playlist, i) in user_playlists.slice(0, 10)"
@@ -18,7 +18,7 @@
       />
     </div>
 
-    <h3 class="text mt-5 mb-2 mx-4">Похожи на любимых</h3>
+    <h3 class="text mt-5 mb-2 mx-4">Исполнители</h3>
     <div class="artistsCollection mx-3 d-flex">
       <ArtistCard
         v-for="(artist, i) in artists.slice(0, 10)"

@@ -19,6 +19,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Carbon;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Log;
 
 use function Laravel\Prompts\select;
 use function PHPUnit\Framework\isNull;
@@ -47,11 +48,10 @@ class MainController extends Controller
             ->get();
 
         if ($user_playlists->isEmpty()) {
-            dd($user_playlists->all());
             $playlist = playlist::create([
                 'playlistName' => "Моё любимое",
                 'userID' => Auth::id(),
-                'photo_path' => 'resources/images/templates/favorite_playlist.svg'
+                'photo_path' => 'templates/favorite_playlist.svg'
             ]);
 
             $playlist_moders = playlist_moders::create([
@@ -169,7 +169,7 @@ class MainController extends Controller
 
     public function trackUpload(Request $request, $playlistID) {
         $request->validate([
-            'file' => 'required|file|mimes:mp3,wav,aac,ogg|max:20480'
+            'file' => 'required|file|mimes:mp3,wav,aac,ogg|max:51200'
         ]);
 
         $file = $request->file('file');
@@ -177,51 +177,90 @@ class MainController extends Controller
 
         $getID3 = new \getID3();
         $fileInfo = $getID3->analyze($file_path);
-        //dd($fileInfo);
-        if (isNull($request->input('trackArtist'))) {
-            $trackArtist = $fileInfo['tags']['id3v2']['artist'][0] ?? $request->input('trackArtist');
-        }
+
         if (isNull($request->input('trackName'))) {
             $trackName = $fileInfo['tags']['id3v2']['title'][0] ?? $request->input('trackName');
         }
         if (isNull($request->input('albumName'))) {
             $albumName = $fileInfo['tags']['id3v2']['album'][0] ?? $request->input('trackAlbum');
-            if (isNull($albumName)) {
-                // return back()->with('error', 'Введите название альбома');
-                $albumName = $trackName;
-            }
         }
-        
-        $artist = DB::table('artist')
-        ->where(Str::lower('artist.artistName'), '=', Str::lower($trackArtist))
-        ->select('*')
-        ->first();
+
+        // if (isNull($request->input('trackArtist'))) {
+        //     $trackArtist = $fileInfo['tags']['id3v2']['artist'][0] ?? $request->input('trackArtist');
+        // }
+
+        // dump($trackArtist);
+        // $artist = DB::table('artist')
+        // ->where(Str::lower('artist.artistName'), '=', Str::lower($trackArtist))
+        // ->select('*')
+        // ->first();
         
 
-        if (empty($artist)) {
-            $new_artist = Artist::create([
-                'artistName' => $trackArtist,
-                'is_confirmed' => false,
-                'music_path' => NULL,
-                'photo_path' => 'resources/images/templates/userImage.svg'
-            ]);
-            $artist = DB::table('artist')
-                ->where(Str::lower('artist.artistName'), '=', Str::lower($new_artist->artistName))
-                ->select('*')
-                ->first();
-            $directoryName = Str::random(20) . $artist->id;
-            $artistPath = "audio/{$directoryName}";
-            Storage::disk('public')->makeDirectory($artistPath);
+        // if (empty($artist)) {
+        //     $new_artist = Artist::create([
+        //         'artistName' => $trackArtist,
+        //         'is_confirmed' => false,
+        //         'music_path' => NULL,
+        //         'photo_path' => 'resources/images/templates/userImage.svg'
+        //     ]);
+        //     $artist = DB::table('artist')
+        //         ->where(Str::lower('artist.artistName'), '=', Str::lower($new_artist->artistName))
+        //         ->select('*')
+        //         ->first();
+        //     $directoryName = Str::random(20) . $artist->id;
+        //     $artistPath = "audio/{$directoryName}";
+        //     Storage::disk('public')->makeDirectory($artistPath);
     
-            // Обновляем путь в базе
-            DB::table('artist')
-                ->where('id', $artist->id)
-                ->update(['music_path' => $artistPath]);
+        //     // Обновляем путь в базе
+        //     DB::table('artist')
+        //         ->where('id', $artist->id)
+        //         ->update(['music_path' => $artistPath]);
 
-            $artist = DB::table('artist')
-            ->where(Str::lower('artist.artistName'), '=', Str::lower($trackArtist))
-            ->select('*')
-            ->first();
+        //     $artist = DB::table('artist')
+        //     ->where(Str::lower('artist.artistName'), '=', Str::lower($trackArtist))
+        //     ->select('*')
+        //     ->first();
+        // }
+
+        // Обработка артиста(ов) из запроса или тегов файла
+        $trackArtistInput = $request->input('trackArtist');
+
+        if (is_null($trackArtistInput)) {
+            $artistsFromTags = $fileInfo['tags']['id3v2']['artist'][0] ?? null;
+            
+            // Нормализация строки с исполнителями (разделение по / или ,)
+            $artists = $artistsFromTags 
+                ? array_map('trim', preg_split('/[\/,]/', $artistsFromTags))
+                : ['Неизвестный Исполнитель'];
+        } else {
+            $artists = [$trackArtistInput]; // Если артист указан вручную
+        }
+
+        // Обработка каждого исполнителя
+        $artistIds = [];
+        foreach ($artists as $artistName) {
+            if (empty($artistName)) continue;
+            
+            // Поиск или создание артиста (оптимизированная версия)
+            $artist = Artist::firstOrCreate(
+                ['artistName' => Str::lower($artistName)],
+                [
+                    'artistName' => $artistName,
+                    'is_confirmed' => false,
+                    'photo_path' => 'resources/images/templates/userImage.svg'
+                ]
+            );
+            
+            // Создание директории, если это новый артист
+            if (is_null($artist->music_path)) {
+                $directoryName = Str::random(20) . $artist->id;
+                $artistPath = "audio/{$directoryName}";
+                Storage::disk('public')->makeDirectory($artistPath);
+                
+                $artist->update(['music_path' => $artistPath]);
+            }
+            
+            $artistIds[] = $artist->id;
         }
 
         $album = DB::table('album')
@@ -234,13 +273,52 @@ class MainController extends Controller
                 'albumName' => $albumName,
                 'is_confirmed' => false,
                 'date_publish' => Carbon::today()->toDateString(),
-                'photo_path' => 'resources/images/templates/playlistImage.svg',
+                'photo_path' => null,
                 'artistID' => $artist->id
             ]);
             $album = DB::table('album')
                 ->where(Str::lower('album.albumName'), '=', Str::lower($new_album->albumName))
                 ->select('*')
                 ->first();
+
+            if (is_null($album->photo_path)) {
+                $directoryName = Str::random(20) . $album->id;
+                $albumPath = "images/{$directoryName}";
+                Storage::disk('public')->makeDirectory($albumPath);
+                if (isset($fileInfo['comments']['picture'][0])) {
+                    $cover = $fileInfo['comments']['picture'][0];
+                    $imageData = $cover['data'];  // Бинарные данные изображения
+                    
+                    // Сохранить в файл
+                    // file_put_contents("{$album->photo_path}/{$album->albumName}.jpg", $imageData);
+                    // $album_photoPath = $file->storeAs($albumPath, $album_name, 'public');
+
+                    $album_name = Str::random(20) . '.jpg';
+                    // $album_photoPath = Storage::disk('public')
+                    // ->putFileAs($albumPath, $imageData, $album_name);
+
+                    Storage::disk('public')->put(
+                        $albumPath . '/' . $album_name,
+                        $imageData
+                    );
+
+                    $album_photoPath = "{$albumPath}/{$album_name}";
+
+                    // $album->update(['photo_path' => $album_photoPath]);
+                    $album_update = DB::table('album')
+                    ->where('album.id', '=', $album->id)
+                    ->update(['album.photo_path' => $album_photoPath]);
+                }
+            }
+            else {
+                // $album->update(['photo_path' => 'resources/images/templates/playlistImage.svg']);
+                $album_update = DB::table('album')
+                    ->where('album.id', '=', $album->id)
+                    ->update(['album.photo_path' => 'resources/images/templates/playlistImage.svg']);
+            }
+
+            
+            //'resources/images/templates/playlistImage.svg'
         }
 
         $track = DB::table('track')
@@ -261,10 +339,17 @@ class MainController extends Controller
                 'albumID' => $album->id
             ]);
 
-            $track_authors = track_authors::create([
-                'trackID' => $track->id,
-                'artistID' => $artist->id
-            ]);
+            $trackAuthorsData = [];
+            foreach ($artistIds as $artistId) {
+                $trackAuthorsData[] = [
+                    'trackID' => $track->id,
+                    'artistID' => $artistId,
+                    'created_at' => now(),  // Добавляем временные метки
+                    'updated_at' => now()
+                ];
+            }
+            // Массовая вставка
+            DB::table('track_authors')->insert($trackAuthorsData);
         }
         
         $playlist_tracks = DB::table('playlist_tracks')
@@ -275,7 +360,8 @@ class MainController extends Controller
         if (empty($playlist_tracks)) {
             $playlist_tracks = Playlist_tracks::create([
                 'playlistID' => $playlistID,
-                'trackID' => $track->id
+                'trackID' => $track->id,
+                'userID' => Auth::user()->id
             ]);
         }
         else {
@@ -383,6 +469,7 @@ class MainController extends Controller
 
     public function usersGet() {
         $users = DB::table('users')
+        ->where('users.id', '!=', Auth::user()->id)
         ->select('users.name as userName', 'users.id as userID', 'users.photo_path as photoPath')
         ->get();
 
@@ -459,11 +546,12 @@ class MainController extends Controller
         return response()->json($albums);
     }
 
-    public function getTracks() {
+    public function getAllTracks() {
         $tracks = DB::table('track')
         ->join('track_authors', 'track_authors.trackID', '=', 'track.id')
         ->join('artist', 'artist.id', '=', 'track_authors.artistID')
-        ->select('track.*', 'artist.artistName as artistName')
+        ->join('album', 'album.id', '=', 'track.albumID')
+        ->select('track.*', 'artist.artistName as artistName', 'artist.id as artistID', 'album.id as albumID', 'album.photo_path as albumCover', 'album.albumName as albumName')
         ->get();
 
         return response()->json( [
@@ -491,7 +579,8 @@ class MainController extends Controller
         if (!$playlistTrack) {
             $addTrack = playlist_tracks::create([
                 'playlistID' => $playlistID,
-                'trackID' => $trackID
+                'trackID' => $trackID,
+                'userID' => Auth::id()
             ]);
 
             return response()->json([

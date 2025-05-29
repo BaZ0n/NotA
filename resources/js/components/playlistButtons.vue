@@ -58,9 +58,9 @@
                 <li class="track_element" v-for="(track, index) in tracks" :key="track.id" @click="addTrackToPlaylist(track.id)">
                     <div class="track d-flex py-2 px-3" style="align-items: center;">
                         <div class="leftContainer" style="display: flex; align-items: center;">
-                            <h4 class="track-number me-3">{{ index + 1 }}.</h4>
+                            <img class="albumCover" :src="'/storage/' + track.albumCover">
                             <div class="trackInfo">
-                                <h6 class="trackArtist">{{ track.artistName }} {{ track.albumName }}</h6>
+                                <h6 class="trackArtist">{{ track.artistName }}</h6>
                                 <h5 class="trackName">{{track.trackName}}</h5>
                             </div>
                         </div>
@@ -81,7 +81,7 @@
     import axios from 'axios'
     import { useAudioPlayerStore } from '@/stores/useAudioPlayerStore'
 
-    import PlayIcon from '@/assets/icons/playIcon.svg'
+    import PlayIcon from '@/assets/icons/playTrackIcon.svg'
     import LikeIcon from '@/assets/icons/likeIcon.svg'
     import FavoriteIcon from '@/assets/icons/favoriteIcon.svg'
     import MoreIcon from '@/assets/icons/moreIcon.svg'

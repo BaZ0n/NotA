@@ -108,9 +108,12 @@
     margin: auto;
     display: flex;
     padding: 3vh 8vw;
+    max-height: 70%;
     justify-content: center;
     flex-direction: column;
     border-radius: 25px;
+    overflow-y: auto;
+    overflow-x: none;
 }
 
 .searchInput {

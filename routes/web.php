@@ -56,6 +56,8 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::get('/playlist/{playlistID}', [MainController::class, 'show_playlist'])->name('playlist.show'); // Просмотр плейлиста
     Route::post('/playlist/{playlistID}/upload-audio', [MainController::class, 'trackUpload'])->name('playlist.upload-audio'); // Загрузка трека в плейлист
     Route::put('/playlist/update/{playlist}', [MainController::class, 'playlistNameUpdate']) -> name('playlistName.update'); // Новое название плейлиста
+
+    Route::post('/playlist/{playlistID}/upload-audio', [MainController::class, 'trackUpload'])->name('playlist.upload-audio'); // Загрузка трека в плейлист
     
     Route::get("/user", [MainController::class,'userPage']);
 
@@ -91,6 +93,6 @@ Route::middleware(['auth', 'verified'])->group(function() {
 
     Route::get('tracks/isFavorite/{trackID}', [MainController::class, 'isFavoriteTrack']);
 
-    Route::get('/tracks/get', [MainController::class, 'getTracks']);
+    Route::get('/tracks/get', [MainController::class, 'getAllTracks']);
 
 });

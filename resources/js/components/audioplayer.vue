@@ -3,7 +3,7 @@
   <div class="container" id="player-container">
     <div class="row align-items-center">
       <div class="col track-info">
-        <img class="playlist_image" :src="'/storage/templates/playlistImage.svg'">  
+        <img class="playlist_image" :src="albumPhotoSrc">  
         <div class="track-text-info">
             <h5 style="color:var(--placeholder);"> {{ store?.currentArtistName || 'Исполнитель'}}</h5>
             <h4>{{store.currentTrackInfo?.trackName || 'Название'}}</h4>
@@ -16,6 +16,11 @@
           @ended="nextTrack"></audio>
     
         <div class="multimediaButtonsContainer">
+
+          <Button class="multBTN" @click="repeat">
+            <RepeatIcon class="icon mx-3"></RepeatIcon>
+          </Button>
+
           <button class="multBTN" @click="prevTrack">
             <PreviousIcon class="icon"></PreviousIcon>
           </button>
@@ -31,6 +36,10 @@
           <button class="multBTN" @click="nextTrack">
             <NextIcon class="icon"></NextIcon>
           </button>
+
+          <Button class="multBTN" @click="shuffle">
+            <ShuffleIcon class="icon mx-3"></ShuffleIcon>
+          </Button>
         </div>
 
         <div class="progress-container">
@@ -41,6 +50,7 @@
             min="0" 
             :max="duration" 
             :value="currentTime"
+            step="0.1"
             @input="seek"
           >
           <span class="time-total">{{ formatTime(duration) }}</span>
@@ -56,9 +66,18 @@
           <QueueIcon class="icons_additional"></QueueIcon>
         </button>
 
-        <button class="multBTN" @click="dropdown_show">
-          <MoreIcon class="icons_additional"></MoreIcon>
-        </button>
+        <div class="dropdown-container">
+          <button class="multBTN" @mouseenter="showDropDownMenu = true" @showDropDownMenu="showVolumeSlider = false">
+            <MoreIcon class="icons_additional"></MoreIcon>
+          </button>
+
+          <transition name="fade">
+            <div v-if="showDropDownMenu" class="menu-popup">
+              
+            </div>
+          </transition>
+        </div>
+        
 
         <div class="volume-container" @mouseenter="showVolumeSlider = true" @mouseleave="showVolumeSlider = false">
           <button class="multBTN">
@@ -141,7 +160,7 @@
   import axios from 'axios'
   import { ref, onMounted, onUnmounted } from 'vue'
   import { useAudioPlayerStore } from '@/stores/useAudioPlayerStore'
-  import { watch } from 'vue'
+  import { watch, computed } from 'vue'
 
   //Иконки
   import PlayIcon from '@/assets/icons/playTrackIcon.svg'
@@ -153,6 +172,8 @@
   import QueueIcon from '@/assets/icons/queueIcon.svg'
   import VolumeUpIcon from '@/assets/icons/volumeUpIcon.svg'
   import VolumeOffIcon from '@/assets/icons/volumeOffIcon.svg'
+  import RepeatIcon from '@/assets/icons/repeatIcon.svg'
+  import ShuffleIcon from '@/assets/icons/shuffleIcon.svg'
 
   // Плейлист
   const tracks = []
@@ -165,6 +186,8 @@
   const moreClicked = ref(false)
   const trackID = ref(null)
   const isFavorite = ref(false)
+  const albumPhoto = "/storage/templates/userImage.svg"
+  let socket = null
 
     // Для прогресс бара
   const currentTime = ref(0)
@@ -187,6 +210,7 @@
     if (!newSrc || !audioPlayer.value) return;
     playlistID.value = store.currentPlaylistID 
     trackID.value = store.trackID;
+    console.log(store.currentAlbumPhoto)
     
     // Сбрасываем состояние
     currentTime.value = 0;
@@ -215,7 +239,6 @@
 
     if (store.justSelected) {
       try {
-        console.log("Я тут")
         const response = await axios.get(`/playlist/${playlistID.value}/tracks`)
         tracks.value = response.data.tracks
         updateNextUpTracks()
@@ -290,15 +313,28 @@
 
   // Управление воспроизведением
   const play = () => {
-    if (audioPlayer.value) {
-      audioPlayer.value.play();
-      isPlaying.value = true;
-      store.play();
+    if (store.isSynchronizedMode) {
+      sendToWebSocket({ action: 'play', trackID: store.currentTrackInfo.id })
+    } else if (audioPlayer.value){
+      audioPlayer.value.play()
+      isPlaying.value = true
+      store.play()
     }
   };
 
+  const albumPhotoSrc = computed(() => {
+    return store.value?.currentAlbumPhoto 
+      ? '/storage/' + store.currentAlbumPhoto 
+      : '/storage/templates/playlistImage.svg';
+  });
+
+    // '/storage/templates/userImage.svg'
+
   // Пауза
   const pause = () => {
+    if (store.isSynchronizedMode) {
+      sendToWebSocket({ action: 'play', trackID: store.currentTrackInfo.id})
+    }
     if (audioPlayer.value) {
       audioPlayer.value.pause();
       isPlaying.value = false;
@@ -308,65 +344,75 @@
 
   // Следующий трек
   const nextTrack = () => {
+    if (store.isSynchronizedMode) {
+      sendToWebSocket('nextTrack');
+      return;
+    }
+
+    handleNextTrack();
+  };
+
+  const handleNextTrack = () => {
     if (queueTracks.value.length > 0) {
-      // Берем следующий трек из очереди
       const nextTrack = queueTracks.value[0];
       const trackData = {
         ...nextTrack,
-        audioSrc: `/storage/${nextTrack.path.replace('public/audio/', '')}` 
-      }
+        audioSrc: `/storage/${nextTrack.path.replace('public/audio/', '')}`
+      };
       store.setTrack(trackData);
       queueTracks.value.shift();
     } else if (nextUpTracks.value.length > 0) {
-      // Берем следующий трек из плейлиста
       const nextTrack = nextUpTracks.value[0];
       const trackData = {
         ...nextTrack,
-        audioSrc: `/storage/${nextTrack.path.replace('public/audio/', '')}` 
-      }
+        audioSrc: `/storage/${nextTrack.path.replace('public/audio/', '')}`
+      };
       store.setTrack(trackData);
       updateNextUpTracks();
     } else if (nextUpTracks.value.length === 0 && isLoop) {
-      // Больше треков нет
       isPlaying.value = false;
       store.pause();
     } else if (tracks.value.length) {
-      // Переходим к следующему треку в плейлисте
       currentIndex.value = (currentIndex.value + 1) % tracks.value.length;
-      const nextTrack = tracks.value[currentIndex.value]
+      const nextTrack = tracks.value[currentIndex.value];
       const trackData = {
         ...nextTrack,
-        audioSrc: `/storage/${nextTrack.path.replace('public/audio/', '')}` 
-      }
+        audioSrc: `/storage/${nextTrack.path.replace('public/audio/', '')}`
+      };
       store.setTrack(trackData);
       updateNextUpTracks();
     }
-    
+
     play();
   };
 
   // Предыдущий трек
   const prevTrack = () => {
-    console.log(tracks.value)
-    if (audioPlayer.value.currentTime > 3 || currentIndex.value == 0 && isLoop) {
-      console.log("Слушай заново", currentIndex.value)
-      // Если трек играет больше 3 секунд, перезапускаем его
+    if (store.isSynchronizedMode) {
+      sendToWebSocket('prevTrack');
+      return;
+    }
+
+    handlePrevTrack();
+  };
+
+  const handlePrevTrack = () => {
+    if (audioPlayer.value.currentTime > 3 || (currentIndex.value === 0 && isLoop)) {
       audioPlayer.value.currentTime = 0;
     } else if (tracks.value.length) {
       if (!isLoop) {
         currentIndex.value = (currentIndex.value - 1 + tracks.value.length) % tracks.value.length;
+      } else {
+        currentIndex.value = currentIndex.value - 1;
       }
-      else {
-        currentIndex.value = currentIndex.value - 1
-      }
-      // Переходим к предыдущему треку
-      const prevTrack = tracks.value[currentIndex.value]
-      const trackData = {
-        ...nextTrack,
-        audioSrc: `/storage/${prevTrack.path.replace('public/audio/', '')}` 
-      }
-      store.setTrack(trackData);
 
+      const prevTrack = tracks.value[currentIndex.value];
+      const trackData = {
+        ...prevTrack,
+        audioSrc: `/storage/${prevTrack.path.replace('public/audio/', '')}`
+      };
+
+      store.setTrack(trackData);
       updateNextUpTracks();
       play();
     }
@@ -404,9 +450,19 @@
   // Ползунок
   const seek = (e) => {
     const seekTime = parseFloat(e.target.value);
-    if (audioPlayer.value && !isNaN(seekTime)) {
-      audioPlayer.value.currentTime = seekTime
-      currentTime.value = seekTime; // если currentTime — ref
+    if (isNaN(seekTime)) return;
+
+    if (store.isSynchronizedMode) {
+      sendToWebSocket('seek', { time: seekTime });
+    } else {
+      handleSeek(seekTime);
+    }
+  };
+
+  const handleSeek = (time) => {
+    if (audioPlayer.value) {
+      audioPlayer.value.currentTime = time;
+      currentTime.value = time;
     }
   };
 
@@ -420,19 +476,84 @@
 
   // Дополнительные действия
   const dropdown_show = () => {
-    isOpen.value = !isOpen.value;
+    showDropDownMenu = true;
   };
 
   const likeTrack = () => {
     // Логика для отметки "нравится"
   };
 
+  // Подключение к WebSocket
+const connectWebSocket = () => {
+  socket = new WebSocket('wss://127.0.0.1:8000/app/YOUR_APP_KEY?protocol=7&client=js&version=7.0.3&flash=false');
+
+  socket.onopen = () => {
+    console.log('WebSocket подключен');
+  };
+
+  socket.onmessage = (event) => {
+    const message = JSON.parse(event.data);
+    handleWebSocketMessage(message);
+  };
+
+  socket.onclose = () => {
+    console.log('WebSocket отключен, попытка переподключения через 5 секунд...');
+    setTimeout(connectWebSocket, 5000);
+  };
+
+  socket.onerror = (error) => {
+    console.error('Ошибка WebSocket:', error);
+  };
+};
+
+// Отправка сообщения
+const sendToWebSocket = (action, data = {}) => {
+  if (socket && socket.readyState === WebSocket.OPEN) {
+    const payload = { action, ...data };
+    socket.send(JSON.stringify(payload));
+  }
+};
+
+// Обработка входящих команд
+const handleWebSocketMessage = (message) => {
+  switch (message.action) {
+    case 'play':
+      handleSeek(message.time ?? 0);
+      audioPlayer.value.play();
+      isPlaying.value = true;
+      store.play();
+      break;
+
+    case 'pause':
+      audioPlayer.value.pause();
+      isPlaying.value = false;
+      store.pause();
+      break;
+
+    case 'seek':
+      handleSeek(message.time);
+      break;
+
+    case 'nextTrack':
+      handleNextTrack();
+      break;
+
+    case 'prevTrack':
+      handlePrevTrack();
+      break;
+
+    default:
+      console.warn('Неизвестное сообщение от WebSocket:', message);
+  }
+};
+
 
   onMounted(() => {
     audioPlayer.value.volume = volumeLevel.value
-      if (audioElement.value) {
-        store.initAudio(audioPlayer.value)
-      }
+    if (audioElement.value) {
+      store.initAudio(audioPlayer.value)
+    }
+    connectWebSocket(); // ← подключение
   })
 
   onUnmounted(() => {

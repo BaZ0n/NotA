@@ -26,21 +26,30 @@
       <Tracks :playlistId="playlist.id" />
     </div>
 
-    <div v-show="showUpload" class="uploadBackground container-fluid" id="uploadCont">
-      <div class="uploadTrackContainer">
+    <div v-show="showUpload" class="uploadBackground container-fluid" id="uploadCont" @click.self="closeWindow">
+      <div class="uploadTrackContainer" @click.stop>
         <h4 class="text-center mb-5" style="color: white">Загрузка трека</h4>
         <form @submit.prevent="submitTrack" enctype="multipart/form-data" method="post">
-          <input type="text" v-model="trackName" placeholder="Название" class="form-control fs-5 my-2" />
-          <input type="text" v-model="trackArtist" placeholder="Исполнитель" class="form-control fs-5 my-2" />
-          <input type="text" v-model="trackAlbum" placeholder="Альбом" class="form-control fs-5 my-2" />
+          <input type="text" v-model="trackName" placeholder="Название" class="form-control fs-5 my-3" />
+          <input type="text" v-model="trackArtist" placeholder="Исполнитель" class="form-control fs-5 my-3" />
+          <input type="text" v-model="trackAlbum" placeholder="Альбом" class="form-control fs-5 my-3" />
           <label class="input-file form-group">
-            <input type="file" @change="handleFileChange" accept="audio/*" />
+            <input type="file" @change="handleFileChange" accept="audio/*" multiple/>
             <span class="input-file-btn px-3 py-2">Выберите файл</span>          
             <span class="input-file-text">{{ fileName }}</span>
           </label>
+          <div v-if="isUploading" class="progress my-3">
+          <div class="progress-bar" role="progressbar" 
+               :style="{ width: uploadProgress + '%' }" 
+               :aria-valuenow="uploadProgress" 
+               aria-valuemin="0" 
+               aria-valuemax="100">
+            {{ uploadProgress }}%
+          </div>
+        </div>
           <div class="form-group my-5 d-flex justify-content-center">
             <button class="button-primary py-2 px-4" type="submit">
-              <h3>Загрузить</h3>
+              <h3>{{ isUploading ? 'Загрузка...' : 'Загрузить' }}</h3>
             </button>
           </div>
         </form>
@@ -52,7 +61,7 @@
 <script setup>
   import axios from 'axios'
   import { ref } from 'vue'
-  import { Inertia } from '@inertiajs/inertia-vue3'
+  import { Inertia, router } from '@inertiajs/inertia-vue3'
   import { useForm } from '@inertiajs/inertia-vue3'
   import { watch } from 'vue'
   import { useAudioPlayerStore } from '@/stores/useAudioPlayerStore'
@@ -72,11 +81,19 @@
   const trackName = ref('')
   const trackArtist = ref('')
   const trackAlbum = ref('')
-  const trackFile = ref(null)
+  const trackFiles = ref(null)
   const fileName = ref('Не выбран файл')
+  const isUploading = ref(false)
+  const uploadProgress = ref(0)
 
   
   const playlistTitle = ref(null)
+
+  // Закрытие модального окна
+  const closeWindow = () => {
+      showUpload.value = false;
+      store.trackUploadHide();
+  };
 
   watch(() => store.trackUpload, async (newValue) => {
     if (!newValue) return;
@@ -106,36 +123,133 @@
     }
   }
 
+  // const handleFileChange = (e) => {
+  //   trackFiles.value = e.target.files
+  //   fileName.value = trackFiles.value.length > 1 ? "Загружено " + trackFiles.value.length + " файлов": trackFiles.value[0].name
+  // }
+
+  // const submitTrack = async () => {
+  //   if (!trackFiles.value[0]) {
+  //     alert('Пожалуйста, выберите аудиофайл')
+  //     return
+  //   }
+
+    
+  //   const formData = new FormData()
+  //   const csrfToken = document.querySelector('meta[name="csrf-token"]').content
+
+  //   console.log(trackFiles)
+  //   for (const trackFile of trackFiles.value) {
+  //     console.log(trackFile)
+  //     if (trackFiles.value.length > 1) {
+  //       formData.append('trackName', '')
+  //       formData.append('trackArtist', '')
+  //       formData.append('trackAlbum', '')
+  //       formData.append('file', trackFile.value)
+  //       formData.append('_token', csrfToken);
+  //     }
+  //     else {
+  //       formData.append('trackName', trackName.value)
+  //       formData.append('trackArtist', trackArtist.value)
+  //       formData.append('trackAlbum', trackAlbum.value)
+  //       formData.append('file', trackFile.value)
+  //       formData.append('_token', csrfToken);
+  //     }
+  //     showUpload.value = false
+  //     store.trackUploadHide()
+  //     try {
+  //       await fetch(`/playlist/${playlist.id}/upload-audio`, {
+  //         method: 'POST',
+  //         body: formData,
+  //         credentials: 'include',
+  //       })
+  //       console.log('Трек успешно загружен')
+
+  //     } catch (error) {
+  //       alert('Ошибка при загрузке трека')
+  //       console.log(error.message)
+  //     }
+  //   }
+    
+  // }
+
+  watch(() => store.trackUpload, (newValue) => {
+    showUpload.value = newValue
+  })
+
   const handleFileChange = (e) => {
-    trackFile.value = e.target.files[0]
-    fileName.value = trackFile.value ? trackFile.value.name : 'Не выбран файл'
+    trackFiles.value = Array.from(e.target.files)
+    fileName.value = trackFiles.value.length > 1 
+      ? `Выбрано ${trackFiles.value.length} файлов` 
+      : trackFiles.value[0]?.name || 'Не выбран файл'
+  }
+
+  const uploadSingleTrack = async (file, index) => {
+    const formData = new FormData()
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').content
+
+    // Используем введенные данные или имя файла
+    formData.append('trackName', trackName.value || file.name.replace(/\.[^/.]+$/, ""))
+    formData.append('trackArtist', trackArtist.value)
+    formData.append('trackAlbum', trackAlbum.value)
+    formData.append('file', file)
+    formData.append('_token', csrfToken)
+
+    try {
+      const response = await axios.post(`/playlist/${playlist.id}/upload-audio`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        },
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+          uploadProgress.value = Math.round((index + percentCompleted / 100) / trackFiles.value.length * 100)
+        }
+      })
+      return response.data
+    } catch (error) {
+      console.error('Ошибка загрузки:', error)
+      throw error
+    }
   }
 
   const submitTrack = async () => {
-    if (!trackFile.value) {
+    if (trackFiles.value.length === 0) {
       alert('Пожалуйста, выберите аудиофайл')
       return
     }
 
-    const formData = new FormData()
-    formData.append('trackName', trackName.value)
-    formData.append('trackArtist', trackArtist.value)
-    formData.append('trackAlbum', trackAlbum.value)
-    formData.append('file', trackFile.value)
-    formData.append('_token', document.querySelector('meta[name="csrf-token"]').content)
+    isUploading.value = true
+    uploadProgress.value = 0
 
     try {
-      await fetch(`/playlist/${playlist.id}/upload-audio`, {
-        method: 'POST',
-        body: formData,
-        credentials: 'include',
-      })
-      alert('Трек успешно загружен')
+      const results = []
+      for (let i = 0; i < trackFiles.value.length; i++) {
+        const result = await uploadSingleTrack(trackFiles.value[i], i)
+        results.push(result)
+      }
+
+      console.log('Все треки загружены:', results)
+      alert(`Успешно загружено ${trackFiles.value.length} треков`)
+      
+      // Сброс формы
+      trackFiles.value = []
+      trackName.value = ''
+      trackArtist.value = ''
+      trackAlbum.value = ''
+      fileName.value = 'Не выбран файл'
       showUpload.value = false
       store.trackUploadHide()
+      
+      // Обновление списка треков
+      Inertia.visit(route('playlist.show', { id: playlist.id }), {
+        preserveState: true,
+        only: ['tracks'] // Укажите какие данные нужно обновить
+      })
+      Inertia.visit(route('playlist.show', ))
     } catch (error) {
-      alert('Ошибка при загрузке трека')
-      console.log(error.message)
+      alert(`Ошибка при загрузке: ${error.message}`)
+    } finally {
+      isUploading.value = false
     }
   }
 </script>

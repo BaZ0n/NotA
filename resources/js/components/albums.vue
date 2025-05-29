@@ -5,7 +5,7 @@
         <div class="album-el"
         v-for="(album) in albums">
 
-            <img class="albumIMG" :src="'/storage/templates/playlistImage.svg'">
+            <img class="albumIMG" :src="'/storage/' + album.photo_path">
             <h4 class="albumName">{{album.albumName}}</h4>
         </div>
 
@@ -36,6 +36,7 @@
         } catch(error) {
             console.log(error)
         }
+        console.log(albums.value)
     })
 
 </script>

@@ -55,23 +55,34 @@
     background-color: var(--bgBlack);
     padding: 5vh 5vw;
     border-radius: 15px;
+
+    .form-control {
+        background-color: transparent;
+        border: 0;
+        border-bottom: 1px solid var(--placeholder);
+        color: white;
+        margin: 5% 0;
+        box-shadow: 0;
+    }
+
+    .form-control::placeholder {
+        color:var(--gray);
+    }
+
+    .form-control:focus {
+        background-color: transparent;
+        color: var(--white);
+        box-shadow: 0;
+        outline: var(--primaryColor);
+    }
+    
+    .form-control:focus::placeholder {
+        color: transparent;
+    }
 }
 
-.uploadTrackContainer .form-control {
-    background-color: transparent;
-    border: 0;
-    border-bottom: 1px solid var(--placeholder);
-    color: white;
-    margin: 5% 0;
-}
 
-.uploadTrackContainer .form-control::placeholder {
-    color:var(--white);
-}
-
-.uploadTrackContainer .form-control:focus::placeholder {
-    color: transparent;
-}
+.uploadTrackContainer 
 
 .input-file {
 	position: relative;

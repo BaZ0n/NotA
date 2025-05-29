@@ -7,7 +7,7 @@
     <div style="flex-grow: 1;"></div>
     <div class="form-group my-2">
         <label for="nicknameLabel" class="text fs-4 my-2 mx-4" style="color: white">Имя пользователя</label>
-        <input type="text" id="name" name="name" class="form-control fs-5 @error('name') is-invalid @enderror" style="background-color: black; border: 1px solid rgba(255, 255, 255, 0.1); color: white" placeholder="Chelik" value="{{old('name')}}">
+        <input type="text" id="name" name="name" class="form-control fs-5 @error('name') is-invalid @enderror" style="background-color: black; border: 1px solid rgba(255, 255, 255, 0.1); color: white" placeholder="Иван" value="{{old('name')}}">
         @error('name')
         <div class="invalid-feedback">{{$message}}</div>
         @enderror
@@ -18,11 +18,11 @@
     </div>
     <div class="form-group my-2">
         <label for="passwordLabel" class="text fs-4 my-2 mx-4" style="color: white">Пароль</label>
-        <input type="password" id="password" name="password" class="form-control fs-5" style="background-color: black; border: 1px solid rgba(255, 255, 255, 0.1); color: white">
+        <input type="password" id="password" name="password" class="form-control fs-5" style="background-color: black; border: 1px solid rgba(255, 255, 255, 0.1); color: white", placeholder="********">
     </div>
     <div class="form-group my-2">
         <label for="password_confirmation_label" class="text fs-4 my-2 mx-4" style="color: white">Повторите пароль</label>
-        <input type="password" id="password_confirmation" name="password_confirmation" class="form-control fs-5" style="background-color: black; border: 1px solid rgba(255, 255, 255, 0.1); color: white">
+        <input type="password" id="password_confirmation" name="password_confirmation" class="form-control fs-5" style="background-color: black; border: 1px solid rgba(255, 255, 255, 0.1); color: white", placeholder="********">
     </div>
     <div style="flex-grow: 1;"></div>
     <div class="container d-flex justify-content-center align-items-center mb-5">

@@ -12,12 +12,19 @@ export const useAudioPlayerStore = defineStore('audioPlayer', () => {
   const justSelected = ref(false)
   const trackUpload = ref(false)
   const active_user = ref(null)
+  const isSynchronizedMode = ref(false)
+  const currentAlbumPhoto = ref(null)
+
+  function toggleSyncMode(mode) {
+    isSynchronizedMode.value = mode
+  }
 
   const setTrack = (track, index) => {
     currentTrackInfo.value = track
     audioSrc.value = track.audioSrc
     currentIndex.value = index
     currentArtistName.value = track.artistName
+    currentAlbumPhoto.value = track.albumPhoto
     currentPlaylistID.value = track.playlistId
   }
 
@@ -42,6 +49,8 @@ export const useAudioPlayerStore = defineStore('audioPlayer', () => {
     justSelected,
     trackUpload,
     active_user,
+    isSynchronizedMode,
+    currentAlbumPhoto,
     setTrack,
     play,
     pause,
@@ -49,6 +58,7 @@ export const useAudioPlayerStore = defineStore('audioPlayer', () => {
     selectedPlaying,
     trackUploadShow,
     trackUploadHide,
-    setUser
+    setUser,
+    toggleSyncMode
   }
 })

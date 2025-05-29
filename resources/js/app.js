@@ -84,6 +84,8 @@ import { createInertiaApp } from '@inertiajs/inertia-vue3'
 import { createPinia } from 'pinia'
 import Layout from './layouts/mainLayout.vue'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
+import Echo from 'laravel-echo';
+import Pusher from 'pusher-js';
 
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
@@ -109,3 +111,15 @@ createInertiaApp({
       .mount(el)
   },
 })
+
+window.Pusher = Pusher;
+
+window.Echo = new Echo({
+    broadcaster: 'pusher',
+    key: 'local',
+    wsHost: window.location.hostname,
+    wsPort: 6001,
+    forceTLS: false,
+    disableStats: true,
+    enabledTransports: ['ws', 'wss'],
+});

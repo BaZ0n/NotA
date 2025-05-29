@@ -7,12 +7,23 @@
         <div class="track d-flex py-2 px-3" style="align-items: center;">
             <div class="leftContainer" style="display: flex; align-items: center;">
                 <h4 class="track-number me-3">{{ index + 1 }}.</h4>
+                <img class="albumCover" :src="'/storage/' + track.albumCover">
                 <div class="trackInfo">
-                    <Link :href="`/artist/${track.artistID}`"><span class="trackArtist">{{ track.artistName }} {{ track.albumName }}</span></Link>
+                    <Link :href="`/artist/${track.artistID}`"><span class="trackArtist">{{ track.artistName }}</span></Link>
                     <Link :href="`/album/${track.albumID}`"><span class="trackName">{{track.trackName}}</span></Link>
                 </div>
             </div>
-            <h5 class="trackDuration">{{ formatDuration(track.duration) }}</h5>
+            <div class="rightContainer" style="display: flex; align-items: center; justify-content: center;">
+                <h5 class="trackDuration">{{ formatDuration(track.duration) }}</h5>
+                <MoreIcon class="icon"></MoreIcon>
+                <div class="track_userInfo">
+                    <img class="userPhoto" src="/storage/templates/userImage.svg">
+                    <span class="userName">{{ track.userName }}</span>
+                </div>
+                
+                
+            </div>
+            
         </div>
         <hr>
     </div>
@@ -25,7 +36,8 @@
     import axios from 'axios'
     import { useAudioPlayerStore } from '@/stores/useAudioPlayerStore'
     import { Link } from '@inertiajs/inertia-vue3'
-    
+
+    import MoreIcon from '@/assets/icons/moreIcon.svg'
 
     const props = defineProps({
         playlistId: Object,
@@ -80,6 +92,7 @@
             ...track,
             artistName: author?.artistName,
             playlistId: playlistID,
+            albumPhoto: track.albumPhoto,
             audioSrc: `/storage/${track.path.replace('public/audio/', '')}`
         }
         

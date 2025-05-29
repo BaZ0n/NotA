@@ -32,6 +32,13 @@
                 transition: color .2s linear;
             }
 
+            .albumCover {
+                width: 48px;
+                height: 48px;
+                margin: 0 10px;
+                border-radius: 15px;
+            }
+
             .trackArtist {
                 font-size: small;
                 color: var(--gray);
@@ -41,11 +48,39 @@
                 font-size: larger;
                 color: var(--white)
             }
-            
-            .trackDuration {
-                margin-left: 8vw;
-                margin-right: 1vw;
+
+            .rightContainer {
+
+                .trackDuration {
+                    margin: 0;
+                }
+
+                .track_userInfo {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    flex-direction: column;
+                    margin-left: 20px;
+
+                    .userPhoto {
+                        height: 32px;
+                        width: 32px;
+                        border-radius: 50%;
+                    }
+
+                    .userName {
+                        color: var(--white);
+                    }
+                }
+                
+                .moreIcon:hover {
+                    fill: var(--primaryColor);
+                }
+
             }
+
+            
+            
         }
 
         .track:hover {
