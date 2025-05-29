@@ -59,5 +59,9 @@ export default defineConfig({
             api: 'modern-compiler' // or "modern"
           }
         }
-    }
+    },
+    define: {
+        'process.env': {},
+    },
+    envPrefix: ['VITE_', 'PUSHER_'],
 });

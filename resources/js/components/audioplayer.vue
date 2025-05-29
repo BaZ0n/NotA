@@ -161,6 +161,8 @@
   import { ref, onMounted, onUnmounted } from 'vue'
   import { useAudioPlayerStore } from '@/stores/useAudioPlayerStore'
   import { watch, computed } from 'vue'
+  import Pusher from 'pusher-js'
+  import Echo from 'laravel-echo'
 
   //Иконки
   import PlayIcon from '@/assets/icons/playTrackIcon.svg'
@@ -187,9 +189,10 @@
   const trackID = ref(null)
   const isFavorite = ref(false)
   const albumPhoto = "/storage/templates/userImage.svg"
-  let socket = null
 
-    // Для прогресс бара
+  let socket
+
+  // Для прогресс бара
   const currentTime = ref(0)
   const duration = ref(0)
 
@@ -483,69 +486,37 @@
     // Логика для отметки "нравится"
   };
 
-  // Подключение к WebSocket
-const connectWebSocket = () => {
-  socket = new WebSocket('wss://127.0.0.1:8000/app/YOUR_APP_KEY?protocol=7&client=js&version=7.0.3&flash=false');
+  window.Pusher = Pusher
 
-  socket.onopen = () => {
-    console.log('WebSocket подключен');
-  };
+  const echo = new Echo({
+    broadcaster: 'reverb',
+    key: import.meta.env.VITE_REVERB_APP_KEY,
+    wsHost: import.meta.env.VITE_REVERB_HOST || window.location.hostname,
+    wsPort: import.meta.env.VITE_REVERB_PORT || 6001,
+    wssPort: import.meta.env.VITE_REVERB_PORT || 6001,
+    forceTLS: (import.meta.env.VITE_REVERB_SCHEME ?? 'https') === 'https',
+    enabledTransports: ['ws', 'wss'],
+    disableStats: true,
+  })
 
-  socket.onmessage = (event) => {
-    const message = JSON.parse(event.data);
-    handleWebSocketMessage(message);
-  };
+  echo.channel('player').listen('PlayerUpdated', (e) => {
+    // e — это объект с текущим состоянием плеера
+    console.log('Получили обновление плеера:', e)
 
-  socket.onclose = () => {
-    console.log('WebSocket отключен, попытка переподключения через 5 секунд...');
-    setTimeout(connectWebSocket, 5000);
-  };
+    // Обновляем локальное состояние плеера
+    isPlaying.value = e.is_playing
+    currentTime.value = e.position
+    queue.value = e.queue_tracks
+  })
 
-  socket.onerror = (error) => {
-    console.error('Ошибка WebSocket:', error);
-  };
-};
-
-// Отправка сообщения
-const sendToWebSocket = (action, data = {}) => {
-  if (socket && socket.readyState === WebSocket.OPEN) {
-    const payload = { action, ...data };
-    socket.send(JSON.stringify(payload));
+  // Функция для отправки действия на сервер
+  const sendToWebSocket = (message) => {
+    if (socket && socket.readyState === WebSocket.OPEN) {
+      socket.send(JSON.stringify(message));
+    } else {
+      console.warn('WebSocket не подключен или не готов');
+    }
   }
-};
-
-// Обработка входящих команд
-const handleWebSocketMessage = (message) => {
-  switch (message.action) {
-    case 'play':
-      handleSeek(message.time ?? 0);
-      audioPlayer.value.play();
-      isPlaying.value = true;
-      store.play();
-      break;
-
-    case 'pause':
-      audioPlayer.value.pause();
-      isPlaying.value = false;
-      store.pause();
-      break;
-
-    case 'seek':
-      handleSeek(message.time);
-      break;
-
-    case 'nextTrack':
-      handleNextTrack();
-      break;
-
-    case 'prevTrack':
-      handlePrevTrack();
-      break;
-
-    default:
-      console.warn('Неизвестное сообщение от WebSocket:', message);
-  }
-};
 
 
   onMounted(() => {
@@ -553,7 +524,6 @@ const handleWebSocketMessage = (message) => {
     if (audioElement.value) {
       store.initAudio(audioPlayer.value)
     }
-    connectWebSocket(); // ← подключение
   })
 
   onUnmounted(() => {

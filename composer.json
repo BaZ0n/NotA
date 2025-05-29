@@ -9,10 +9,12 @@
         "inertiajs/inertia-laravel": "^2.0",
         "james-heinrich/getid3": "^1.9",
         "laravel/framework": "^11.9",
+        "laravel/prompts": "^0.2",
+        "laravel/reverb": "^1.5",
         "laravel/sanctum": "*",
         "laravel/tinker": "^2.9",
         "pbmedia/laravel-ffmpeg": "^8.7",
-        "pusher/pusher-php-server": "^2.1"
+        "pusher/pusher-php-server": "^7.2"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

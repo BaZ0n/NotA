@@ -77,4 +77,3 @@ class PlayerController extends Controller
         return response()->json(['status' => 'track added']);
     }
 }
-

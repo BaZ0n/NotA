@@ -12,7 +12,7 @@ export const useAudioPlayerStore = defineStore('audioPlayer', () => {
   const justSelected = ref(false)
   const trackUpload = ref(false)
   const active_user = ref(null)
-  const isSynchronizedMode = ref(false)
+  const isSynchronizedMode = ref(true)
   const currentAlbumPhoto = ref(null)
 
   function toggleSyncMode(mode) {
