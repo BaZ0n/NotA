@@ -3,7 +3,7 @@
   <div class="container" id="player-container">
     <div class="row align-items-center">
       <div class="col track-info">
-        <img class="playlist_image" :src="albumPhotoSrc">  
+        <img class="playlist_image" :src="'/storage/' + store.currentAlbumPhoto">  
         <div class="track-text-info">
             <h5 style="color:var(--placeholder);"> {{ store?.currentArtistName || 'Исполнитель'}}</h5>
             <h4>{{store.currentTrackInfo?.trackName || 'Название'}}</h4>
@@ -18,7 +18,7 @@
         <div class="multimediaButtonsContainer">
 
           <Button class="multBTN" @click="repeat">
-            <RepeatIcon class="icon mx-3"></RepeatIcon>
+            <RepeatIcon class="icon mx-3 lower"></RepeatIcon>
           </Button>
 
           <button class="multBTN" @click="prevTrack">
@@ -38,7 +38,7 @@
           </button>
 
           <Button class="multBTN" @click="shuffle">
-            <ShuffleIcon class="icon mx-3"></ShuffleIcon>
+            <ShuffleIcon class="icon mx-3 lower"></ShuffleIcon>
           </Button>
         </div>
 
@@ -58,31 +58,19 @@
       </div>
 
       <div class="col additionalBtn">
-        <button class="multBTN" @click="likeTrack">
-          <LikeIcon class="icons_additional"></LikeIcon>
+        <button class="multBTN">
+          <LikeIcon class="icons_additional favorite" @click="likeTrack" v-if="!isFavorite"></LikeIcon>
+          <FavoriteTrackIcon class="icons_additional notFavorite" @click="deleteFromFavorite" v-else></FavoriteTrackIcon>
         </button>
         
         <button class="multBTN" @click="toggleQueueVisibility">
           <QueueIcon class="icons_additional"></QueueIcon>
         </button>
 
-        <div class="dropdown-container">
-          <button class="multBTN" @mouseenter="showDropDownMenu = true" @showDropDownMenu="showVolumeSlider = false">
-            <MoreIcon class="icons_additional"></MoreIcon>
-          </button>
-
-          <transition name="fade">
-            <div v-if="showDropDownMenu" class="menu-popup">
-              
-            </div>
-          </transition>
-        </div>
-        
-
         <div class="volume-container" @mouseenter="showVolumeSlider = true" @mouseleave="showVolumeSlider = false">
           <button class="multBTN">
-            <VolumeUpIcon v-if="!isMuted" class="icons_additional"></VolumeUpIcon>
-            <VolumeOffIcon v-else class="icons_additional"></VolumeOffIcon>
+            <VolumeUpIcon v-if="!isMuted" class="icons_additional" @click="toggleMute"></VolumeUpIcon>
+            <VolumeOffIcon v-else class="icons_additional" @click="toggleMute"></VolumeOffIcon>
           </button>
           
           <transition name="fade">
@@ -98,6 +86,32 @@
                 orient="vertical"
               >
             </div>
+          </transition>
+        </div>
+
+        <div class="dropdown-container">
+          <button class="multBTN" @click="dropdown_show">
+            <MoreIcon class="icons_additional"></MoreIcon>
+          </button>
+
+          <transition name="fade">
+            <ul v-if="showDropDownMenu" class="menu-popup">
+              <li class="dropdownContent" 
+              @mouseenter="addTrackToPlaylist = true" 
+              @mouseleave="addTrackToPlaylist = false"
+              >
+              Добавить в плейлист
+                <transition name="fade">
+                <ul v-if="addTrackToPlaylist" class="submenu-popup left">
+                  <li class="submenu-item">Плейлист 1</li>
+                  <li class="submenu-item">Плейлист 2</li>
+                  <li class="submenu-item">Плейлист 3</li>
+                  <li class="submenu-item">+ Создать новый</li>
+                </ul>
+              </transition>
+              </li>
+              <li class="dropdownContent" @click="createChannel">Пригласить пользователя</li>
+            </ul>
           </transition>
         </div>
       </div>
@@ -152,6 +166,7 @@
       </div>
     </div>
   </div>
+
 </div>
 
 </template>
@@ -161,8 +176,8 @@
   import { ref, onMounted, onUnmounted } from 'vue'
   import { useAudioPlayerStore } from '@/stores/useAudioPlayerStore'
   import { watch, computed } from 'vue'
-  import Pusher from 'pusher-js'
-  import Echo from 'laravel-echo'
+  // import Pusher from 'pusher-js'
+  // import echo from '../echo.js';
 
   //Иконки
   import PlayIcon from '@/assets/icons/playTrackIcon.svg'
@@ -176,6 +191,7 @@
   import VolumeOffIcon from '@/assets/icons/volumeOffIcon.svg'
   import RepeatIcon from '@/assets/icons/repeatIcon.svg'
   import ShuffleIcon from '@/assets/icons/shuffleIcon.svg'
+  import FavoriteTrackIcon from '@/assets/icons/favoriteTrackIcon.svg'
 
   // Плейлист
   const tracks = []
@@ -189,17 +205,23 @@
   const trackID = ref(null)
   const isFavorite = ref(false)
   const albumPhoto = "/storage/templates/userImage.svg"
+  const addTrackToPlaylist = ref(false)
 
   let socket
+
+  const searchQuery = ref('')
 
   // Для прогресс бара
   const currentTime = ref(0)
   const duration = ref(0)
 
   // начальный уровень громкости (50%)
+  const previousVolumeLevel = ref(0)
   const volumeLevel = ref(0.5) 
   const isMuted = ref(false)
   const showVolumeSlider = ref(false)
+
+  const showDropDownMenu = ref(false)
 
   // Очередь проигрывания
   const showQueue = ref(false)
@@ -209,11 +231,27 @@
   // Кнопки управления
   const isLoop = ref(false)
 
+  // Закрытие модального окна
+  const closeWindow = () => {
+      // moddersAdd.value = false;
+      addTrackToPlaylist.value = false;
+      searchQuery.value = '';
+  };
+
+  // Закрытие при клике вне меню
+  const closeOnClickOutside = (event) => {
+      if (!event.target.closest('.dropdown-container')) {
+          showDropDownMenu.value = false
+      }
+      if (!event.target.closest('.addContainer')) {
+          addTrackToPlaylist.value = false
+      }
+  }
+
   watch(() => store.audioSrc, async (newSrc) => {
     if (!newSrc || !audioPlayer.value) return;
     playlistID.value = store.currentPlaylistID 
     trackID.value = store.trackID;
-    console.log(store.currentAlbumPhoto)
     
     // Сбрасываем состояние
     currentTime.value = 0;
@@ -251,12 +289,34 @@
       }
     }
 
+    try {
+
+      const response = await axios.get(`/tracks/isFavorite/${store.currentTrackInfo?.id}`)
+      isFavorite.value = response.data.isTrackFavorite
+
+    } catch(error) {
+      console.log(error)
+    }
+
+    saveToBD()
+
     // Начинаем загрузку
-    audioPlayer.value.load();
+    audioPlayer.value.load()
   }, { immediate: true });
+
+  const saveToBD = async() => {
+    try {
+
+      const response = await axios.put(`/user/lastUse/${playlistID.value}/${store.currentTrackInfo?.id}/${volumeLevel.value}`)
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   // Обновление треков "Далее в плейлисте"
   const updateNextUpTracks = () => {
+
     if (!tracks.value || !store.currentTrackInfo) return;
     const currentTrackIndex = tracks.value.findIndex(
       track => track.id === store.currentTrackInfo.id
@@ -317,7 +377,7 @@
   // Управление воспроизведением
   const play = () => {
     if (store.isSynchronizedMode) {
-      sendToWebSocket({ action: 'play', trackID: store.currentTrackInfo.id })
+      // sendToWebSocket({ action: 'play', trackID: store.currentTrackInfo.id })
     } else if (audioPlayer.value){
       audioPlayer.value.play()
       isPlaying.value = true
@@ -336,7 +396,7 @@
   // Пауза
   const pause = () => {
     if (store.isSynchronizedMode) {
-      sendToWebSocket({ action: 'play', trackID: store.currentTrackInfo.id})
+      // sendToWebSocket({ action: 'play', trackID: store.currentTrackInfo.id})
     }
     if (audioPlayer.value) {
       audioPlayer.value.pause();
@@ -348,7 +408,7 @@
   // Следующий трек
   const nextTrack = () => {
     if (store.isSynchronizedMode) {
-      sendToWebSocket('nextTrack');
+      // sendToWebSocket('nextTrack');
       return;
     }
 
@@ -392,7 +452,7 @@
   // Предыдущий трек
   const prevTrack = () => {
     if (store.isSynchronizedMode) {
-      sendToWebSocket('prevTrack');
+      // sendToWebSocket('prevTrack');
       return;
     }
 
@@ -421,13 +481,22 @@
     }
   };
 
+  const repeat = () => {
+    isLoop.value = true
+  }
+
   // Ползунок громкости
   const setVolume = () => {
     if (audioPlayer.value) {
       audioPlayer.value.volume = volumeLevel.value
       // Если включен mute, отключаем его при изменении громкости
-      if (isMuted.value) {
+      if (volumeLevel.value == 0) {
+        isMuted.value = true
+        audioPlayer.value.muted = isMuted.value
+      }
+      else if (isMuted.value) {
         isMuted.value = false
+        audioPlayer.value.muted = isMuted.value
       }
     }
   }
@@ -437,6 +506,13 @@
     if (audioPlayer.value) {
       isMuted.value = !isMuted.value
       audioPlayer.value.muted = isMuted.value
+      if (isMuted.value) {
+        previousVolumeLevel.value = volumeLevel.value
+        volumeLevel.value = 0
+      }
+      else {
+        volumeLevel.value = previousVolumeLevel.value
+      }
     }
   }
 
@@ -479,43 +555,134 @@
 
   // Дополнительные действия
   const dropdown_show = () => {
-    showDropDownMenu = true;
-  };
+    showDropDownMenu.value = !showDropDownMenu.value;
 
-  const likeTrack = () => {
-    // Логика для отметки "нравится"
-  };
+    try {
 
-  window.Pusher = Pusher
+      // const response = await axios.get("")
 
-  const echo = new Echo({
-    broadcaster: 'reverb',
-    key: import.meta.env.VITE_REVERB_APP_KEY,
-    wsHost: import.meta.env.VITE_REVERB_HOST || window.location.hostname,
-    wsPort: import.meta.env.VITE_REVERB_PORT || 6001,
-    wssPort: import.meta.env.VITE_REVERB_PORT || 6001,
-    forceTLS: (import.meta.env.VITE_REVERB_SCHEME ?? 'https') === 'https',
-    enabledTransports: ['ws', 'wss'],
-    disableStats: true,
-  })
-
-  echo.channel('player').listen('PlayerUpdated', (e) => {
-    // e — это объект с текущим состоянием плеера
-    console.log('Получили обновление плеера:', e)
-
-    // Обновляем локальное состояние плеера
-    isPlaying.value = e.is_playing
-    currentTime.value = e.position
-    queue.value = e.queue_tracks
-  })
-
-  // Функция для отправки действия на сервер
-  const sendToWebSocket = (message) => {
-    if (socket && socket.readyState === WebSocket.OPEN) {
-      socket.send(JSON.stringify(message));
-    } else {
-      console.warn('WebSocket не подключен или не готов');
+    } catch (error) {
+      console.log("Ошибка: ", error)
     }
+  };
+
+  const likeTrack = async() => {
+    try {
+
+      const response = await axios.put(`/favorite/tracks/${store.currentTrackInfo?.id}`)
+      isFavorite.value = true
+      console.log("Трек успешно добавлен в любимое.")
+
+    } catch(error) {
+      console.log("Ошибка добавления трека в любимое: ", error)
+    }
+  };
+
+  // window.Pusher = Pusher
+
+  // echo.channel('player').listen('PlayerUpdated', (e) => {
+  //   // e — это объект с текущим состоянием плеера
+  //   console.log('Получили обновление плеера:', e)
+
+  //   // Обновляем локальное состояние плеера
+  //   isPlaying.value = e.is_playing
+  //   currentTime.value = e.position
+  //   queue.value = e.queue_tracks
+  // })
+
+  // // Функция для отправки действия на сервер
+  // const sendToWebSocket = (message) => {
+  //   if (socket && socket.readyState === WebSocket.OPEN) {
+  //     socket.send(JSON.stringify(message));
+  //   } else {
+  //     console.warn('WebSocket не подключен или не готов');
+  //   }
+  // }
+
+  const createChannel = async() => {
+    try {
+      const response = await axios.post('/room/create')
+      roomId.value = response.data.room_id
+      joinRoom()
+      emit('room-created', roomId.value)
+    } catch (err) {
+      error.value = err.response?.data?.message || 'Failed to create room'
+    }
+  }
+
+  // Присоединение к существующей комнате
+  const joinRoom = () => {
+    if (!roomId.value) return
+    
+    // Подписываемся на канал комнаты
+    window.Echo.channel(`player-room.${roomId.value}`)
+      .listen('.play', (data) => {
+        currentTrack.value = data.trackId
+        position.value = data.position || 0
+        isPlaying.value = true
+        emit('track-changed', { trackId: data.trackId, action: 'play' })
+      })
+      .listen('.pause', () => {
+        isPlaying.value = false
+        emit('track-changed', { trackId: currentTrack.value, action: 'pause' })
+      })
+      .listen('.skip', (data) => {
+        currentTrack.value = data.trackId
+        isPlaying.value = true
+        position.value = 0
+        emit('track-changed', { trackId: data.trackId, action: 'skip' })
+      })
+      .listen('.user-joined', (user) => {
+        if (!roomMembers.value.some(u => u.id === user.id)) {
+          roomMembers.value.push(user)
+        }
+      })
+      .listen('.user-left', (userId) => {
+        roomMembers.value = roomMembers.value.filter(u => u.id !== userId)
+      })
+  }
+
+  const showPlaylistsList = () => {
+    addTrackToPlaylist.value = true
+  }
+
+  const addToPlaylist = () => {
+    try {
+        // const response = await axios.put(`/playlist/${playlistID}/addTrack/${trackID}`)
+    } catch (error) {
+        console.error("Ошибка добавления трека:", error)
+    }
+  }
+
+  const checkLastUseInfo = async() => {
+
+    const res = await axios.get('/user/lastInfo')
+
+    const last_use_info = res.data.last_use_info
+
+    if (last_use_info === null || last_use_info === undefined) {
+      return 0
+    }
+    else {
+
+      volumeLevel.value = last_use_info.volumeLevel
+      audioPlayer.value.volume = volumeLevel.value
+
+      const track = res.data.track
+      const author = res.data.author
+      
+      const trackData = {
+          ...track,
+          artistName: author?.artistName,
+          playlistId: last_use_info.playlistID,
+          albumPhoto: track.albumPhoto,
+          audioSrc: `/storage/${track.path.replace('public/audio/', '')}`
+      }
+      await store.selectTrack()
+
+      const loaded = await store.setTrack(trackData)
+    }
+
   }
 
 
@@ -524,11 +691,22 @@
     if (audioElement.value) {
       store.initAudio(audioPlayer.value)
     }
+
+    document.addEventListener('click', closeOnClickOutside);
+      document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+          showDropDownMenu.value = false;
+          addTrackToPlaylist.value = false;
+      }
+    })
+
+    checkLastUseInfo()
+
   })
 
   onUnmounted(() => {
     store.audioElement = null // Очищаем ссылку
+    document.removeEventListener('click', closeOnClickOutside)
   })
-
 </script>
 

@@ -27,3 +27,5 @@ Route::post('/player/seek', [PlayerController::class, 'seek']);
 Route::post('/player/next', [PlayerController::class, 'next']);
 Route::post('/player/previous', [PlayerController::class, 'previous']);
 Route::post('/player/add-to-queue', [PlayerController::class, 'addToQueue']);
+
+Route::get('/user/lastInfo', [AudioController::class, 'checkLastInfo']);

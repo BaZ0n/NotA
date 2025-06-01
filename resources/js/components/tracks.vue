@@ -9,13 +9,13 @@
                 <h4 class="track-number me-3">{{ index + 1 }}.</h4>
                 <img class="albumCover" :src="'/storage/' + track.albumCover">
                 <div class="trackInfo">
-                    <Link :href="`/artist/${track.artistID}`"><span class="trackArtist">{{ track.artistName }}</span></Link>
-                    <Link :href="`/album/${track.albumID}`"><span class="trackName">{{track.trackName}}</span></Link>
+                    <Link :href="`/artist/${track.artistID}`" @click.stop><span class="trackArtist">{{ track.artistName }}</span></Link>
+                    <Link :href="`/album/${track.albumID}`" @click.stop><span class="trackName">{{track.trackName}}</span></Link>
                 </div>
             </div>
             <div class="rightContainer" style="display: flex; align-items: center; justify-content: center;">
                 <h5 class="trackDuration">{{ formatDuration(track.duration) }}</h5>
-                <MoreIcon class="icon"></MoreIcon>
+                <div class="more-popup"><MoreIcon class="icon" @click.stop></MoreIcon></div>
                 <div class="track_userInfo">
                     <img class="userPhoto" src="/storage/templates/userImage.svg">
                     <span class="userName">{{ track.userName }}</span>
@@ -25,7 +25,6 @@
             </div>
             
         </div>
-        <hr>
     </div>
 </template>
 

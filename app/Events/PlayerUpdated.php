@@ -1,9 +1,5 @@
 <?php
 
-// app/Events/PlayerActionEvent.php
-
-// app/Events/PlayerUpdated.php
-
 namespace App\Events;
 
 use Illuminate\Broadcasting\Channel;

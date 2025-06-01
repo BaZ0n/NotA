@@ -1,7 +1,7 @@
 <template>
   <div class="container playlistContainerTracks p-4 d-flex mt-5 mb-2">
     <div class="playlistInfo mx-3"> 
-      <img class="playlistImage" src="/storage/templates/playlistImage.svg" alt="playlist image" />
+      <img class="playlistImage" :src="'/storage/' + playlist.photo_path" alt="playlist image" /> <!-- src="/storage/templates/playlistImage.svg" -->
 
       <h3
         class="text-center my-2 editable"

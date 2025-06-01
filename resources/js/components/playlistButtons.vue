@@ -10,7 +10,7 @@
             <FavoriteIcon class="icon"></FavoriteIcon>
         </button>
         <div class="dropdown" @click.stop="toggleDropdown" v-if="isModer">
-            <button class="toolButton" id="moreIcon" @click="dropdownMenu">
+            <button class="toolButton" id="moreIcon">
                 <MoreIcon class="icon"></MoreIcon>
             </button> 
             <transition name="fade">
@@ -81,7 +81,7 @@
     import axios from 'axios'
     import { useAudioPlayerStore } from '@/stores/useAudioPlayerStore'
 
-    import PlayIcon from '@/assets/icons/playTrackIcon.svg'
+    import PlayIcon from '@/assets/icons/playPlaylistIcon.svg'
     import LikeIcon from '@/assets/icons/likeIcon.svg'
     import FavoriteIcon from '@/assets/icons/favoriteIcon.svg'
     import MoreIcon from '@/assets/icons/moreIcon.svg'
@@ -122,7 +122,6 @@
             moddersAdd.value = false
             tracksAdd.value = false
         }
-        
     }
 
     watch(searchQuery, async (newSearch) => {

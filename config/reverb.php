@@ -71,37 +71,37 @@ return [
 
         'provider' => 'config',
 
-        // 'apps' => [
-        //     [
-        //         'key' => env('REVERB_APP_KEY'),
-        //         'secret' => env('REVERB_APP_SECRET'),
-        //         // 'app_id' => env('REVERB_APP_ID'),
-        //         'id' => env('PUSHER_APP_ID', 'app-id'),
-        //         'options' => [
-        //             'host' => env('REVERB_HOST'),
-        //             'port' => env('REVERB_PORT', 443),
-        //             'scheme' => env('REVERB_SCHEME', 'https'),
-        //             'useTLS' => env('REVERB_SCHEME', 'https') === 'https',
-        //         ],
-        //         'allowed_origins' => ['*'],
-        //         'ping_interval' => env('REVERB_APP_PING_INTERVAL', 60),
-        //         'activity_timeout' => env('REVERB_APP_ACTIVITY_TIMEOUT', 30),
-        //         'max_message_size' => env('REVERB_APP_MAX_MESSAGE_SIZE', 10_000),
-        //     ],
-        // ],
-
-            'apps' => [
+        'apps' => [
             [
-                'id' => env('PUSHER_APP_ID', 'app-id'),
-                'name' => env('APP_NAME', 'Laravel'),
-                'key' => env('PUSHER_APP_KEY', 'app-key'),
-                'secret' => env('PUSHER_APP_SECRET', 'app-secret'),
-                'path' => '/',
-                'capacity' => null,
-                'enable_client_messages' => false,
-                'enable_statistics' => true,
+                'key' => env('REVERB_APP_KEY'),
+                'secret' => env('REVERB_APP_SECRET'),
+                'app_id' => env('REVERB_APP_ID'),
+                // 'id' => env('PUSHER_APP_ID', 'app-id'),
+                'options' => [
+                    'host' => env('REVERB_HOST'),
+                    'port' => env('REVERB_PORT', 443),
+                    'scheme' => env('REVERB_SCHEME', 'https'),
+                    'useTLS' => env('REVERB_SCHEME', 'https') === 'https',
+                ],
+                'allowed_origins' => ['*'],
+                'ping_interval' => env('REVERB_APP_PING_INTERVAL', 60),
+                'activity_timeout' => env('REVERB_APP_ACTIVITY_TIMEOUT', 30),
+                'max_message_size' => env('REVERB_APP_MAX_MESSAGE_SIZE', 10_000),
             ],
         ],
+
+            // 'apps' => [
+            // [
+            //     'id' => env('PUSHER_APP_ID', 'app-id'),
+            //     'name' => env('APP_NAME', 'Laravel'),
+            //     'key' => env('PUSHER_APP_KEY', 'app-key'),
+            //     'secret' => env('PUSHER_APP_SECRET', 'app-secret'),
+            //     'path' => '/',
+            //     'capacity' => null,
+            //     'enable_client_messages' => false,
+            //     'enable_statistics' => true,
+            // ],
+        // ],
 
     ],
 

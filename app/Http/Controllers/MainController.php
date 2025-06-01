@@ -9,6 +9,7 @@ use App\Models\artist;
 use App\Models\album;
 use App\Models\playlist_tracks;
 use App\Models\track_authors;
+use App\Models\user_last_use;
 use App\Models\favorite_artist;
 use App\Models\favorite_playlist;
 use App\Models\playlist_moders;
@@ -83,9 +84,10 @@ class MainController extends Controller
 
     // Страница коллекции пользователя
     public function collectionPage() {
-        $favorite_playlists = DB::table("playlist")
-        ->where("playlist.userID", "=", Auth::id())
-        ->select('*')
+        $favorite_playlists = DB::table("favorite_playlist")
+        ->where("favorite_playlist.userID", "=", Auth::id())
+        ->join('playlist', 'playlist.id', '=', 'favorite_playlist.playlistID')
+        ->select('playlist.*')
         ->get();
 
         $playlist_favoriteTracks = DB::table("playlist")
@@ -117,7 +119,7 @@ class MainController extends Controller
                 'userID' => Auth::id(),
             ]);
 
-            Favorite_playlist::create([
+            favorite_playlist::create([
                 'userID' => Auth::id(),
                 'playlistID' => $playlist->id,
             ]);
@@ -147,9 +149,9 @@ class MainController extends Controller
     }
 
     public function playlistTracks($playlistID) {
-        $playlist_tracks = DB::table('playlist_tracks') // Убедитесь, что имя таблицы правильное (playlist_tracks или playlist_track)
+        $playlist_tracks = DB::table('playlist_tracks') 
             ->where('playlist_tracks.playlistID', '=', $playlistID)
-            ->join('track', 'track.id', '=', 'playlist_tracks.trackID') // Исправлено имя таблицы и связь
+            ->join('track', 'track.id', '=', 'playlist_tracks.trackID') 
             ->join('album', 'album.id', '=', 'track.albumID')
             ->join('artist', 'artist.id', '=', 'album.artistID')
             ->select(
@@ -184,43 +186,6 @@ class MainController extends Controller
         if (isNull($request->input('albumName'))) {
             $albumName = $fileInfo['tags']['id3v2']['album'][0] ?? $request->input('trackAlbum');
         }
-
-        // if (isNull($request->input('trackArtist'))) {
-        //     $trackArtist = $fileInfo['tags']['id3v2']['artist'][0] ?? $request->input('trackArtist');
-        // }
-
-        // dump($trackArtist);
-        // $artist = DB::table('artist')
-        // ->where(Str::lower('artist.artistName'), '=', Str::lower($trackArtist))
-        // ->select('*')
-        // ->first();
-        
-
-        // if (empty($artist)) {
-        //     $new_artist = Artist::create([
-        //         'artistName' => $trackArtist,
-        //         'is_confirmed' => false,
-        //         'music_path' => NULL,
-        //         'photo_path' => 'resources/images/templates/userImage.svg'
-        //     ]);
-        //     $artist = DB::table('artist')
-        //         ->where(Str::lower('artist.artistName'), '=', Str::lower($new_artist->artistName))
-        //         ->select('*')
-        //         ->first();
-        //     $directoryName = Str::random(20) . $artist->id;
-        //     $artistPath = "audio/{$directoryName}";
-        //     Storage::disk('public')->makeDirectory($artistPath);
-    
-        //     // Обновляем путь в базе
-        //     DB::table('artist')
-        //         ->where('id', $artist->id)
-        //         ->update(['music_path' => $artistPath]);
-
-        //     $artist = DB::table('artist')
-        //     ->where(Str::lower('artist.artistName'), '=', Str::lower($trackArtist))
-        //     ->select('*')
-        //     ->first();
-        // }
 
         // Обработка артиста(ов) из запроса или тегов файла
         $trackArtistInput = $request->input('trackArtist');
@@ -368,6 +333,16 @@ class MainController extends Controller
             return back()->with('success', 'Трек уже есть в плейлисте!');
         }
 
+        $addedTrack = DB::table('track')
+        ->where('track.id', '=', $track->id)
+        ->join('album', 'album.id', '=', 'track.albumID')
+        ->select('track.id as id', 'album.photo_path as photo_path')
+        ->first();
+
+        $playlist = DB::table('playlist')
+        ->where('playlist.id', '=', $playlistID)
+        ->update(['playlist.photo_path' => $addedTrack->photo_path ]);
+
         return back()->with('success', 'Аудио успешно загружено!');
     }
 
@@ -502,6 +477,11 @@ class MainController extends Controller
                 'playlistID' => $playlistID,
                 'userID' => $userID
             ]);
+
+            $newFavorite = Favorite_playlist::create([
+                'playlistID' => $playlistID,
+                'userID' => $userID
+            ]);
             return response()->json([
                 'result' => "Модератор успешно добавлен."
             ]);
@@ -513,9 +493,30 @@ class MainController extends Controller
         }
     }
 
-    // public function isFavoriteTrack($trackID) {
-    //     $
-    // }
+    public function isFavoriteTrack($trackID) {
+        $favorite_tracks_playlist = DB::table('playlist')
+        ->where("playlist.userID", '=', Auth::user()->id)
+        ->where("playlist.playlistName", '=', "Моё любимое")
+        ->select('playlist.*')
+        ->first();
+
+        $favorite_tracks = DB::table('playlist_tracks')
+        ->where('playlist_tracks.playlistID', '=', $favorite_tracks_playlist->id)
+        ->where('playlist_tracks.trackID', '=', $trackID)
+        ->select('*')
+        ->get();
+
+        if (!$favorite_tracks->isEmpty()) {
+            return response()->json([
+                "isTrackFavorite" => true
+            ]);
+        }
+        else {
+            return response()->json([
+                "isTrackFavorite" => false
+            ]);
+        }
+    }
 
     // Страница артиста
     public function artist($artistID)
@@ -583,6 +584,16 @@ class MainController extends Controller
                 'userID' => Auth::id()
             ]);
 
+            $track = DB::table('track')
+            ->where('track.id', '=', $trackID)
+            ->join('album', 'album.id', '=', 'track.albumID')
+            ->select('track.id as id', 'album.photo_path as photo_path')
+            ->first();
+
+            $playlist = DB::table('playlist')
+            ->where('playlist.id', '=', $playlistID)
+            ->update(['playlist.photo_path' => $track->photo_path ]);
+
             return response()->json([
                 "result" => "Успех!"
             ]);
@@ -592,6 +603,104 @@ class MainController extends Controller
                 "result" => "Трек уже есть в плейлисте"
             ]);
         }
+    }
+
+    public function getUserPlaylists($userID) {
+        $userPlaylists = DB::table('playlist_moders')
+        ->where('playlist_moders.userID', '=', $userID)
+        ->join('playlist', 'playlist.id', '=', 'playlist_moders.id')
+        ->select('playlist.id as playlistID', 'playlist.playlistName as playlistName', 'playlist.playlistImage as playlistImage')
+        ->get();
+
+        return response()->json([
+            "playlists" => $userPlaylists
+        ]);
+    }
+
+    public function addTrackToFavorite($trackID) {
+        // $favorite_tracks = DB::table('playlist')
+        // ->where("playlist.userID", '=', Auth::user()->id)
+        // ->where("playlist.playlistName", '=', "Моё любимое")
+        // ->join("playlist_tracks", 'playlist_tracks.playlistID', '=', 'playlist.id')
+        // ->select('playlist.*')
+        // ->get();
+
+        $favorite_tracks_playlist = DB::table('playlist')
+        ->where("playlist.userID", '=', Auth::user()->id)
+        ->where("playlist.playlistName", '=', "Моё любимое")
+        ->select('playlist.*')
+        ->first();
+
+        $favorite_tracks = DB::table('playlist_tracks')
+        ->where('playlist_tracks.playlistID', '=', $favorite_tracks_playlist->id)
+        ->where('playlist_tracks.trackID', '=', $trackID)
+        ->select('*')
+        ->get();
+
+        if ($favorite_tracks->isEmpty()) {
+            $addTrack = playlist_tracks::create([
+                'playlistID' => $favorite_tracks_playlist->id,
+                'trackID' => $trackID,
+                'userID' => Auth::user()->id
+            ]); 
+        } else {
+            echo "Трек не найден.";
+        }
+    }
+
+    public function addUserLastUseInfo($playlistID, $trackID, $volumeLevel) {
+        $userLastUse = DB::table('user_last_use')
+        ->where('user_last_use.userId', '=', Auth::user()->id)
+        ->select('*')
+        ->first();
+
+        if ($userLastUse) {
+            $updateLastUse = DB::table('user_last_use')
+            ->where('user_last_use.id', '=', $userLastUse->id)
+            ->update(['trackID' => $trackID, 'playlistID' => $playlistID, 'volumeLevel' => $volumeLevel]);
+            // $userLastUse->update(['trackID' => $trackID], ['playlistID' => $playlistID]);
+        }
+        else {
+            $newUserLastUseInfo = user_last_use::create([
+                'userID' => Auth::user()->id,
+                'trackID' => $trackID,
+                'playlistID' => $playlistID,
+                'volumeLevel' => $volumeLevel
+            ]);
+        }
+    }
+
+    public function checkLastInfo() {
+
+        $user_last_info = DB::table('user_last_use')
+        ->where('user_last_use.userID', '=', Auth::user()->id)
+        ->select('*')
+        ->first();
+
+        if (!$user_last_info) {
+            return response()->json([
+                'last_use_info' => $user_last_info
+            ]);
+        }
+
+        $track = DB::table('track')
+        ->where('track.id', '=', $user_last_info->trackID)
+        ->join('album', 'track.albumID', '=', 'album.id')
+        ->select('track.*', 'album.albumName as albumName', 'album.id as albumId', 'album.photo_path as albumPhoto')
+        ->first();
+
+        $track_authors = DB::table('track_authors')
+        ->where('track_authors.trackID', '=', $user_last_info->trackID)
+        ->join('artist', 'track_authors.artistID', '=', 'artist.id')
+        ->select('track_authors.*', 'artist.artistName', 'artist.id as artistID', 'artist.music_path as music_path')
+        ->first();
+
+        return response()->json([
+            'last_use_info' => $user_last_info,
+            'track' => $track,
+            'author' => $track_authors
+        ]);
+
     }
 
 }

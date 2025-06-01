@@ -34,6 +34,7 @@
         "bootstrap-vue": "^2.23.1",
         "pinia": "^3.0.2",
         "pinia-plugin-persistedstate": "^4.3.0",
-        "sberzvuk-api": "^2.1.9"
+        "sberzvuk-api": "^2.1.9",
+        "vue-router": "^4.5.1"
     }
 }

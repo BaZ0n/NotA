@@ -73,10 +73,10 @@
                     }
                 }
                 
-                .moreIcon:hover {
+                .icon:hover {
+                    transition: all 0.2s linear;
                     fill: var(--primaryColor);
                 }
-
             }
 
             

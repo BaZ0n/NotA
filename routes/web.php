@@ -56,16 +56,11 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::get('/playlist/{playlistID}', [MainController::class, 'show_playlist'])->name('playlist.show'); // Просмотр плейлиста
     Route::post('/playlist/{playlistID}/upload-audio', [MainController::class, 'trackUpload'])->name('playlist.upload-audio'); // Загрузка трека в плейлист
     Route::put('/playlist/update/{playlist}', [MainController::class, 'playlistNameUpdate']) -> name('playlistName.update'); // Новое название плейлиста
-
+    Route::get('/playlist/{userID}', [MainController::class, 'getUserPlaylists']);
     Route::post('/playlist/{playlistID}/upload-audio', [MainController::class, 'trackUpload'])->name('playlist.upload-audio'); // Загрузка трека в плейлист
-    
     Route::get("/user", [MainController::class,'userPage']);
-
     Route::get("/artist/{artistID}", [MainController::class, 'artist']);
 
-    
-
-    
 
     Route::get('/collection/{userID}/artists', [MainController::class, 'favoriteArtist']);
 
@@ -91,8 +86,15 @@ Route::middleware(['auth', 'verified'])->group(function() {
 
     Route::put('/playlist/{playlistID}/addTrack/{trackID}', [MainController::class, 'addTrackToPlaylist']);
 
-    Route::get('tracks/isFavorite/{trackID}', [MainController::class, 'isFavoriteTrack']);
+    Route::get('/tracks/isFavorite/{trackID}', [MainController::class, 'isFavoriteTrack']);
 
     Route::get('/tracks/get', [MainController::class, 'getAllTracks']);
+
+    Route::put('/favorite/tracks/{trackID}', [MainController::class, 'addTrackToFavorite']);
+    // Route::put('/playlist/{playlistID}/track/{trackID}', [MainController::class, 'addTrackToPlaylist']);
+
+
+    Route::put('/user/lastUse/{playlistID}/{trackID}/{volumeLevel}', [MainController::class, 'addUserLastUseInfo']);
+    Route::get('/user/lastInfo', [MainController::class, 'checkLastInfo']);
 
 });
