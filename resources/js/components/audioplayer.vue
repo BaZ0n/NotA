@@ -37,7 +37,7 @@
             <NextIcon class="icon"></NextIcon>
           </button>
 
-          <Button class="multBTN" @click="shuffle">
+          <Button class="multBTN">
             <ShuffleIcon class="icon mx-3 lower"></ShuffleIcon>
           </Button>
         </div>
@@ -176,8 +176,9 @@
   import { ref, onMounted, onUnmounted } from 'vue'
   import { useAudioPlayerStore } from '@/stores/useAudioPlayerStore'
   import { watch, computed } from 'vue'
-  // import Pusher from 'pusher-js'
-  // import echo from '../echo.js';
+  import echo from '../echo';
+
+
 
   //Иконки
   import PlayIcon from '@/assets/icons/playTrackIcon.svg'
@@ -193,6 +194,8 @@
   import ShuffleIcon from '@/assets/icons/shuffleIcon.svg'
   import FavoriteTrackIcon from '@/assets/icons/favoriteTrackIcon.svg'
 
+  window.Echo = echo;
+
   // Плейлист
   const tracks = []
   const currentIndex = ref(0)
@@ -207,7 +210,6 @@
   const albumPhoto = "/storage/templates/userImage.svg"
   const addTrackToPlaylist = ref(false)
 
-  let socket
 
   const searchQuery = ref('')
 
@@ -229,7 +231,7 @@
   const nextUpTracks = ref([])
 
   // Кнопки управления
-  const isLoop = ref(false)
+  const isLoop = ref(true)
 
   // Закрытие модального окна
   const closeWindow = () => {
@@ -250,7 +252,8 @@
 
   watch(() => store.audioSrc, async (newSrc) => {
     if (!newSrc || !audioPlayer.value) return;
-    playlistID.value = store.currentPlaylistID 
+    playlistID.value = store.currentPlaylistID
+    console.log(playlistID.value)
     trackID.value = store.trackID;
     
     // Сбрасываем состояние
@@ -298,16 +301,16 @@
       console.log(error)
     }
 
-    saveToBD()
+    saveToBD(playlistID)
 
     // Начинаем загрузку
-    audioPlayer.value.load()
+    // audioPlayer.value.load()
   }, { immediate: true });
 
   const saveToBD = async() => {
     try {
 
-      const response = await axios.put(`/user/lastUse/${playlistID.value}/${store.currentTrackInfo?.id}/${volumeLevel.value}`)
+      const response = await axios.put(`/user/lastUse/${store.currentPlaylistID}/${store.currentTrackInfo?.id}/${volumeLevel.value}`)
 
     } catch (error) {
       console.log(error)
@@ -341,26 +344,36 @@
   };
 
   const addToQueue = (track) => {
+    if (store.isSynchronizedMode) {
+      syncQueue('add', track)
+      return
+    }
     queueTracks.value.push(track);
   };
 
   const removeFromQueue = (index) => {
+    if (store.isSynchronizedMode) {
+      syncQueue('remove', null, index);
+    }
     queueTracks.value.splice(index, 1);
   };
 
 
   const playFromQueue = (index) => {
-    if (index >= queueTracks.value.length) return;
-    
+    if (index >= queueTracks.value.length || index < 0) return;
+
     const track = queueTracks.value[index];
-    store.setTrack(track);
-    
-    // Удаляем трек из очереди, если он сейчас играет
-    if (index === 0) {
-      queueTracks.value.shift();
+    const trackData = {
+        ...track,
+        playlistId: playlistID.value,
+        audioSrc: `/storage/${track.path.replace('public/audio/', '')}`
+      };
+    store.setTrack(trackData);
+    queueTracks.value.splice(index, 1); // Удаляем трек по индексу
+
+    if (store.isSynchronizedMode) {
+      syncQueue('play', track, index); // Отправляем другим клиентам
     }
-    
-    play();
   };
 
   // Добавление трека в очередь
@@ -377,7 +390,7 @@
   // Управление воспроизведением
   const play = () => {
     if (store.isSynchronizedMode) {
-      // sendToWebSocket({ action: 'play', trackID: store.currentTrackInfo.id })
+      syncPlayback('play', store.currentTrackInfo?.id, audioPlayer.value.currentTime);
     } else if (audioPlayer.value){
       audioPlayer.value.play()
       isPlaying.value = true
@@ -396,7 +409,7 @@
   // Пауза
   const pause = () => {
     if (store.isSynchronizedMode) {
-      // sendToWebSocket({ action: 'play', trackID: store.currentTrackInfo.id})
+      syncPlayback('pause', store.currentTrackInfo?.id, audioPlayer.value.currentTime);
     }
     if (audioPlayer.value) {
       audioPlayer.value.pause();
@@ -408,7 +421,7 @@
   // Следующий трек
   const nextTrack = () => {
     if (store.isSynchronizedMode) {
-      // sendToWebSocket('nextTrack');
+      syncPlayback('next', store.currentTrackInfo?.id, 0);
       return;
     }
 
@@ -420,6 +433,7 @@
       const nextTrack = queueTracks.value[0];
       const trackData = {
         ...nextTrack,
+        playlistId: playlistID.value,
         audioSrc: `/storage/${nextTrack.path.replace('public/audio/', '')}`
       };
       store.setTrack(trackData);
@@ -428,6 +442,7 @@
       const nextTrack = nextUpTracks.value[0];
       const trackData = {
         ...nextTrack,
+        playlistId: playlistID.value,
         audioSrc: `/storage/${nextTrack.path.replace('public/audio/', '')}`
       };
       store.setTrack(trackData);
@@ -440,19 +455,26 @@
       const nextTrack = tracks.value[currentIndex.value];
       const trackData = {
         ...nextTrack,
+        playlistId: playlistID.value,
         audioSrc: `/storage/${nextTrack.path.replace('public/audio/', '')}`
       };
       store.setTrack(trackData);
       updateNextUpTracks();
     }
 
-    play();
+    if (store.isSynchronizedMode) {
+      syncPlayback('play', store.currentTrackInfo?.id, audioPlayer.value.currentTime);
+    }
+    else {
+      play(); 
+    }
+     
   };
 
   // Предыдущий трек
   const prevTrack = () => {
     if (store.isSynchronizedMode) {
-      // sendToWebSocket('prevTrack');
+      syncPlayback('prev', store.currentTrackInfo?.id, audioPlayer.value.currentTime);
       return;
     }
 
@@ -472,6 +494,7 @@
       const prevTrack = tracks.value[currentIndex.value];
       const trackData = {
         ...prevTrack,
+        playlistId: playlistID.value,
         audioSrc: `/storage/${prevTrack.path.replace('public/audio/', '')}`
       };
 
@@ -532,7 +555,7 @@
     if (isNaN(seekTime)) return;
 
     if (store.isSynchronizedMode) {
-      sendToWebSocket('seek', { time: seekTime });
+      // syncPlayback('play', store.currentTrackInfo?.id, audioPlayer.value.currentTime);
     } else {
       handleSeek(seekTime);
     }
@@ -578,69 +601,6 @@
     }
   };
 
-  // window.Pusher = Pusher
-
-  // echo.channel('player').listen('PlayerUpdated', (e) => {
-  //   // e — это объект с текущим состоянием плеера
-  //   console.log('Получили обновление плеера:', e)
-
-  //   // Обновляем локальное состояние плеера
-  //   isPlaying.value = e.is_playing
-  //   currentTime.value = e.position
-  //   queue.value = e.queue_tracks
-  // })
-
-  // // Функция для отправки действия на сервер
-  // const sendToWebSocket = (message) => {
-  //   if (socket && socket.readyState === WebSocket.OPEN) {
-  //     socket.send(JSON.stringify(message));
-  //   } else {
-  //     console.warn('WebSocket не подключен или не готов');
-  //   }
-  // }
-
-  const createChannel = async() => {
-    try {
-      const response = await axios.post('/room/create')
-      roomId.value = response.data.room_id
-      joinRoom()
-      emit('room-created', roomId.value)
-    } catch (err) {
-      error.value = err.response?.data?.message || 'Failed to create room'
-    }
-  }
-
-  // Присоединение к существующей комнате
-  const joinRoom = () => {
-    if (!roomId.value) return
-    
-    // Подписываемся на канал комнаты
-    window.Echo.channel(`player-room.${roomId.value}`)
-      .listen('.play', (data) => {
-        currentTrack.value = data.trackId
-        position.value = data.position || 0
-        isPlaying.value = true
-        emit('track-changed', { trackId: data.trackId, action: 'play' })
-      })
-      .listen('.pause', () => {
-        isPlaying.value = false
-        emit('track-changed', { trackId: currentTrack.value, action: 'pause' })
-      })
-      .listen('.skip', (data) => {
-        currentTrack.value = data.trackId
-        isPlaying.value = true
-        position.value = 0
-        emit('track-changed', { trackId: data.trackId, action: 'skip' })
-      })
-      .listen('.user-joined', (user) => {
-        if (!roomMembers.value.some(u => u.id === user.id)) {
-          roomMembers.value.push(user)
-        }
-      })
-      .listen('.user-left', (userId) => {
-        roomMembers.value = roomMembers.value.filter(u => u.id !== userId)
-      })
-  }
 
   const showPlaylistsList = () => {
     addTrackToPlaylist.value = true
@@ -683,6 +643,119 @@
       const loaded = await store.setTrack(trackData)
     }
 
+  }
+
+  const syncPlayback = async (action, trackId, time) => {
+    console.log("Отправил запрос ", action, ' ', trackId, ' ', time)
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').content
+    try {
+      const response = await axios.post('/sync-track', {
+        action,
+        trackId,
+        time
+      }, {
+        headers: {
+          'X-CSRF-TOKEN': csrfToken,
+          'Accept': 'application/json'
+        }
+      });
+      console.log('Ответ сервера:', response.data);
+    } catch (error) {
+      console.error("Ошибка синхронизации:", error)
+    }
+  }
+
+  const syncQueue = async (action, track = null, index = null, queue = []) => {
+    try {
+      await axios.post('/update-queue', {
+        action,
+        track,
+        index,
+        queue
+      });
+    } catch (error) {
+      console.error("Ошибка синхронизации очереди:", error);
+    }
+  };
+
+
+  Echo.private('queue.sync')
+    .listen('QueueUpdated', (e) => {
+        console.log('Обновление очереди пришло:', e)
+
+        switch (e.action) {
+            case 'add':
+                queueTracks.value.push(e.track)
+                break
+
+            case 'remove':
+                if (typeof e.index === 'number') {
+                    queueTracks.value.splice(e.index, 1)
+                }
+                break
+
+            case 'play':
+                if (e.index !== null && e.track) {
+                  const trackData = {
+                      ...e.track,
+                      playlistId: playlistID.value,
+                      audioSrc: `/storage/${e.track.path.replace('public/audio/', '')}`
+                    };
+                  store.setTrack(trackData);
+                  if (e.index < queueTracks.value.length) {
+                    queueTracks.value.splice(e.index, 1);
+                  }
+                  play()
+                  console.log(`Воспроизвожу синхронно трек: ${e.track.title || 'без названия'}`);
+                }
+                break;
+
+            // case 'replace':
+            //     queueTracks.value = e.queue
+            //     break
+        }
+    })
+
+  // Обработка входящих событий от Echo
+  Echo.private('track.sync')
+    .listen('TrackSynced', (e) => {
+      console.log("Зашёл")
+      if (store.currentTrackInfo?.id !== e.trackId) return;
+
+      console.log('Получено событие:', e.action)
+
+      // Выполняем локально действие, которое пришло от другого пользователя
+      executeActionLocally(e.action, e.time)
+  })
+
+  // Функция выполнения действия локально
+  function executeActionLocally(action, time = 0) {
+    switch(action) {
+      case 'play':
+        audioPlayer.value.currentTime = time
+        audioPlayer.value.play()
+        isPlaying.value = true
+        console.log("Начинаем воспроизведение локально")
+        break
+      case 'pause':
+        audioPlayer.value.pause()
+        isPlaying.value = false
+        console.log("Пауза локально")
+        break
+      case 'next':
+        handleNextTrack()
+        console.log("Следующий трек локально")
+        break
+      case 'prev':
+        handlePrevTrack()
+        console.log("Предыдущий трек локально")
+        break
+    }
+  }
+
+  const createChannel = () => {
+    store.toggleSyncMode(true)
+    console.log(store.isSynchronizedMode)
   }
 
 

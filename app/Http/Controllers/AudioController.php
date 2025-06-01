@@ -4,10 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
-use Symfony\Component\HttpFoundation\StreamedResponse;
-
+use App\Events\TrackSynced;
+use Illuminate\Support\Facades\Log;
 
 class AudioController extends Controller
 {
@@ -47,4 +45,9 @@ class AudioController extends Controller
         return response()->json($tracks_playlist);
         //return view('main/playlistPage', ['playlist' => $playlistID, 'tracks' => $tracks_playlist]);
     }
+
 }
+
+
+
+

@@ -21,6 +21,8 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Carbon;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
+use App\Events\TrackSynced;
+use App\Events\QueueUpdated;
 
 use function Laravel\Prompts\select;
 use function PHPUnit\Framework\isNull;
@@ -702,6 +704,31 @@ class MainController extends Controller
         ]);
 
     }
+
+    public function syncTrack(Request $request)
+    {
+
+        broadcast(new TrackSynced(
+            $request->trackId,
+            $request->action,
+            $request->time
+        ))->toOthers();
+
+
+        return response()->json(['status' => 'ok']);
+    }
+
+    public function syncQueue(Request $request) {
+        broadcast(new QueueUpdated(
+            $request->action,
+            $request->track,
+            $request->index,
+            $request->queue
+        ))->toOthers();
+
+        return response()->json(['status' => 'ok']);
+    }
+
 
 }
 

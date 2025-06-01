@@ -55,7 +55,6 @@
             try {
                 const response = await axios.get(`/api/playlist/${playlistID}/tracks`)
                 tracks.value = response.data
-                console.log(tracks)
             } catch (error) {
                 console.error('Ошибка при загрузке треков плейлиста:', error)
             }
@@ -64,7 +63,6 @@
             try {
                 const response = await axios.get(`/artist/${artistID}/tracks`)
                 tracks.value = response.data
-                console.log(tracks)
             } catch (error) {
                 console.error('Ошибка при загрузке треков плейлиста:', error)
             }
@@ -94,8 +92,6 @@
             albumPhoto: track.albumPhoto,
             audioSrc: `/storage/${track.path.replace('public/audio/', '')}`
         }
-        
-        console.log(trackData.audioSrc)
 
         await store.selectTrack()
         await store.play()

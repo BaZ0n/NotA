@@ -97,4 +97,8 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::put('/user/lastUse/{playlistID}/{trackID}/{volumeLevel}', [MainController::class, 'addUserLastUseInfo']);
     Route::get('/user/lastInfo', [MainController::class, 'checkLastInfo']);
 
+    Route::post('/sync-track', [MainController::class, 'syncTrack']);
+
+    Route::post('/update-queue', [MainController::class, 'syncQueue']);
+
 });
