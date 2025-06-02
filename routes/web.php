@@ -42,6 +42,8 @@ Route::middleware('auth')->group(function() {
 
 Route::middleware(['auth', 'verified'])->group(function() {
 
+    Route::post('/channels/create', [MainController::class, 'createChannel']);
+
     // Маршруты к основной странице
     Route::get("/home", [MainController::class, 'mainPage']);
     Route::get("/main", [MainController::class, 'mainPage']); 

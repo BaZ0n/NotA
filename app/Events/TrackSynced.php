@@ -17,6 +17,8 @@ class TrackSynced implements ShouldBroadcastNow
     public $action;
     public $time;
 
+    public $channelId;
+
     public function __construct($trackId, $action, $time)
     {
         $this->trackId = $trackId;
@@ -26,6 +28,6 @@ class TrackSynced implements ShouldBroadcastNow
 
     public function broadcastOn(): PrivateChannel
     {
-        return new PrivateChannel('track.sync');
+        return new PrivateChannel('track.sync' . $this->channelId);
     }
 }

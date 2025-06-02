@@ -7,6 +7,10 @@ use Illuminate\Http\Request;
 use App\Events\TrackSynced;
 use Illuminate\Support\Facades\Log;
 
+use App\Models\Channel;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+
 class AudioController extends Controller
 {
     public function playAudio(Request $request) {

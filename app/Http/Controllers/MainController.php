@@ -13,6 +13,7 @@ use App\Models\user_last_use;
 use App\Models\favorite_artist;
 use App\Models\favorite_playlist;
 use App\Models\playlist_moders;
+use App\Models\Channel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -29,6 +30,31 @@ use function PHPUnit\Framework\isNull;
 
 class MainController extends Controller
 {
+
+    public function createChannel(Request $request)
+    {
+        $user = Auth::user();
+        $invitedUserId = $request->input('invitedUserId');
+        Log::info('invitedUserId:', ['id' => $invitedUserId]);
+        if (!$invitedUserId || !User::find($invitedUserId)) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+
+        // Проверяем, существует ли уже канал с этими двумя пользователями
+        $existingChannel = Channel::whereHas('users', fn($q) => $q->where('user_id', $user->id))
+            ->whereHas('users', fn($q) => $q->where('user_id', $invitedUserId))
+            ->first();
+
+        if ($existingChannel) {
+            return response()->json(['channelId' => $existingChannel->id]);
+        }
+
+        // Создаём новый канал
+        $channel = Channel::create();
+        $channel->users()->attach([$user->id, $invitedUserId]);
+
+        return response()->json(['channelId' => $channel->id]);
+    }
 
     private function getAudioDuration($file)
     {
@@ -708,10 +734,11 @@ class MainController extends Controller
     public function syncTrack(Request $request)
     {
 
-        broadcast(new TrackSynced(
-            $request->trackId,
-            $request->action,
-            $request->time
+            broadcast(new TrackSynced(
+        $request->trackId,
+        $request->action,
+        $request->time,
+        $request->channelId
         ))->toOthers();
 
 
@@ -723,11 +750,14 @@ class MainController extends Controller
             $request->action,
             $request->track,
             $request->index,
-            $request->queue
+            $request->queue,
+            $request->channelId
         ))->toOthers();
 
         return response()->json(['status' => 'ok']);
     }
+
+    
 
 
 }

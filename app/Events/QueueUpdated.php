@@ -16,6 +16,8 @@ class QueueUpdated implements ShouldBroadcast
     public $index;
     public $track;
 
+    public $channelId;
+
     public function __construct($action, $track = null, $index = null, $queue = [])
     {
         $this->action = $action; // 'add', 'remove', 'play'
@@ -26,7 +28,7 @@ class QueueUpdated implements ShouldBroadcast
 
     public function broadcastOn()
     {
-        return new PrivateChannel('queue.sync');
+        return new PrivateChannel('queue.sync' . $this->channelId);
     }
 
     public function broadcastWith()

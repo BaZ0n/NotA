@@ -101,7 +101,7 @@
               @mouseleave="addTrackToPlaylist = false"
               >
               Добавить в плейлист
-                <transition name="fade">
+              <transition name="fade">
                 <ul v-if="addTrackToPlaylist" class="submenu-popup left">
                   <li class="submenu-item">Плейлист 1</li>
                   <li class="submenu-item">Плейлист 2</li>
@@ -110,7 +110,17 @@
                 </ul>
               </transition>
               </li>
-              <li class="dropdownContent" @click="createChannel">Пригласить пользователя</li>
+              <li class="dropdownContent" 
+              @mouseenter="inviteUser = true" 
+              @mouseleave="inviteUser = false">
+              Пригласить пользователя
+              <transition name="fade">
+                <ul class="submenu-popup left"
+                v-if="inviteUser">
+                  <li class="submenu-item" v-for="(user) in users" :key="user.id" @click="createChannel(user.userID)">{{user.userName}}</li>
+                </ul>
+              </transition>
+              </li>
             </ul>
           </transition>
         </div>
@@ -178,8 +188,6 @@
   import { watch, computed } from 'vue'
   import echo from '../echo';
 
-
-
   //Иконки
   import PlayIcon from '@/assets/icons/playTrackIcon.svg'
   import PauseIcon from '@/assets/icons/pauseIcon.svg'
@@ -209,9 +217,11 @@
   const isFavorite = ref(false)
   const albumPhoto = "/storage/templates/userImage.svg"
   const addTrackToPlaylist = ref(false)
+  const inviteUser = ref(false)
 
 
   const searchQuery = ref('')
+  const users = ref(null)
 
   // Для прогресс бара
   const currentTime = ref(0)
@@ -577,12 +587,14 @@
   };
 
   // Дополнительные действия
-  const dropdown_show = () => {
+  const dropdown_show = async() => {
     showDropDownMenu.value = !showDropDownMenu.value;
 
     try {
 
-      // const response = await axios.get("")
+      const response = await axios.get("/users/get")
+      users.value = response.data.users
+      console.log(users)
 
     } catch (error) {
       console.log("Ошибка: ", error)
@@ -681,6 +693,9 @@
 
   Echo.private('queue.sync')
     .listen('QueueUpdated', (e) => {
+        if (!store.isSynchronizedMode) {
+          store.toggleSyncMode(true)
+        }
         console.log('Обновление очереди пришло:', e)
 
         switch (e.action) {
@@ -719,6 +734,9 @@
   // Обработка входящих событий от Echo
   Echo.private('track.sync')
     .listen('TrackSynced', (e) => {
+      if (!store.isSynchronizedMode) {
+        store.toggleSyncMode(true)
+      }
       console.log("Зашёл")
       if (store.currentTrackInfo?.id !== e.trackId) return;
 
@@ -753,9 +771,36 @@
     }
   }
 
-  const createChannel = () => {
-    store.toggleSyncMode(true)
-    console.log(store.isSynchronizedMode)
+  const createChannel = async(invitedUserId) => {
+    try {
+      const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+      const response = await axios.post('/channels/create', {
+        invitedUserId
+      }, {
+        headers: {
+          'X-CSRF-TOKEN': csrfToken,
+          'Accept': 'application/json'
+        }
+      });
+      const channelId = response.data.channelId;
+      store.setChannelId(channelId); // сохранить, чтобы использовать в Echo
+      store.toggleSyncMode(true)
+      console.log(store.isSynchronizedMode)
+    
+    // подключаемся к каналу
+      // Echo.private(`player.sync.${channelId}`)
+      //   .listen('TrackSynced', (e) => {
+      //     console.log('Принято событие синхронизации:', e);
+      //     executeActionLocally(e.action, e.time);
+      //   })
+      //   .listen('QueueUpdated', (e) => {
+      //     console.log('Обновлена очередь:', e);
+      //     handleQueueEvent(e);
+      //   });
+      console.log('Подключен к каналу:', channelId);
+    } catch (error) {
+      console.error('Ошибка при создании канала:', error);
+    }
   }
 
 
@@ -780,6 +825,7 @@
   onUnmounted(() => {
     store.audioElement = null // Очищаем ссылку
     document.removeEventListener('click', closeOnClickOutside)
+    store.toggleSyncMode(false)
   })
 </script>
 
