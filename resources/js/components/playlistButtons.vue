@@ -55,7 +55,7 @@
             <input type="text" class="searchInput" placeholder="Поиск..." v-model="searchQueryTrack">
             <hr>
             <ul class="tracks_list" style="padding-left: 0; background-color: transparent; border: 0;">
-                <li class="track_element" v-for="(track, index) in tracks" :key="track.id" @click="addTrackToPlaylist(track.id)">
+                <li class="track_element" v-for="(track, index) in tracks.slice(0, 6)" :key="track.id" @click="addTrackToPlaylist(track.id)">
                     <div class="track d-flex py-2 px-3" style="align-items: center;">
                         <div class="leftContainer" style="display: flex; align-items: center;">
                             <img class="albumCover" :src="'/storage/' + track.albumCover">
@@ -127,7 +127,7 @@
     watch(searchQuery, async (newSearch) => {
         try {
             const response = await axios.get(
-                `/users/get/${searchQuery.value}`
+                `/api/users/get/${searchQuery.value}`
             )
             users.value = response.data.users
         }
@@ -139,7 +139,7 @@
     watch(searchQueryTrack, async(newSearch) => {
         try {
             const response = await axios.get(
-                `/tracks/get/${searchQueryTrack.value}`
+                `/api/tracks/get/${searchQueryTrack.value}`
             )
             tracks.value = response.data.tracks
         } catch(error) {
@@ -195,7 +195,6 @@
             const response = await axios.get(
                 '/users/get'
             )
-            
             users.value = response.data.users
         }
         else {
@@ -210,7 +209,7 @@
             if (!tracksAdd.value) {
                 tracksAdd.value = !tracksAdd.value
                 const response = await axios.get(
-                    '/tracks/get'
+                    '/api/tracks/get'
                 )
                 tracks.value = response.data.tracks
             }
@@ -235,6 +234,33 @@
         }
     }
 
+    const playPlaylist = async () => {
+        try {
+            const res = await axios.get('/api/play-playlist', {
+                params: { playlistID },
+            })
+
+            const track = res.data.track
+            const author = res.data.author
+            
+            const trackData = {
+                ...track,
+                artistName: author?.artistName,
+                playlistId: playlistID,
+                albumPhoto: track.albumPhoto,
+                audioSrc: `/storage/${track.path.replace('public/audio/', '')}`
+            }
+
+            await store.selectTrack()
+            await store.play()
+            // Загрузка трека в плеер
+            const loaded = await store.setTrack(trackData)
+        }
+        catch(error) {
+            console.log(error.message)
+        }
+    }
+
     const trackUploadShow = () => {
         store.trackUploadShow()
     }
@@ -244,9 +270,6 @@
         const secs = Math.floor(seconds % 60).toString().padStart(2, '0')
         return `${mins}:${secs}`
     }
-
-    
-    
 
     onMounted(async () => {
         try {

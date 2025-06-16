@@ -9,7 +9,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 
-class TrackSynced implements ShouldBroadcastNow
+class TrackSynced implements ShouldBroadcast
 {
     use InteractsWithSockets, SerializesModels;
 

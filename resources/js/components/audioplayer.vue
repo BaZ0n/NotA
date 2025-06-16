@@ -3,7 +3,8 @@
   <div class="container" id="player-container">
     <div class="row align-items-center">
       <div class="col track-info">
-        <img class="playlist_image" :src="'/storage/' + store.currentAlbumPhoto">  
+        <img class="playlist_image" :src="'/storage/' + store.currentAlbumPhoto" v-if="hasAlbumPhoto == true">
+        <img class="playlist_image" :src="'/storage/templates/playlistImage.svg'" v-else>  
         <div class="track-text-info">
             <h5 style="color:var(--placeholder);"> {{ store?.currentArtistName || 'Исполнитель'}}</h5>
             <h4>{{store.currentTrackInfo?.trackName || 'Название'}}</h4>
@@ -203,6 +204,7 @@
   import FavoriteTrackIcon from '@/assets/icons/favoriteTrackIcon.svg'
 
   window.Echo = echo;
+  const hasAlbumPhoto = ref(false)
 
   // Плейлист
   const tracks = []
@@ -215,7 +217,6 @@
   const moreClicked = ref(false)
   const trackID = ref(null)
   const isFavorite = ref(false)
-  const albumPhoto = "/storage/templates/userImage.svg"
   const addTrackToPlaylist = ref(false)
   const inviteUser = ref(false)
 
@@ -263,8 +264,8 @@
   watch(() => store.audioSrc, async (newSrc) => {
     if (!newSrc || !audioPlayer.value) return;
     playlistID.value = store.currentPlaylistID
-    console.log(playlistID.value)
-    trackID.value = store.trackID;
+    trackID.value = store.trackID
+    hasAlbumPhoto.value = true
     
     // Сбрасываем состояние
     currentTime.value = 0;
@@ -293,7 +294,7 @@
 
     if (store.justSelected) {
       try {
-        const response = await axios.get(`/playlist/${playlistID.value}/tracks`)
+        const response = await axios.get(`/api/playlist/${playlistID.value}/tracks`)
         tracks.value = response.data.tracks
         updateNextUpTracks()
         store.selectedPlaying()
@@ -408,14 +409,6 @@
     }
   };
 
-  const albumPhotoSrc = computed(() => {
-    return store.value?.currentAlbumPhoto 
-      ? '/storage/' + store.currentAlbumPhoto 
-      : '/storage/templates/playlistImage.svg';
-  });
-
-    // '/storage/templates/userImage.svg'
-
   // Пауза
   const pause = () => {
     if (store.isSynchronizedMode) {
@@ -441,9 +434,11 @@
   const handleNextTrack = () => {
     if (queueTracks.value.length > 0) {
       const nextTrack = queueTracks.value[0];
+      
       const trackData = {
         ...nextTrack,
         playlistId: playlistID.value,
+        albumPhoto: nextTrack.albumCover,
         audioSrc: `/storage/${nextTrack.path.replace('public/audio/', '')}`
       };
       store.setTrack(trackData);
@@ -453,6 +448,7 @@
       const trackData = {
         ...nextTrack,
         playlistId: playlistID.value,
+        albumPhoto: nextTrack.albumCover,
         audioSrc: `/storage/${nextTrack.path.replace('public/audio/', '')}`
       };
       store.setTrack(trackData);
@@ -466,6 +462,7 @@
       const trackData = {
         ...nextTrack,
         playlistId: playlistID.value,
+        albumPhoto: nextTrack.albumPhoto,
         audioSrc: `/storage/${nextTrack.path.replace('public/audio/', '')}`
       };
       store.setTrack(trackData);
@@ -628,9 +625,10 @@
 
   const checkLastUseInfo = async() => {
 
-    const res = await axios.get('/user/lastInfo')
+    const res = await axios.get('/user-lastInfo')
 
     const last_use_info = res.data.last_use_info
+    console.log(last_use_info.value)
 
     if (last_use_info === null || last_use_info === undefined) {
       return 0
@@ -786,17 +784,6 @@
       store.setChannelId(channelId); // сохранить, чтобы использовать в Echo
       store.toggleSyncMode(true)
       console.log(store.isSynchronizedMode)
-    
-    // подключаемся к каналу
-      // Echo.private(`player.sync.${channelId}`)
-      //   .listen('TrackSynced', (e) => {
-      //     console.log('Принято событие синхронизации:', e);
-      //     executeActionLocally(e.action, e.time);
-      //   })
-      //   .listen('QueueUpdated', (e) => {
-      //     console.log('Обновлена очередь:', e);
-      //     handleQueueEvent(e);
-      //   });
       console.log('Подключен к каналу:', channelId);
     } catch (error) {
       console.error('Ошибка при создании канала:', error);
@@ -817,6 +804,13 @@
           addTrackToPlaylist.value = false;
       }
     })
+
+    if (store.currentAlbumPhoto === null) {
+      hasAlbumPhoto.value = false
+    }
+    else {
+      hasAlbumPhoto.value = true
+    }
 
     checkLastUseInfo()
 

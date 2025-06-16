@@ -1,6 +1,6 @@
 <template>
     <h2 class="emptyPlaylist" v-if="tracks.length == 0">Упс. Тут пока что пусто</h2>
-    <div class="trackLink"  
+    <div class="trackLink" v-else 
     v-for="(track, index) in tracks"
     :key="track.id"
     @click=playTrack(track.id)>
@@ -16,14 +16,11 @@
             <div class="rightContainer" style="display: flex; align-items: center; justify-content: center;">
                 <h5 class="trackDuration">{{ formatDuration(track.duration) }}</h5>
                 <div class="more-popup"><MoreIcon class="icon" @click.stop></MoreIcon></div>
-                <div class="track_userInfo">
+                <div class="track_userInfo" v-if="!isArtistTracks">
                     <img class="userPhoto" src="/storage/templates/userImage.svg">
                     <span class="userName">{{ track.userName }}</span>
-                </div>
-                
-                
+                </div>       
             </div>
-            
         </div>
     </div>
 </template>
@@ -45,6 +42,7 @@
 
     const playlistID = props.playlistId
     const artistID = props.artistId
+    const isArtistTracks = ref(false);
     const store = useAudioPlayerStore()
     const tracks = ref([])
     const artists = ref([])
@@ -54,15 +52,17 @@
         if (!isNaN(playlistID)) {
             try {
                 const response = await axios.get(`/api/playlist/${playlistID}/tracks`)
-                tracks.value = response.data
+                tracks.value = response.data.tracks
+                console.log(tracks.length)
             } catch (error) {
                 console.error('Ошибка при загрузке треков плейлиста:', error)
             }
         }
         else if (!isNaN(artistID)) {
             try {
-                const response = await axios.get(`/artist/${artistID}/tracks`)
+                const response = await axios.get(`/api/artist/${artistID}/tracks`)
                 tracks.value = response.data
+                isArtistTracks.value = true
             } catch (error) {
                 console.error('Ошибка при загрузке треков плейлиста:', error)
             }
@@ -76,7 +76,7 @@
         return `${mins}:${secs}`
     }
 
-    const playTrack = async (trackID, index) => {
+    const playTrack = async (trackID) => {
     try {
         const res = await axios.get('/api/play-audio', {
             params: { trackID },

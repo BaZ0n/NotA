@@ -45,8 +45,8 @@
       </div>
     </div>
 
-    <!-- Заглушка под будущие данные об артистах
-    <div class="container mx-0">
+    <!-- Заглушка под будущие данные об артистах -->
+    <!-- <div class="container mx-0">
       <h3>Исполнители</h3>
       <div class="artistsCollection mx-3 d-flex" id="artistsCollection">
         <ArtistsCard
@@ -113,9 +113,4 @@ const createPlaylist = async () => {
     console.log(e.message)
   }
 }
-
-onMounted(() => {
-  userStore.loadFromStorage();
-  console.log(userStore)
-})
 </script>

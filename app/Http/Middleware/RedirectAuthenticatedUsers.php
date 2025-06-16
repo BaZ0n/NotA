@@ -21,7 +21,7 @@ class RedirectAuthenticatedUsers
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
                 // Перенаправляем на главную страницу для авторизованных
-                return redirect('/mainPage');
+                return redirect('/main');
             }
         }
 

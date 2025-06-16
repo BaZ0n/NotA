@@ -60,9 +60,8 @@
 
 <script setup>
   import axios from 'axios'
-  import { ref } from 'vue'
-  import { Inertia, router } from '@inertiajs/inertia-vue3'
-  import { useForm } from '@inertiajs/inertia-vue3'
+  import { onMounted, ref } from 'vue'
+  import { Inertia } from '@inertiajs/inertia'
   import { watch } from 'vue'
   import { useAudioPlayerStore } from '@/stores/useAudioPlayerStore'
 
@@ -74,7 +73,7 @@
   })
 
   const playlist = props.playlist
-
+  
   const showUpload = ref(false)
 
   const store = useAudioPlayerStore()
@@ -122,56 +121,6 @@
       }
     }
   }
-
-  // const handleFileChange = (e) => {
-  //   trackFiles.value = e.target.files
-  //   fileName.value = trackFiles.value.length > 1 ? "Загружено " + trackFiles.value.length + " файлов": trackFiles.value[0].name
-  // }
-
-  // const submitTrack = async () => {
-  //   if (!trackFiles.value[0]) {
-  //     alert('Пожалуйста, выберите аудиофайл')
-  //     return
-  //   }
-
-    
-  //   const formData = new FormData()
-  //   const csrfToken = document.querySelector('meta[name="csrf-token"]').content
-
-  //   console.log(trackFiles)
-  //   for (const trackFile of trackFiles.value) {
-  //     console.log(trackFile)
-  //     if (trackFiles.value.length > 1) {
-  //       formData.append('trackName', '')
-  //       formData.append('trackArtist', '')
-  //       formData.append('trackAlbum', '')
-  //       formData.append('file', trackFile.value)
-  //       formData.append('_token', csrfToken);
-  //     }
-  //     else {
-  //       formData.append('trackName', trackName.value)
-  //       formData.append('trackArtist', trackArtist.value)
-  //       formData.append('trackAlbum', trackAlbum.value)
-  //       formData.append('file', trackFile.value)
-  //       formData.append('_token', csrfToken);
-  //     }
-  //     showUpload.value = false
-  //     store.trackUploadHide()
-  //     try {
-  //       await fetch(`/playlist/${playlist.id}/upload-audio`, {
-  //         method: 'POST',
-  //         body: formData,
-  //         credentials: 'include',
-  //       })
-  //       console.log('Трек успешно загружен')
-
-  //     } catch (error) {
-  //       alert('Ошибка при загрузке трека')
-  //       console.log(error.message)
-  //     }
-  //   }
-    
-  // }
 
   watch(() => store.trackUpload, (newValue) => {
     showUpload.value = newValue
@@ -240,12 +189,6 @@
       showUpload.value = false
       store.trackUploadHide()
       
-      // Обновление списка треков
-      Inertia.visit(route('playlist.show', { id: playlist.id }), {
-        preserveState: true,
-        only: ['tracks'] // Укажите какие данные нужно обновить
-      })
-      Inertia.visit(route('playlist.show', ))
     } catch (error) {
       alert(`Ошибка при загрузке: ${error.message}`)
     } finally {

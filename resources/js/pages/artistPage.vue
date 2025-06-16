@@ -3,6 +3,12 @@
     <div class="artistInfoCont">
       <img class="artistAvatar" src="/storage/templates/userImage.svg" alt="Artist Avatar" />
       <h4 class="artistName">{{ artist.artistName }}</h4>
+      <!-- <button class="favoriteButton" id="likeButton" @click="addToFavorite">
+          <LikeIcon class="icon"></LikeIcon>
+      </button> -->
+        <button class="toolButton" id="likeButton" @click="deleteFromFavorite">
+            <FavoriteIcon class="icon"></FavoriteIcon>
+        </button>
     </div>
 
     <div class="tracksList">
@@ -21,6 +27,8 @@
     // Подключаем дочерние компоненты
     import TrackList from '@/components/tracks.vue'
     import AlbumList from '@/components/albums.vue'
+    import LikeIcon from '@/assets/icons/likeIcon.svg'
+    import FavoriteIcon from '@/assets/icons/favoriteTrackIcon.svg'
 
     const props = defineProps({
         artist: Object

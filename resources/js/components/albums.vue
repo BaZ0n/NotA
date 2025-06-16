@@ -29,14 +29,13 @@
     onMounted(async () => {
         try {
             const response = await axios.get(
-                `/artist/${artistID}/albums`
+                `/api/artist/${artistID}/albums`
             )
             albums.value = response.data
 
         } catch(error) {
             console.log(error)
         }
-        console.log(albums.value)
     })
 
 </script>

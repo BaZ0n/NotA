@@ -5,6 +5,11 @@
         flex-direction: column;
         align-items: center;
         width: fit-content;
+        justify-content: center;
+        border: 1px solid var(--gray);
+        border-radius: 15px;
+        width: 20%;
+        background-color: var(--sliderBG);
 
         .artistAvatar {
             width: 128px;
@@ -16,6 +21,22 @@
             margin: 20px 0;
             text-align: center;
         }
+
+        .favoriteButton {
+            background-color: transparent;
+            border: 0;
+
+            .icon {
+                width: 48px;
+                height: 48px;
+            }
+
+            .icon:hover {
+                fill: var(--primaryColor);
+                transition: all 0.2s linear;
+            }
+        }
+        
     }
 
     .tracksList {
@@ -25,6 +46,11 @@
         padding: 15px;
         width: 40vw;
         align-items: center;
+    }
+
+    .albumList {
+        background-color: var(--sliderBG);
+        width: 20%;
     }
 }
 
